@@ -1,0 +1,45 @@
+Here is a list of all Valorant Agents : 
+NAME :: ROLE :: NATIONALITY :: Additionnal Notes
+
+// Brimstone :: Controller :: American
+// Viper :: Controller :: American
+// Omen :: Controller :: Unknown Origin :: Monster Appearance
+// Killjoy :: Sentinel :: German
+// Cypher :: Sentinel :: Moroccan
+// Sova :: Initiator :: Russian
+// Sage :: Controller :: Chinese :: Healer
+// Phoenix :: Duelist :: British
+// Jett :: Duelist :: Korean
+// Reyna :: Duelist :: Mexican
+// Raze :: Duelist :: Brazilian
+// Breach :: Initiator :: Swedish
+// Skye :: Initiator :: Australian
+// Yoru :: Duelist :: Japanese
+// Astra :: Controller :: Ghanaian
+// KAY/O :: Initiator :: Unknown Origin :: Robot
+// Chamber :: Sentinel :: French
+// Neon :: Duelist :: Filipinos
+// Fade :: Initiator :: Turkish
+// Harbor :: Controller :: Indian
+// Gekko :: Initiator :: American
+// Deadlock :: Sentinel :: Norwegian
+// Iso :: Duelist :: Chinese
+// Clove :: Controller :: Scottish :: Is the newest agent 
+
+FIVE favorite agents are Omen and Clove 
+LAUMELETTE favorite agents are are Clove and Gekko
+
+
+Here is a list of Valorant MAPS :
+NAME :: LOCATION
+
+// BIND :: MOROCCO
+// HAVEN :: BHUTAN
+// SPLIT :: JAPAN (Tokyo)
+// ASCENT :: ITALY (Venice)
+// ICEBOX :: RUSSIA
+// BREEZE :: BERMUDA TRIANGLE
+// FRACTURE :: USA (New Mexico)
+// PEARL :: PORTUGAL
+// LOTUS :: INDIA
+// SUNSET :: USA (Los Angeles)

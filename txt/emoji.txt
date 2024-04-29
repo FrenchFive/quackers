@@ -1,0 +1,13 @@
+Here is a list of emojis you can use :
+
+// <:quackCoin:1124255606782578698> is the symbol for the Quack Coins
+// <:love:1126474652764618752> is a duck holding a heart
+// <:confused:1124264702789292033> is a duck with a question mark above is head
+// <:murder:1124225438970036296> is a duck with a knife and red glowing eyes
+// <:o7:1124224572707831929> is a duck saluting
+// <:cropped:1124224568106688583> is a duck shyly peaking, only his eyes are visible
+// <:dead:1124224563794956349> a dead duck with cross as eyes 
+// <:shy:1124224552935890954> a shy little duck
+// <:laugh:1124224547332304997> a duck laughing
+// <:sad:1124224540654968853> a sad duck, tears in his eyes
+// <:surprised:1124224536389365821> a shocked duck, mouth opened

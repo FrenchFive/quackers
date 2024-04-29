@@ -1,0 +1,154 @@
+import os
+from datetime import datetime, timedelta
+import sqlite3
+from sqlite3 import Error
+import json
+
+scrpt_dir = os.path.dirname(os.path.abspath(__file__))
+folder_name = 'db/quackers.db'
+database_path = os.path.join(scrpt_dir, folder_name)
+
+CONNECTION = sqlite3.connect(database_path)
+CURSOR = CONNECTION.cursor()
+#CURSOR.execute("CREATE TABLE IF NOT EXISTS members (id INTEGER PRIMARY KEY, name TEXT, coins INTEGER, daily TEXT, quackers INTEGER, mess INTEGER, created TEXT)")
+
+def export():
+    global scrpt_dir
+    export_path = os.path.join(scrpt_dir, "txt/database.json")
+
+    CURSOR.execute('SELECT * FROM members')
+    data = CURSOR.fetchall()
+
+    # Convert data to a list of dictionaries
+    column_names = [desc[0] for desc in CURSOR.description]
+    json_data = []
+    for row in data:
+        json_data.append(dict(zip(column_names, row)))
+    
+    # Write JSON data to the output file
+    with open(export_path, 'w') as json_file:
+        json.dump(json_data, json_file, indent=4)
+
+def user_in_db(name):
+    CURSOR.execute("SELECT COUNT(*) FROM members WHERE name = ?",(name,))
+    data = CURSOR.fetchall()
+    return(data[0][0])
+
+def add_user(name):
+    date = datetime.now().strftime('%Y-%m-%d %H:%M')
+    CURSOR.execute('INSERT INTO members (name, coins, daily, quackers, mess, created, streak) VALUES(?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0))
+    CONNECTION.commit()
+    print(f'{datetime.now().strftime("%Y_%m_%d %H:%M:%S")} --QDB // ADDED USER : {name}')
+
+def qcheck(name, amount):
+    CURSOR.execute("SELECT coins FROM members WHERE name = ?",(name,))
+    data = CURSOR.fetchall()
+    coins = data[0][0]
+
+    if coins >= amount:
+        return(0)
+    else:
+        return(1)
+
+def add_mess(name):
+    CURSOR.execute("SELECT coins, mess FROM members WHERE name = ?",(name,))
+    rows = CURSOR.fetchall()
+    data = rows[0]
+    coins = data[0]
+    mess = data[1]
+
+    coins += 1
+    mess += 1
+
+    CURSOR.execute("UPDATE members SET coins = ?, mess = ? WHERE name = ?", (coins, mess, name))
+    CONNECTION.commit()
+
+def add_quackers(name):
+    CURSOR.execute("SELECT coins, quackers FROM members WHERE name = ?",(name,))
+    rows = CURSOR.fetchall()
+    data = rows[0]
+    coins = data[0]
+    quackers = data[1]
+
+    coins += 9  #9 + 1coin from message => 10
+    quackers += 1
+
+    CURSOR.execute("UPDATE members SET coins = ?, quackers = ? WHERE name = ?", (coins, quackers, name))
+    CONNECTION.commit()
+
+def daily(name):
+    date = datetime.now().strftime('%Y-%m-%d')
+    CURSOR.execute("SELECT coins, daily, streak FROM members WHERE name = ?",(name,))
+    rows = CURSOR.fetchall()
+    data = rows[0]
+    coins = data[0]
+    daily = data[1]
+    streak = data[2]
+
+    if daily != date:
+        amount = 100
+        if daily == (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'):
+            streak += 1
+            if streak > 10:
+                res = 10
+            else:
+                res = streak
+            mult = res * (2.5 - 1) / 20 + 1
+        else:
+            streak = 0
+            mult = 1
+        coins += int((amount * mult))
+
+        CURSOR.execute("UPDATE members SET coins = ?, daily = ?, streak = ? WHERE name = ?", (coins, date, streak, name))
+        CONNECTION.commit()
+        print(f'{datetime.now().strftime("%Y_%m_%d %H:%M:%S")} --QDB // DAILY : {name} : {coins}')
+        if streak == 0:
+            return(f'Successfully added {int((amount * mult))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins')
+        else:
+            return(f'Successfully added {int((amount * mult))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins // STREAK : {streak}')
+    else:
+        return(f'Daily QuackCoins have already been collected today for {name}')
+
+def send(fname, dname, amount):
+    if amount<0:
+        return('The amount must be higher than 1 <:quackCoin:1124255606782578698>.')
+    CURSOR.execute("SELECT coins FROM members WHERE name = ?",(fname,))
+    data = CURSOR.fetchall()
+    fcoin = data[0][0]
+    if fcoin < amount:
+        return("INSUFICIENT FUNDS")
+    
+    CURSOR.execute("UPDATE members SET coins = ? WHERE name = ?", (fcoin-amount, fname))
+    CONNECTION.commit()
+    CURSOR.execute("SELECT coins FROM members WHERE name = ?",(dname,))
+    data = CURSOR.fetchall()
+    dcoin = data[0][0]
+    CURSOR.execute("UPDATE members SET coins = ? WHERE name = ?", (dcoin+amount, dname))
+    CONNECTION.commit()
+    print(f'{datetime.now().strftime("%Y_%m_%d %H:%M:%S")} --QDB // SENT : {amount} // FROM : {fname} / TO : {dname}')
+    return(f"{fname.capitalize()} sent {amount} <:quackCoin:1124255606782578698> to {dname.capitalize()}")
+
+def coins(name):
+    CURSOR.execute("SELECT coins FROM members WHERE name = ?", (name,))
+    data = CURSOR.fetchall()
+    return(f'{name.capitalize()} possède {data[0][0]} <:quackCoin:1124255606782578698>.')
+
+def leaderboard():
+    CURSOR.execute("SELECT * FROM members ORDER BY coins DESC LIMIT 10")
+    data = CURSOR.fetchall()
+    result = []
+    for i in range(len(data)):
+        result.append(f'N.{i+1} :: {data[i][1].capitalize()} :: {data[i][2]} <:quackCoin:1124255606782578698>')
+    return(result)
+
+def add(name, amount):
+    CURSOR.execute("SELECT coins FROM members WHERE name = ?",(name,))
+    rows = CURSOR.fetchall()
+    data = rows[0]
+    coins = data[0]
+
+    coins += amount
+
+    CURSOR.execute("UPDATE members SET coins = ? WHERE name = ?", (coins, name))
+    CONNECTION.commit()
+
