@@ -1,2 +1,2 @@
-# quackers
+# QUACKERS
 DISCORD DUCK [BOT]
