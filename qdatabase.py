@@ -8,6 +8,8 @@ scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'db/quackers.db'
 database_path = os.path.join(scrpt_dir, folder_name)
 
+import qlogs
+
 CONNECTION = sqlite3.connect(database_path)
 CURSOR = CONNECTION.cursor()
 #CURSOR.execute("CREATE TABLE IF NOT EXISTS members (id INTEGER PRIMARY KEY, name TEXT, coins INTEGER, daily TEXT, quackers INTEGER, mess INTEGER, created TEXT)")
@@ -38,7 +40,7 @@ def add_user(name):
     date = datetime.now().strftime('%Y-%m-%d %H:%M')
     CURSOR.execute('INSERT INTO members (name, coins, daily, quackers, mess, created, streak) VALUES(?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0))
     CONNECTION.commit()
-    print(f'{datetime.now().strftime("%Y_%m_%d %H:%M:%S")} --QDB // ADDED USER : {name}')
+    qlogs.info(f'--QDB // ADDED USER : {name}')
 
 def qcheck(name, amount):
     CURSOR.execute("SELECT coins FROM members WHERE name = ?",(name,))
@@ -101,7 +103,7 @@ def daily(name):
 
         CURSOR.execute("UPDATE members SET coins = ?, daily = ?, streak = ? WHERE name = ?", (coins, date, streak, name))
         CONNECTION.commit()
-        print(f'{datetime.now().strftime("%Y_%m_%d %H:%M:%S")} --QDB // DAILY : {name} : {coins}')
+        qlogs.info(f'--QDB // DAILY : {name} : {coins}')
         if streak == 0:
             return(f'Successfully added {int((amount * mult))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins')
         else:
@@ -125,7 +127,7 @@ def send(fname, dname, amount):
     dcoin = data[0][0]
     CURSOR.execute("UPDATE members SET coins = ? WHERE name = ?", (dcoin+amount, dname))
     CONNECTION.commit()
-    print(f'{datetime.now().strftime("%Y_%m_%d %H:%M:%S")} --QDB // SENT : {amount} // FROM : {fname} / TO : {dname}')
+    qlogs.info(f'--QDB // SENT : {amount} // FROM : {fname} / TO : {dname}')
     return(f"{fname.capitalize()} sent {amount} <:quackCoin:1124255606782578698> to {dname.capitalize()}")
 
 def coins(name):

@@ -2,22 +2,22 @@
     {
         "id": 1,
         "name": "quack_five",
-        "coins": 4959,
-        "daily": "2024-04-29",
-        "quackers": 18,
-        "mess": 409,
+        "coins": 5183,
+        "daily": "2024-04-30",
+        "quackers": 19,
+        "mess": 410,
         "created": "2024-04-05 19:44",
-        "streak": 12
+        "streak": 13
     },
     {
         "id": 2,
         "name": "lau_melette",
-        "coins": 4052,
-        "daily": "2024-04-29",
+        "coins": 4233,
+        "daily": "2024-04-30",
         "quackers": 14,
         "mess": 291,
         "created": "2024-04-05 20:01",
-        "streak": 15
+        "streak": 16
     },
     {
         "id": 3,
@@ -62,12 +62,12 @@
     {
         "id": 7,
         "name": "niroo003",
-        "coins": 4877,
-        "daily": "2024-04-29",
+        "coins": 5062,
+        "daily": "2024-04-30",
         "quackers": 1,
         "mess": 109,
         "created": "2024-04-05 20:18",
-        "streak": 19
+        "streak": 20
     },
     {
         "id": 8,

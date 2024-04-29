@@ -15,6 +15,8 @@ import games
 import os
 import random
 
+import qlogs
+
 import time
 
 scrpt_dir = os.path.dirname(os.path.abspath(__file__))
@@ -260,7 +262,7 @@ async def on_message(ctx):
 
     qdb.add_quackers(ctx.author.name)
     counter += 1
-    print(f'{counter:02} // {datetime.now().strftime("%Y-%m-%d %H:%M:%S")} // RESPONDING TO : {ctx.author.name}')
+    qlogs.info(f'{counter:02} // RESPONDING TO : {ctx.author.name}')
 
     CLIENT.beta.threads.messages.create(
             thread.id,
@@ -298,7 +300,7 @@ async def on_message(ctx):
             f.write(memory)
         temp = 'MEMORY LIST :' + '\n' + memory
         memory = temp
-        print("/// RESETTING THREAD")
+        qlogs.info("/// RESETTING THREAD")
         thread = CLIENT.beta.threads.create()
         context()
 
