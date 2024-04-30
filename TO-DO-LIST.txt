@@ -1,2 +1,11 @@
 VOICE ADD POINTS
-ADMIN COMMANDS
+
+BETS
+DATABASE FOR POLLS 
+DATABASE / POLL
+/create
+/status
+/bid 
+/result // vainqueur / somme des vainqueurs = proportion // resultat = vainqueur + (proportion * somme des perdants)
+
+Print and send LOGS
