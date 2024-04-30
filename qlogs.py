@@ -10,3 +10,4 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s' ,filename
 def info(message):
     print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} :: {message}')
     logging.info(message)
+    return(message)

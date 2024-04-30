@@ -116,7 +116,7 @@ def generate():
 
 @bot.event
 async def on_ready():
-    print("QUACKERS IS ONLINE")
+    qlogs.info("QUACKERS IS ONLINE")
 
 
 #COMMANDS
@@ -242,6 +242,23 @@ async def rps(
         result = "Pas assez de QuackCoins disponibles."
     await interaction.response.send_message(result)
 
+
+#ADMIN
+@bot.slash_command(name="add", description="[ADMIN] add QuackCoins to a User", guild_ids=[1159282148042350642])
+async def add(interaction: Interaction, amount:int, user:nextcord.Member):
+    name = interaction.user.name
+    user = user.name
+
+    if qdb.user_in_db(name) == 0:
+        qdb.add_user(name)
+
+    if qdb.user_in_db(user) == 0:
+        qdb.add_user(user)
+    
+    qdb.add(user, amount)
+    result = qlogs.info(f"[ADMIN : {name}] ADDED {amount} <:quackCoin:1124255606782578698> to {user}")
+
+    await interaction.response.send_message(result)
 
 #EVENTS
 @bot.event

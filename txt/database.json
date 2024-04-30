@@ -2,7 +2,7 @@
     {
         "id": 1,
         "name": "quack_five",
-        "coins": 5183,
+        "coins": 5202,
         "daily": "2024-04-30",
         "quackers": 19,
         "mess": 410,
@@ -12,7 +12,7 @@
     {
         "id": 2,
         "name": "lau_melette",
-        "coins": 4233,
+        "coins": 4234,
         "daily": "2024-04-30",
         "quackers": 14,
         "mess": 291,
@@ -172,10 +172,10 @@
     {
         "id": 18,
         "name": "not.five",
-        "coins": 213,
+        "coins": 324,
         "daily": "2024-04-24",
         "quackers": 0,
-        "mess": 3,
+        "mess": 4,
         "created": "2024-04-08 17:36",
         "streak": 0
     },
