@@ -2,6 +2,6 @@ secret.env
 qlogs.log
 
 db
-txt/database.json
+/txt/database.json
 tests
 __pycache__
