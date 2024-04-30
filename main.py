@@ -244,7 +244,7 @@ async def rps(
 
 
 #ADMIN
-@bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids=[1159282148042350642])
+@bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids=serverid)
 async def add(interaction: Interaction, amount:int, user:nextcord.Member):
     name = interaction.user.name
     user = user.name
@@ -260,7 +260,7 @@ async def add(interaction: Interaction, amount:int, user:nextcord.Member):
 
     await interaction.response.send_message(result)
 
-@bot.slash_command(name="admin-remove", description="[ADMIN] remove QuackCoins to a User", guild_ids=[1159282148042350642])
+@bot.slash_command(name="admin-remove", description="[ADMIN] remove QuackCoins to a User", guild_ids=serverid)
 async def add(interaction: Interaction, amount:int, user:nextcord.Member):
     name = interaction.user.name
     user = user.name
