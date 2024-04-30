@@ -1,4 +1,6 @@
 secret.env
 qlogs.log
+
+db
 tests
 __pycache__
