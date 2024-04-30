@@ -256,7 +256,23 @@ async def add(interaction: Interaction, amount:int, user:nextcord.Member):
         qdb.add_user(user)
     
     qdb.add(user, amount)
-    result = qlogs.info(f"[ADMIN : {name}] ADDED {amount} <:quackCoin:1124255606782578698> to {user}")
+    result = qlogs.admin(f"[ADMIN : {name}] ADDED {amount} <:quackCoin:1124255606782578698> to {user.upper()}")
+
+    await interaction.response.send_message(result)
+
+@bot.slash_command(name="remove", description="[ADMIN] remove QuackCoins to a User", guild_ids=[1159282148042350642])
+async def add(interaction: Interaction, amount:int, user:nextcord.Member):
+    name = interaction.user.name
+    user = user.name
+
+    if qdb.user_in_db(name) == 0:
+        qdb.add_user(name)
+
+    if qdb.user_in_db(user) == 0:
+        qdb.add_user(user)
+    
+    qdb.add(user, (amount*-1))
+    result = qlogs.admin(f"[ADMIN : {name}] ADDED {amount} <:quackCoin:1124255606782578698> to {user.upper()}")
 
     await interaction.response.send_message(result)
 

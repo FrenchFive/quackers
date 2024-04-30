@@ -11,3 +11,8 @@ def info(message):
     print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} :: {message}')
     logging.info(message)
     return(message)
+
+def admin(message):
+    print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} :: {message}')
+    logging.critical(message)
+    return(message)
