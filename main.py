@@ -279,8 +279,7 @@ async def add(interaction: Interaction, amount:int, user:nextcord.Member):
 
     await interaction.response.send_message(result)
 
-# Slash command to retrieve logs
-@bot.slash_command(name="admin-logs", description="Retrieve last 5 lines from LOGS", guild_ids=testid)
+@bot.slash_command(name="admin-logs", description="Retrieve last 5 lines from LOGS", guild_ids=serverid)
 async def logs(interaction: Interaction):
     try:
         # Read the last 10 lines from q.log
