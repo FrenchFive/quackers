@@ -1,5 +1,22 @@
 import random
 
+import os
+import sqlite3
+from sqlite3 import Error
+import time
+from datetime import datetime, timedelta
+
+import qlogs
+
+scrpt_dir = os.path.dirname(os.path.abspath(__file__))
+folder_name = 'db/qbet.db'
+database_path = os.path.join(scrpt_dir, folder_name)
+
+CONNECTION = sqlite3.connect(database_path)
+CURSOR = CONNECTION.cursor()
+CURSOR.execute(' CREATE TABLE IF NOT EXISTS "dashboard" ("id" INTEGER UNIQUE, "user" TEXT, "title" TEXT, "A" TEXT, "B" TEXT, "epoch" INTEGER, PRIMARY KEY("id" AUTOINCREMENT))')
+CONNECTION.commit()
+
 def roll(num):
     dicelist = []
     for i in range(num):
@@ -56,4 +73,10 @@ def rps(user, bet, name):
     tosay += text
 
     return(tosay, gameresult)
-    
+
+#BET  
+def bet_create(name, title, a, b):
+    epoch = int(time.time())
+    CURSOR.execute('INSERT INTO dashboard (user, title, a, b, epoch) VALUES(?, ?, ?, ?, ?)', (name, title, a, b, epoch))
+    CONNECTION.commit()
+    qlogs.info(f'--BET-DB // ADDED POLL : {title} by {name}')

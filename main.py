@@ -118,6 +118,49 @@ def generate():
 
     return(response)
 
+#MODAL DISCORD
+class BetCreation(nextcord.ui.Modal):
+    def __init__(self):
+        super().__init__(
+            title = "BET CREATION",
+            timeout=None,
+        )
+
+        self.bettitle = nextcord.ui.TextInput(
+            label="BET TITLE",
+            min_length=3,
+            max_length=50,
+        )
+        self.add_item(self.bettitle)
+
+        self.optionone = nextcord.ui.TextInput(
+            label="OPTION 1 :",
+            placeholder="YES",
+            required=False,
+            max_length=50,
+        )
+        self.add_item(self.optionone)
+
+        self.optiontwo = nextcord.ui.TextInput(
+            label="OPTION 2 :",
+            placeholder="NO",
+            required=False,
+            max_length=50,
+        )
+        self.add_item(self.optiontwo)
+
+    async def callback(self, interaction: nextcord.Interaction) -> None:
+        if self.optionone.value == '':
+            a = "YES"
+        else:
+            a = self.optionone.value
+        if self.optiontwo.value == '':
+            b = "NO"
+        else:
+            b = self.optiontwo.value
+        games.bet_create(interaction.user.name, self.bettitle.value, a, b)
+        await interaction.send("A BET HAS BEEN SENT TO THE DATABASE")
+
 @bot.event
 async def on_ready():
     qlogs.info("QUACKERS IS ONLINE")
@@ -246,6 +289,10 @@ async def rps(
         result = "Pas assez de QuackCoins disponibles."
     await interaction.response.send_message(result)
 
+#BETTING SYSTEM
+@bot.slash_command(name="bet-create", description="Create a BET", guild_ids=testid)
+async def bet_create(interaction: nextcord.Interaction):
+    await interaction.response.send_modal(BetCreation())
 
 #ADMIN
 @bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids=serverid)
@@ -280,7 +327,7 @@ async def add(interaction: Interaction, amount:int, user:nextcord.Member):
 
     await interaction.response.send_message(result)
 
-@bot.slash_command(name="admin-logs", description="Retrieve last 5 lines from LOGS", guild_ids=serverid)
+@bot.slash_command(name="admin-logs", description="[ADMIN] Retrieve last 5 lines from LOGS", guild_ids=serverid)
 async def logs(interaction: Interaction):
     try:
         # Read the last 10 lines from q.log

@@ -1,6 +1,9 @@
-VOICE ADD POINTS
+Possibility to see coins of someone (optional)
 
 LUCKY AMOUNT IN DB
+Number of times connected to a VOICE
+How long spent in a VC
+How much used commands => Make commands rewards random
 
 BETS
 DATABASE FOR POLLS 
@@ -9,3 +12,5 @@ DATABASE / POLL
 /status
 /bid 
 /result // vainqueur / somme des vainqueurs = proportion // resultat = vainqueur + (proportion * somme des perdants)
+
+QUACK GAME ??? 
