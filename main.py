@@ -44,7 +44,7 @@ bot_id = "asst_DDSMrYNpgfEulWI85Ccg882z"
 #serveur IDs
 serverid = [1159282148042350642, 945445171670171668]
 testid = [1159282148042350642]
-afkchannellist = [1126432480690446396]
+afkchannellist = ["afk"]
 
 def context():
     global thread
@@ -363,14 +363,13 @@ async def on_voice_state_update(member, before, after):
         
         qdb.voiceactive(member.name)
         qdb.add(member.name, 15)
-        qlogs.info(f"{member.name} is connvected to a Voice Channel")
-    if after.channel.id in afkchannellist:
+        qlogs.info(f"{member.name} is connected to a Voice Channel")
+    if before.channel is None and  after.channel in afkchannellist:
         #USER CONNECTED TO AFK
         if qdb.user_in_db(member.name) == 0:
             qdb.add_user(member.name)
         qlogs.info(f"{member.name} is detected AFK")
-        
-        qdb.voicestalled()
+        qdb.voicestalled(member.name)
     if before.channel is not None and after.channel is None:
         # User disconnects
         if qdb.user_in_db(member.name) == 0:

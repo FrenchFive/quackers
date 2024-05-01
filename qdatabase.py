@@ -174,6 +174,7 @@ def voicestalled(name):
             if amount > 500:
                 amount = 500
             add(name, amount)
+            qlogs.info(f"-- QDB // Added {amount} to {name} for being active in Voice Channel.")
 
     CURSOR.execute("UPDATE members SET epvoicet = ? WHERE name = ?",(0, name))
     CONNECTION.commit()
