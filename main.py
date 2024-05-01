@@ -30,6 +30,8 @@ KEY_OPENAI = env_data[0].replace('\n','')
 KEY_DISCORD = env_data[1].replace('\n','')
 env_file.close()
 
+LOGFILE = os.path.join(scrpt_dir, "qlogs.log")
+
 bot = commands.Bot(command_prefix='!', intents= nextcord.Intents.all())
 
 counter = 0
@@ -41,6 +43,7 @@ bot_id = "asst_DDSMrYNpgfEulWI85Ccg882z"
 
 #serveur IDs
 serverid = [1159282148042350642, 945445171670171668]
+testid = [1159282148042350642]
 
 def context():
     global thread
@@ -275,6 +278,20 @@ async def add(interaction: Interaction, amount:int, user:nextcord.Member):
     result = qlogs.admin(f"[ADMIN : {name}] ADDED {amount} <:quackCoin:1124255606782578698> to {user.upper()}")
 
     await interaction.response.send_message(result)
+
+# Slash command to retrieve logs
+@bot.slash_command(name="admin-logs", description="Retrieve last 5 lines from LOGS", guild_ids=testid)
+async def logs(interaction: Interaction):
+    try:
+        # Read the last 10 lines from q.log
+        with open(LOGFILE, "r") as log_file:
+            lines = log_file.readlines()[-5:]  # Get the last 10 lines
+
+        # Send the lines as a code block
+        formatted_lines = "\n".join(lines)
+        await interaction.response.send_message(f"```\n{formatted_lines}\n```")
+    except FileNotFoundError:
+        await interaction.response.send_message("Error: q.log file not found.")
 
 #EVENTS
 @bot.event
