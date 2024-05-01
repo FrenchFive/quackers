@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import sqlite3
 from sqlite3 import Error
 import json
+import time
 
 scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'db/quackers.db'
@@ -12,7 +13,18 @@ import qlogs
 
 CONNECTION = sqlite3.connect(database_path)
 CURSOR = CONNECTION.cursor()
-#CURSOR.execute("CREATE TABLE IF NOT EXISTS members (id INTEGER PRIMARY KEY, name TEXT, coins INTEGER, daily TEXT, quackers INTEGER, mess INTEGER, created TEXT)")
+CURSOR.execute(' CREATE TABLE IF NOT EXISTS "members" ("id" INTEGER UNIQUE, "name" TEXT, "coins" INTEGER, "daily" TEXT, "quackers" INTEGER, "mess" INTEGER, "created" TEXT, "streak" INTEGER DEFAULT 0, PRIMARY KEY("id" AUTOINCREMENT))')
+
+def add(name, amount):
+    CURSOR.execute("SELECT coins FROM members WHERE name = ?",(name,))
+    rows = CURSOR.fetchall()
+    data = rows[0]
+    coins = data[0]
+
+    coins += amount
+
+    CURSOR.execute("UPDATE members SET coins = ? WHERE name = ?", (coins, name))
+    CONNECTION.commit()
 
 def export():
     global scrpt_dir
@@ -38,7 +50,7 @@ def user_in_db(name):
 
 def add_user(name):
     date = datetime.now().strftime('%Y-%m-%d %H:%M')
-    CURSOR.execute('INSERT INTO members (name, coins, daily, quackers, mess, created, streak) VALUES(?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0))
+    CURSOR.execute('INSERT INTO members (name, coins, daily, quackers, mess, created, streak, epvoicet) VALUES(?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0))
     CONNECTION.commit()
     qlogs.info(f'--QDB // ADDED USER : {name}')
 
@@ -143,14 +155,25 @@ def leaderboard():
         result.append(f'N.{i+1} :: {data[i][1].capitalize()} :: {data[i][2]} <:quackCoin:1124255606782578698>')
     return(result)
 
-def add(name, amount):
-    CURSOR.execute("SELECT coins FROM members WHERE name = ?",(name,))
-    rows = CURSOR.fetchall()
-    data = rows[0]
-    coins = data[0]
-
-    coins += amount
-
-    CURSOR.execute("UPDATE members SET coins = ? WHERE name = ?", (coins, name))
+def voiceactive(name):
+    timenow = int(time.time())
+    CURSOR.execute("UPDATE members SET epvoicet = ? WHERE name = ?",(timenow, name))
     CONNECTION.commit()
 
+def voicestalled(name):
+    timenow = int(time.time())
+    CURSOR.execute("SELECT epvoicet FROM members WHERE name = ?",(name,))
+    data = CURSOR.fetchall()
+    past = data[0][0]
+
+    if past != 0 and past < timenow:
+        secelapsed = timenow - past
+        if secelapsed > 60:
+            hours = divmod(secelapsed, 3600)[0]
+            amount = 50 * hours
+            if amount > 500:
+                amount = 500
+            add(name, amount)
+
+    CURSOR.execute("UPDATE members SET epvoicet = ? WHERE name = ?",(0, name))
+    CONNECTION.commit()

@@ -1,5 +1,7 @@
 VOICE ADD POINTS
 
+LUCKY AMOUNT IN DB
+
 BETS
 DATABASE FOR POLLS 
 DATABASE / POLL
@@ -7,5 +9,3 @@ DATABASE / POLL
 /status
 /bid 
 /result // vainqueur / somme des vainqueurs = proportion // resultat = vainqueur + (proportion * somme des perdants)
-
-Print and send LOGS

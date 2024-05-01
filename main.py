@@ -360,6 +360,13 @@ async def on_voice_state_update(member, before, after):
         if qdb.user_in_db(member.name) == 0:
             qdb.add_user(member.name)
         
+        qdb.voiceactive(member.name)
         qdb.add(member.name, 15)
+    if before.channel is not None and after.channel is None:
+        # User connected to a voice channel
+        if qdb.user_in_db(member.name) == 0:
+            qdb.add_user(member.name)
+        
+        qdb.voicestalled(member.name)
 
 bot.run(KEY_DISCORD)
