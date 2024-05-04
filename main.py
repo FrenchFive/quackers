@@ -355,7 +355,7 @@ async def rps(
     await interaction.response.send_message(result)
 
 #BETTING SYSTEM
-@bot.slash_command(name="bet-create", description="Create a BET", guild_ids=testid)
+@bot.slash_command(name="bet-create", description="Create a BET", guild_ids=serverid)
 async def bet_create(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
@@ -365,7 +365,7 @@ async def bet_create(interaction: nextcord.Interaction):
     else:
         await interaction.response.send_message('You already have a Bet going on. || send results of your bet before creating another one "/bet-result"', ephemeral=True)
 
-@bot.slash_command(name="bet-close", description="Close a BET, users won't be able to bet on it.", guild_ids=testid)
+@bot.slash_command(name="bet-close", description="Close a BET, users won't be able to bet on it.", guild_ids=serverid)
 async def bet_close(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
@@ -383,7 +383,7 @@ async def bet_close(interaction: nextcord.Interaction):
         mess += f"The highest bet was by : {highest}"
         await interaction.send(mess)
 
-@bot.slash_command(name="bet-result", description="Sends the money", guild_ids=testid)
+@bot.slash_command(name="bet-result", description="Sends the money", guild_ids=serverid)
 async def bet_result(
     interaction: Interaction,
     option: int = SlashOption(
