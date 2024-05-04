@@ -161,7 +161,12 @@ class BetCreation(nextcord.ui.Modal):
             b = self.optiontwo.value
         id = games.bet_create(interaction.user.name, title, a, b)
         view = ButtonMessage(id)
-        await interaction.send(f"A BET HAS BEEN OPEN : {title}", view=view)
+
+        mess = f"{interaction.user.name} initiated a bet : \n"
+        mess += f"# **{title}** \n \n"
+        mess += f"A: **{a}** \n"
+        mess += f"B: **{b}**"
+        await interaction.send(mess, view=view)
 
 class ButtonMessage(nextcord.ui.View):
     def __init__(self, id):
@@ -358,9 +363,15 @@ async def bet_close(interaction: nextcord.Interaction):
     if games.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
     else:
-        games.bet_close(interaction.user.name)
+        totala, totalb, totalbetter, totalbettera, totalbetterb, highest = games.bet_close(interaction.user.name)
         #GET INFO FROM THE BET
         await interaction.response.send_message('Status Updated', ephemeral=True)
+        mess = "BET CLOSED !!! \n \n"
+        mess += f"{totalbetter} Users entered the bet. \n"
+        mess += f"A : **{totala}** QuackCoins by {totalbettera} user(s) \n"
+        mess += f"B : **{totalb}** QuackCoins by {totalbetterb} user(s) \n"
+        mess += f"The highest bet was by : {highest}"
+        await interaction.send(mess)
 
 @bot.slash_command(name="bet-result", description="Sends the money", guild_ids=testid)
 async def bet_result(

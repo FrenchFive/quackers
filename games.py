@@ -104,7 +104,9 @@ def bet_close(name):
     CURSOR.execute(f"SELECT amount FROM 'qbet-{id}' WHERE option = ?",("A",))
     data = CURSOR.fetchall()
     if (len(data)) > 0:
-        listama = data[0]
+        listama = []
+        for i in range(len(data)):
+            listama.append(data[i][0])
         totala = sum(listama)
     else:
         totala = 0
@@ -112,16 +114,34 @@ def bet_close(name):
     CURSOR.execute(f"SELECT amount FROM 'qbet-{id}' WHERE option = ?",("B",))
     data = CURSOR.fetchall()
     if (len(data)) > 0:
-        listamb = data[0]
+        listamb = []
+        for i in range(len(data)):
+            listamb.append(data[i][0])
         totalb = sum(listamb)
     else:
         totalb = 0
+    
+    CURSOR.execute(f"SELECT COUNT(*) FROM 'qbet-{id}'")
+    data = CURSOR.fetchall()
+    totalbetter = data[0][0]
+
+    CURSOR.execute(f"SELECT COUNT(*) FROM 'qbet-{id}' WHERE option = ?",("A",))
+    data = CURSOR.fetchall()
+    totalbettera = data[0][0]
+    
+    CURSOR.execute(f"SELECT COUNT(*) FROM 'qbet-{id}' WHERE option = ?",("B",))
+    data = CURSOR.fetchall()
+    totalbetterb = data[0][0]
+
+    CURSOR.execute(f"SELECT user, option, amount FROM 'qbet-{id}' ORDER BY amount DESC LIMIT 1")
+    data = CURSOR.fetchall()
+    highest = data[0]
 
     CURSOR.execute("UPDATE dashboard SET status = ?, total_a = ?, total_b = ? WHERE id = ?", ("close", totala, totalb, id))
     CONNECTION.commit()
     qlogs.info(f'--BET-DB // BET CLOSED by {name}')
     #SHOULD RETURN // the total number of bidders // the amount of money bet total // number of poeple betting on a // number of poeple betting on b ... // HIGHEST BIDDER
-    return(totala, totalb)
+    return(totala, totalb, totalbetter, totalbettera, totalbetterb, highest)
 
 def bet_has_a_bet_going_on(name):
     CURSOR.execute("SELECT COUNT(*) FROM dashboard WHERE user = ? and status != ?",(name,"result"))
