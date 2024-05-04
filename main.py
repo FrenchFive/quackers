@@ -164,14 +164,12 @@ class BetCreation(nextcord.ui.Modal):
         await interaction.send(f"A BET HAS BEEN OPEN : {title}", view=view)
 
 class ButtonMessage(nextcord.ui.View):
-    def __init__(self, id, a, b):
+    def __init__(self, id):
         super().__init__()
         self.id = id
-        self.a = a
-        self.b = b
     
     @nextcord.ui.button(label=f"BET : A", style=nextcord.ButtonStyle.green)
-    async def confirm(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+    async def beta(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if games.bet_status(self.id) == "open":
             await interaction.response.send_modal(Betting(self.id, "A"))
             self.value = True
@@ -179,7 +177,7 @@ class ButtonMessage(nextcord.ui.View):
             await interaction.response.send_message("THIS BET HAS BEEN CLOSED", ephemeral=True)
     
     @nextcord.ui.button(label="BET : B", style=nextcord.ButtonStyle.blurple)
-    async def confirm(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+    async def betb(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if games.bet_status(self.id) == "open":
             await interaction.response.send_modal(Betting(self.id, "B"))
             self.value = True
