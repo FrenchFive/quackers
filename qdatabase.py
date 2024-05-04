@@ -168,7 +168,7 @@ def voicestalled(name):
 
     if past != 0 and past < timenow:
         secelapsed = timenow - past
-        if secelapsed > 60:
+        if secelapsed > 3600:
             hours = divmod(secelapsed, 3600)[0]
             amount = 50 * hours
             if amount > 500:
