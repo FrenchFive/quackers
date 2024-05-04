@@ -158,6 +158,9 @@ def bet_result(name, option):
         qdb.add(user, result)
         qlogs.info(f'--BET-DB // ADDED {result} QC to {user} for Winning the BET')
     
+    
     CURSOR.execute("UPDATE dashboard SET status = ? WHERE id = ?", ("result", id))
+    CONNECTION.commit()
+    CURSOR.execute(f"DROP table 'qbet-{id}'")
     CONNECTION.commit()
     qlogs.info(f'--BET-DB // BET RESULT by {name}')
