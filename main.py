@@ -150,6 +150,7 @@ class BetCreation(nextcord.ui.Modal):
         self.add_item(self.optiontwo)
 
     async def callback(self, interaction: nextcord.Interaction) -> None:
+        title = self.bettitle.value
         if self.optionone.value == '':
             a = "YES"
         else:
@@ -158,8 +159,65 @@ class BetCreation(nextcord.ui.Modal):
             b = "NO"
         else:
             b = self.optiontwo.value
-        games.bet_create(interaction.user.name, self.bettitle.value, a, b)
-        await interaction.send("A BET HAS BEEN SENT TO THE DATABASE")
+        id = games.bet_create(interaction.user.name, title, a, b)
+        view = ButtonMessage(id)
+        await interaction.send(f"A BET HAS BEEN OPEN : {title}", view=view)
+
+class ButtonMessage(nextcord.ui.View):
+    def __init__(self, id, a, b):
+        super().__init__()
+        self.id = id
+        self.a = a
+        self.b = b
+    
+    @nextcord.ui.button(label=f"BET : A", style=nextcord.ButtonStyle.green)
+    async def confirm(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        if games.bet_status(self.id) == "open":
+            await interaction.response.send_modal(Betting(self.id, "A"))
+            self.value = True
+        else:
+            await interaction.response.send_message("THIS BET HAS BEEN CLOSED", ephemeral=True)
+    
+    @nextcord.ui.button(label="BET : B", style=nextcord.ButtonStyle.blurple)
+    async def confirm(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        if games.bet_status(self.id) == "open":
+            await interaction.response.send_modal(Betting(self.id, "B"))
+            self.value = True
+        else:
+            await interaction.response.send_message("THIS BET HAS BEEN CLOSED", ephemeral=True)
+   
+class Betting(nextcord.ui.Modal):
+    def __init__(self, id, option):
+        super().__init__(
+            title = "BETTING",
+            timeout=None,
+        )
+        self.id = id
+        self.option = option
+
+        self.amount = nextcord.ui.TextInput(
+            label="AMOUNT",
+            placeholder="100",
+            min_length=1,
+            max_length=50,
+        )
+        self.add_item(self.amount)
+
+    async def callback(self, interaction: nextcord.Interaction) -> None:
+        try:
+            amount = int(self.amount.value)
+        except:
+            amount = 0
+            await interaction.send('Amount must be a number', ephemeral=True)
+        
+        if amount > 0:
+            if qdb.qcheck(interaction.user.name, amount) == 0:
+                games.bet_join(self.id, interaction.user.name, amount, self.option)
+                qdb.add(interaction.user.name, (amount * -1))
+                await interaction.send(f"Confirming Joining Bet : {self.id}, with : {amount} QuackCoins", ephemeral=True)
+            else:
+                await interaction.send(f'{interaction.user.mention} do not have enough QuackCoins', ephemeral=True)
+        
 
 @bot.event
 async def on_ready():
@@ -292,7 +350,23 @@ async def rps(
 #BETTING SYSTEM
 @bot.slash_command(name="bet-create", description="Create a BET", guild_ids=testid)
 async def bet_create(interaction: nextcord.Interaction):
-    await interaction.response.send_modal(BetCreation())
+    if games.bet_has_a_bet_going_on(interaction.user.name) == 0:
+        await interaction.response.send_modal(BetCreation())
+    else:
+        await interaction.response.send_message('You already have a Bet going on. || send results of your bet before creating another one "/bet-result"', ephemeral=True)
+
+@bot.slash_command(name="bet-close", description="Close a BET, users won't be able to bet on it.", guild_ids=testid)
+async def bet_close(interaction: nextcord.Interaction):
+    if games.bet_has_a_bet_going_on(interaction.user.name) == 0:
+        await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
+    else:
+        games.bet_close(interaction.user.name)
+        #GET INFO FROM THE BET
+        await interaction.response.send_message('Status Updated', ephemeral=True)
+
+@bot.slash_command(name="bet-result", description="Sends the money", guild_ids=testid)
+async def bet_result(interaction: nextcord.Interaction):
+    pass
 
 #ADMIN
 @bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids=serverid)

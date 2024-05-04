@@ -14,7 +14,7 @@ database_path = os.path.join(scrpt_dir, folder_name)
 
 CONNECTION = sqlite3.connect(database_path)
 CURSOR = CONNECTION.cursor()
-CURSOR.execute(' CREATE TABLE IF NOT EXISTS "dashboard" ("id" INTEGER UNIQUE, "user" TEXT, "title" TEXT, "A" TEXT, "B" TEXT, "epoch" INTEGER, PRIMARY KEY("id" AUTOINCREMENT))')
+CURSOR.execute(' CREATE TABLE IF NOT EXISTS "dashboard" ("id" INTEGER UNIQUE, "user" TEXT, "title" TEXT, "status" TEXT, "A" TEXT, "B" TEXT, "epoch" INTEGER, PRIMARY KEY("id" AUTOINCREMENT))')
 CONNECTION.commit()
 
 def roll(num):
@@ -77,6 +77,29 @@ def rps(user, bet, name):
 #BET  
 def bet_create(name, title, a, b):
     epoch = int(time.time())
-    CURSOR.execute('INSERT INTO dashboard (user, title, a, b, epoch) VALUES(?, ?, ?, ?, ?)', (name, title, a, b, epoch))
+    CURSOR.execute('INSERT INTO dashboard (user, title, status, a, b, epoch) VALUES(?, ?, ?, ?, ?, ?)', (name, title, "open", a, b, epoch))
     CONNECTION.commit()
+    inserted_id = CURSOR.lastrowid
     qlogs.info(f'--BET-DB // ADDED POLL : {title} by {name}')
+    CURSOR.execute(f' CREATE TABLE "qbet-{inserted_id}" ("id" INTEGER UNIQUE, "user" TEXT, "amount" int, "option" TEXT, PRIMARY KEY("id" AUTOINCREMENT))')
+    CONNECTION.commit()
+    return(inserted_id)
+
+def bet_status(id):
+    CURSOR.execute("SELECT status FROM dashboard WHERE id = ?",(id,))
+    data = CURSOR.fetchall()
+    status = data[0][0]
+    return(status)
+
+def bet_join(id, name, amount, option):
+    CURSOR.execute(f'INSERT INTO "qbet-{id}" (user, amount, option) VALUES(?, ?, ?)', (name, amount, option))
+    CONNECTION.commit()
+
+def bet_close(name):
+    CURSOR.execute("UPDATE dashboard SET status = ? WHERE user = ?", ("close", name))
+    CONNECTION.commit()
+
+def bet_has_a_bet_going_on(name):
+    CURSOR.execute("SELECT COUNT(*) FROM dashboard WHERE user = ? and status = ?",(name,"open"))
+    data = CURSOR.fetchall()
+    return(data[0][0])
