@@ -212,7 +212,7 @@ class Betting(nextcord.ui.Modal):
             if qdb.qcheck(interaction.user.name, amount) == 0:
                 games.bet_join(self.id, interaction.user.name, amount, self.option)
                 qdb.add(interaction.user.name, (amount * -1))
-                await interaction.send(f"Confirming Joining Bet : {self.id}, with : {amount} QuackCoins", ephemeral=True)
+                await interaction.send(f"Confirming Joining Bet : {self.option}, with : {amount} QuackCoins", ephemeral=True)
             else:
                 await interaction.send(f'{interaction.user.mention} do not have enough QuackCoins', ephemeral=True)
         
@@ -363,8 +363,23 @@ async def bet_close(interaction: nextcord.Interaction):
         await interaction.response.send_message('Status Updated', ephemeral=True)
 
 @bot.slash_command(name="bet-result", description="Sends the money", guild_ids=testid)
-async def bet_result(interaction: nextcord.Interaction):
-    pass
+async def bet_result(
+    interaction: Interaction,
+    option: int = SlashOption(
+        name="winner",
+        description="Pick the winning option :",
+        choices={"A": 0, "B": 1},
+    ),
+):   
+    if games.bet_has_a_bet_going_on(interaction.user.name) == 0:
+        await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
+    else:
+        if option == 0:
+            option = "A"
+        else:
+            option = "B"
+        games.bet_result(interaction.user.name, option)
+        await interaction.response.send_message('MONEY SENT !!!')
 
 #ADMIN
 @bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids=serverid)
