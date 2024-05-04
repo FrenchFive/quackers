@@ -175,6 +175,8 @@ class ButtonMessage(nextcord.ui.View):
     
     @nextcord.ui.button(label=f"BET : A", style=nextcord.ButtonStyle.green)
     async def beta(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        if qdb.user_in_db(interaction.user.name) == 0:
+            qdb.add_user(interaction.user.name)
         if games.bet_status(self.id) == "open":
             await interaction.response.send_modal(Betting(self.id, "A"))
             self.value = True
@@ -183,6 +185,8 @@ class ButtonMessage(nextcord.ui.View):
     
     @nextcord.ui.button(label="BET : B", style=nextcord.ButtonStyle.blurple)
     async def betb(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        if qdb.user_in_db(interaction.user.name) == 0:
+            qdb.add_user(interaction.user.name)
         if games.bet_status(self.id) == "open":
             await interaction.response.send_modal(Betting(self.id, "B"))
             self.value = True
@@ -353,6 +357,9 @@ async def rps(
 #BETTING SYSTEM
 @bot.slash_command(name="bet-create", description="Create a BET", guild_ids=testid)
 async def bet_create(interaction: nextcord.Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user.name)
+    
     if games.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_modal(BetCreation())
     else:
@@ -360,6 +367,9 @@ async def bet_create(interaction: nextcord.Interaction):
 
 @bot.slash_command(name="bet-close", description="Close a BET, users won't be able to bet on it.", guild_ids=testid)
 async def bet_close(interaction: nextcord.Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user.name)
+    
     if games.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
     else:
@@ -382,6 +392,9 @@ async def bet_result(
         choices={"A": 0, "B": 1},
     ),
 ):   
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user.name)
+    
     if games.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
     else:
