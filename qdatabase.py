@@ -4,6 +4,7 @@ import sqlite3
 from sqlite3 import Error
 import json
 import time
+import random
 
 scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'db/quackers.db'
@@ -103,15 +104,16 @@ def daily(name):
         amount = 100
         if daily == (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'):
             streak += 1
-            if streak > 10:
-                res = 10
+            if streak > 20:
+                amount = random.randint(250, 350)
             else:
-                res = streak
-            mult = res * (2.5 - 1) / 20 + 1
+                mult = streak * (2.5 - 1) / 20 + 1
+                amount *= mult
+            
         else:
             streak = 0
-            mult = 1
-        coins += int((amount * mult))
+
+        coins += int((amount))
 
         CURSOR.execute("UPDATE members SET coins = ?, daily = ?, streak = ? WHERE name = ?", (coins, date, streak, name))
         CONNECTION.commit()
