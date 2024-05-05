@@ -148,6 +148,12 @@ def bet_has_a_bet_going_on(name):
     data = CURSOR.fetchall()
     return(data[0][0])
 
+def bet_has_betted(name, id):
+    CURSOR.execute(f"SELECT COUNT(*) FROM 'qbet-{id}' WHERE user = ?",(name,))
+    data = CURSOR.fetchall()
+    return(data[0][0])
+
+
 def bet_result(name, option):
     CURSOR.execute("SELECT id FROM dashboard WHERE user = ? and status != ?",(name,"result"))
     data = CURSOR.fetchall()
