@@ -3,6 +3,7 @@ import nextcord
 from nextcord.ext import commands
 from nextcord import Interaction
 from nextcord import SlashOption
+from typing import Optional
 
 from unidecode import unidecode
 
@@ -284,7 +285,12 @@ async def leaderboard(interaction: Interaction):
 
 #GAMES
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
-async def dices(interaction: Interaction, bet:int, roll:int):
+async def dices(interaction: Interaction, bet: Optional[int]=SlashOption(required=False), roll:Optional[int]=SlashOption(required=False)):
+    if bet is None:
+        bet = 100
+    if roll is None:
+        roll = 3
+
     amount = bet
     name = interaction.user.name
 
