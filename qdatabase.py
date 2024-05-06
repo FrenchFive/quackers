@@ -107,7 +107,7 @@ def daily(name):
             if streak > 20:
                 amount = random.randint(250, 350)
             else:
-                mult = streak * (2.5 - 1) / 20 + 1
+                mult = 1 + (streak - 1) * (2.5 - 1) / (20 - 1)
                 amount *= mult
             
         else:
@@ -119,9 +119,9 @@ def daily(name):
         CONNECTION.commit()
         qlogs.info(f'--QDB // DAILY : {name} : {coins}')
         if streak == 0:
-            return(f'Successfully added {int((amount * mult))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins')
+            return(f'Successfully added {int((amount))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins')
         else:
-            return(f'Successfully added {int((amount * mult))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins // STREAK : {streak}')
+            return(f'Successfully added {int((amount))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins // STREAK : {streak}')
     else:
         return(f'Daily QuackCoins have already been collected today for {name}')
 

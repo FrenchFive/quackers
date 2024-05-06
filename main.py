@@ -434,7 +434,7 @@ async def add(interaction: Interaction, amount:int, user:nextcord.Member):
         qdb.add_user(user)
     
     qdb.add(user, (amount*-1))
-    result = qlogs.admin(f"[ADMIN : {name}] ADDED {amount} <:quackCoin:1124255606782578698> to {user.upper()}")
+    result = qlogs.admin(f"[ADMIN : {name}] REMOVED {amount} <:quackCoin:1124255606782578698> to {user.upper()}")
 
     await interaction.response.send_message(result)
 
