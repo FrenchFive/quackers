@@ -275,11 +275,13 @@ async def coins(interaction: Interaction, user:Optional[nextcord.Member]=SlashOp
     await interaction.response.send_message(result)
 
 @bot.slash_command(name="info", description="Get an Image of your Quack Profile", guild_ids=testid)
-async def coins(interaction: Interaction, user:Optional[nextcord.Member]=SlashOption(required=False)):
+async def info(interaction: Interaction, user:Optional[nextcord.Member]=SlashOption(required=False)):
     if user is None:
         name = interaction.user.name
+        url = interaction.user.display_avatar
     else:
         name = user.name
+        url = user.display_avatar
         if qdb.user_in_db(interaction.user.name) == 0:
             qdb.add_user(interaction.user.name)
 
@@ -288,6 +290,8 @@ async def coins(interaction: Interaction, user:Optional[nextcord.Member]=SlashOp
     
     result = qdb.info(name)
     qdb.add(interaction.user.name, 5)
+ 
+    qdraw.info(name, url, result)
 
     await interaction.response.send_message(result)
 
