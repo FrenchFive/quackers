@@ -10,7 +10,7 @@ SCHABO = os.path.join(IMGFOLDER, 'fonts/schabo.otf')
 def info(name, url, result):
     name = name[:12].upper() #CUTTING THE NAME
 
-    coin = result[0]
+    coins = result[0]
     mess = result[1]
     date = result[2]
     date = date[:10]
@@ -49,8 +49,31 @@ def info(name, url, result):
     font = ImageFont.truetype(WOSKER, size=350)
     draw.text(((rest*2)+lildim, rest*2), name, fill=(0, 0, 0, 255), font=font)
 
+    #MEMBER SINCE
+    draw = ImageDraw.Draw(base)
+    font = ImageFont.truetype(SCHABO, size=120)
+    text = f" MEMBER SINCE : {date}"
+    draw.text(((rest*2)+lildim + 25, rest*2 + 270), text, fill=(0, 0, 0, 255), font=font)
+
+    #BIG INFO
+    draw = ImageDraw.Draw(base)
+    font = ImageFont.truetype(SCHABO, size=150)  # You can specify your custom font
+    text = f"{mess} MESSAGES SENT"
+    draw.text(((rest*2)+lildim + 15, rest*2 + 500), text, fill=(0, 0, 0, 255), font=font)
+
+    #SMALLER INFO
+    draw = ImageDraw.Draw(base)
+    font = ImageFont.truetype(SCHABO, size=120)  # You can specify your custom font
+    text = f"COINS : {coins} QC"
+    draw.text(((rest*2)+lildim + 15, rest*2 + 650), text, fill=(0, 0, 0, 255), font=font)
+
+    #RANK
+    draw = ImageDraw.Draw(base)
+    font = ImageFont.truetype(SCHABO, size=400)  # You can specify your custom font
+    text = f"#{str(rank).zfill(3)}"
+    draw.text((GLBDIM[0]-700,GLBDIM[1]-340), text, fill=(0, 0, 0, 255), font=font)
+
     #FINALLY SAVE
     final = os.path.join(IMGFOLDER, "final.png")
     base.save(final)
 
-info("quack_five", "https://cdn.discordapp.com/avatars/475985107241402368/ef1b0f90c431ac30620100545c99ed96.png?size=1024", (7773, 518, '2024-04-05 19:44', 1715286216))
