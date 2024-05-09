@@ -149,6 +149,11 @@ def coins(name):
     data = CURSOR.fetchall()
     return(f'{name.capitalize()} possède {data[0][0]} <:quackCoin:1124255606782578698>.')
 
+def info(name):
+    CURSOR.execute("SELECT coins, mess, created, epvoicet FROM members WHERE name = ?", (name,))
+    data = CURSOR.fetchall()
+    return(data[0])
+
 def leaderboard():
     CURSOR.execute("SELECT * FROM members ORDER BY coins DESC LIMIT 10")
     data = CURSOR.fetchall()

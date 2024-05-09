@@ -12,6 +12,7 @@ from datetime import datetime
 
 import qdatabase as qdb
 import games
+import qdraw
 
 import os
 import random
@@ -273,6 +274,23 @@ async def coins(interaction: Interaction, user:Optional[nextcord.Member]=SlashOp
 
     await interaction.response.send_message(result)
 
+@bot.slash_command(name="info", description="Get an Image of your Quack Profile", guild_ids=testid)
+async def coins(interaction: Interaction, user:Optional[nextcord.Member]=SlashOption(required=False)):
+    if user is None:
+        name = interaction.user.name
+    else:
+        name = user.name
+        if qdb.user_in_db(interaction.user.name) == 0:
+            qdb.add_user(interaction.user.name)
+
+    if qdb.user_in_db(name) == 0:
+        qdb.add_user(name)
+    
+    result = qdb.info(name)
+    qdb.add(interaction.user.name, 5)
+
+    await interaction.response.send_message(result)
+
 @bot.slash_command(name="leaderboard", description="Display the Top.10 of the server.", guild_ids=serverid)
 async def leaderboard(interaction: Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
@@ -326,7 +344,7 @@ async def dices(interaction: Interaction, bet: Optional[int]=SlashOption(require
             pass
 
         qdb.add(name, amount)
-        qdb.add(interaction.user.name, 5)
+        qdb.add(interaction.user.name, random.randint(0, 5))
     else:
         response = "Not enough QuackCoins"
 
@@ -360,7 +378,7 @@ async def rps(
 
         bet *= mult
         qdb.add(name, bet)
-        qdb.add(interaction.user.name, 5)
+        qdb.add(interaction.user.name, random.randint(0, 5))
     else:
         result = "Pas assez de QuackCoins disponibles."
     await interaction.response.send_message(result)
