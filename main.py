@@ -291,9 +291,10 @@ async def info(interaction: Interaction, user:Optional[nextcord.Member]=SlashOpt
     result = qdb.info(name)
     qdb.add(interaction.user.name, 5)
  
-    qdraw.info(name, url, result)
+    path = qdraw.info(name, url, result)
 
-    await interaction.response.send_message(result)
+    imgfile = nextcord.File(path)
+    await interaction.response.send_message(files=[imgfile])
 
 @bot.slash_command(name="leaderboard", description="Display the Top.10 of the server.", guild_ids=serverid)
 async def leaderboard(interaction: Interaction):

@@ -76,4 +76,4 @@ def info(name, url, result):
     #FINALLY SAVE
     final = os.path.join(IMGFOLDER, "final.png")
     base.save(final)
-
+    return(final)
