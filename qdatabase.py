@@ -163,7 +163,12 @@ def coins(name):
 def info(name):
     CURSOR.execute("SELECT coins, mess, created, epvoicet, voiceh, luck FROM members WHERE name = ?", (name,))
     data = CURSOR.fetchall()
-    return(data[0])
+
+    coins = data[0][0]
+    CURSOR.execute("SELECT COUNT(*) FROM members WHERE coins > ?",(coins,))
+    cdata = CURSOR.fetchall()
+    rank = cdata[0][0] + 1
+    return(data[0], rank)
 
 def leaderboard():
     CURSOR.execute("SELECT * FROM members ORDER BY coins DESC LIMIT 10")

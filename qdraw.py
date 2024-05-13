@@ -7,7 +7,7 @@ IMGFOLDER = os.path.join(SCRPTDIR, "imgs")
 WOSKER = os.path.join(IMGFOLDER, 'fonts/wosker.otf')
 SCHABO = os.path.join(IMGFOLDER, 'fonts/schabo.otf')
 
-def info(name, url, result):
+def info(name, url, result, rank):
     name = name[:12].upper() #CUTTING THE NAME
 
     coins = result[0]
@@ -17,7 +17,6 @@ def info(name, url, result):
     voice = result[3]
     voiceh = result[4]
     luck = result[5]
-    rank = 5
 
     # Create a base image
     GLBDIM = (3800, 1000)

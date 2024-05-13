@@ -288,10 +288,10 @@ async def info(interaction: Interaction, user:Optional[nextcord.Member]=SlashOpt
     if qdb.user_in_db(name) == 0:
         qdb.add_user(name)
     
-    result = qdb.info(name)
+    result, rank = qdb.info(name)
     qdb.add(interaction.user.name, 5)
  
-    path = qdraw.info(name, url, result)
+    path = qdraw.info(name, url, result, rank)
 
     imgfile = nextcord.File(path)
     await interaction.response.send_message(files=[imgfile])
