@@ -14,7 +14,7 @@ import qlogs
 
 CONNECTION = sqlite3.connect(database_path)
 CURSOR = CONNECTION.cursor()
-CURSOR.execute(' CREATE TABLE IF NOT EXISTS "members" ("id" INTEGER UNIQUE, "name" TEXT, "coins" INTEGER, "daily" TEXT, "quackers" INTEGER, "mess" INTEGER, "created" TEXT, "streak" INTEGER DEFAULT 0, PRIMARY KEY("id" AUTOINCREMENT))')
+CURSOR.execute('CREATE TABLE IF NOT EXISTS "members" ("id" INTEGER UNIQUE, "name" TEXT, "coins" INTEGER, "daily" TEXT, "quackers" INTEGER, "mess" INTEGER, "created" TEXT, "streak" INTEGER DEFAULT 0, "epvoicet" INTEGER DEFAULT 0, "voiceh" INTEGER DEFAULT 0, "luck" INTEGER DEFAULT 0, "cryptoq" INTEGER DEFAULT 0, PRIMARY KEY("id" AUTOINCREMENT));')
 
 def add(name, amount):
     CURSOR.execute("SELECT coins FROM members WHERE name = ?",(name,))
@@ -25,6 +25,17 @@ def add(name, amount):
     coins += amount
 
     CURSOR.execute("UPDATE members SET coins = ? WHERE name = ?", (coins, name))
+    CONNECTION.commit()
+
+def luck(name, amount):
+    CURSOR.execute("SELECT luck FROM members WHERE name = ?",(name,))
+    rows = CURSOR.fetchall()
+    data = rows[0]
+    luck = data[0]
+
+    luck += amount
+
+    CURSOR.execute("UPDATE members SET luck = ? WHERE name = ?", (luck, name))
     CONNECTION.commit()
 
 def export():
@@ -51,7 +62,7 @@ def user_in_db(name):
 
 def add_user(name):
     date = datetime.now().strftime('%Y-%m-%d %H:%M')
-    CURSOR.execute('INSERT INTO members (name, coins, daily, quackers, mess, created, streak, epvoicet) VALUES(?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0))
+    CURSOR.execute('INSERT INTO members (name, coins, daily, quackers, mess, created, streak, epvoicet, voiceh, luck, cryptoq) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0, 0, 0, 0))
     CONNECTION.commit()
     qlogs.info(f'--QDB // ADDED USER : {name}')
 
@@ -181,6 +192,16 @@ def voicestalled(name):
             if amount > 500:
                 amount = 500
             add(name, amount)
+            #ADD HOURS TO DB
+            CURSOR.execute("SELECT voiceh FROM members WHERE name = ?",(name,))
+            raw = CURSOR.fetchall()
+            data = raw[0][0]
+
+            data += hours
+
+            CURSOR.execute("UPDATE members SET voiceh = ? WHERE name = ?", (data, name))
+            CONNECTION.commit()
+            #LOGS
             qlogs.info(f"-- QDB // Added {amount} to {name} for being active in Voice Channel.")
 
     CURSOR.execute("UPDATE members SET epvoicet = ? WHERE name = ?",(0, name))
