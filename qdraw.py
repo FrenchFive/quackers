@@ -15,6 +15,8 @@ def info(name, url, result):
     date = result[2]
     date = date[:10]
     voice = result[3]
+    voiceh = result[4]
+    luck = result[5]
     rank = 5
 
     # Create a base image
@@ -58,13 +60,13 @@ def info(name, url, result):
     #BIG INFO
     draw = ImageDraw.Draw(base)
     font = ImageFont.truetype(SCHABO, size=150)  # You can specify your custom font
-    text = f"{mess} MESSAGES SENT"
+    text = f"{coins} Quack Coins"
     draw.text(((rest*2)+lildim + 15, rest*2 + 500), text, fill=(0, 0, 0, 255), font=font)
 
     #SMALLER INFO
     draw = ImageDraw.Draw(base)
     font = ImageFont.truetype(SCHABO, size=120)  # You can specify your custom font
-    text = f"COINS : {coins} QC"
+    text = f"MESSAGES : {mess} // VC HOURS : {voiceh} // LUCK : {luck}"
     draw.text(((rest*2)+lildim + 15, rest*2 + 650), text, fill=(0, 0, 0, 255), font=font)
 
     #RANK

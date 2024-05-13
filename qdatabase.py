@@ -161,7 +161,7 @@ def coins(name):
     return(f'{name.capitalize()} possède {data[0][0]} <:quackCoin:1124255606782578698>.')
 
 def info(name):
-    CURSOR.execute("SELECT coins, mess, created, epvoicet FROM members WHERE name = ?", (name,))
+    CURSOR.execute("SELECT coins, mess, created, epvoicet, voiceh, luck FROM members WHERE name = ?", (name,))
     data = CURSOR.fetchall()
     return(data[0])
 
