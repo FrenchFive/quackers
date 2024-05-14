@@ -274,7 +274,7 @@ async def coins(interaction: Interaction, user:Optional[nextcord.Member]=SlashOp
 
     await interaction.response.send_message(result)
 
-@bot.slash_command(name="info", description="Get an Image of your Quack Profile", guild_ids=testid)
+@bot.slash_command(name="info", description="Get an Image of your Quack Profile", guild_ids=serverid)
 async def info(interaction: Interaction, user:Optional[nextcord.Member]=SlashOption(required=False)):
     if user is None:
         name = interaction.user.name
