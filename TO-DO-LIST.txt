@@ -1,16 +1,6 @@
-Possibility to see coins of someone (optional)
+QUACK GAME ?? 
 
-LUCKY AMOUNT IN DB
-Number of times connected to a VOICE
-How long spent in a VC
-How much used commands => Make commands rewards random
+CRYPTO QUACK
 
-BETS
-DATABASE FOR POLLS 
-DATABASE / POLL
-/create
-/status
-/bid 
-/result // vainqueur / somme des vainqueurs = proportion // resultat = vainqueur + (proportion * somme des perdants)
-
-QUACK GAME ??? 
+- Make A SHOP 
+    - Add custom BG for info
