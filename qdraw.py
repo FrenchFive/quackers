@@ -8,7 +8,7 @@ WOSKER = os.path.join(IMGFOLDER, 'fonts/thunder.ttf')
 SCHABO = os.path.join(IMGFOLDER, 'fonts/schabo.otf')
 
 def info(name, url, result, rank):
-    name = name[:20].upper().replace("_","-") #CUTTING THE NAME
+    name = name[:20].upper() #CUTTING THE NAME
 
     coins = result[0]
     mess = result[1]
