@@ -4,11 +4,11 @@ import requests
 
 SCRPTDIR = os.path.dirname(os.path.abspath(__file__))
 IMGFOLDER = os.path.join(SCRPTDIR, "imgs")
-WOSKER = os.path.join(IMGFOLDER, 'fonts/wosker.otf')
+WOSKER = os.path.join(IMGFOLDER, 'fonts/thunder.ttf')
 SCHABO = os.path.join(IMGFOLDER, 'fonts/schabo.otf')
 
 def info(name, url, result, rank):
-    name = name[:12].upper() #CUTTING THE NAME
+    name = name[:20].upper().replace("_","-") #CUTTING THE NAME
 
     coins = result[0]
     mess = result[1]
@@ -32,41 +32,49 @@ def info(name, url, result, rank):
     avatar = Image.open(tmpavatar).convert('RGB')
     lildim = 900
     dim = (lildim, lildim)
+    center = (lildim/2, lildim/2)
     avatar = avatar.resize(dim)
     mask = Image.new('L', dim, 0)
     draw = ImageDraw.Draw(mask)
     draw.ellipse((0, 0, dim[0], dim[1]), fill=255)
+    if voice != 0:
+        radius = 90
+        tmpcenter = (300,300)
+        draw.ellipse((radius, radius, tmpcenter[0]-radius, tmpcenter[1]-radius), fill=0)
+    mask.save(os.path.join(IMGFOLDER, "tmp.png"))
     rest = int((GLBDIM[1] - dim[1])/2)
     base.paste(avatar, (rest, rest), mask)
     #GREEN CIRCLE IF CONNECTED TO A VOICE CHANNEL
     if voice != 0:
-        draw = ImageDraw.Draw(base)
-        center = (180, 180)  # Center coordinates of the circle
-        radius = 70  # Radius of the circle
-        draw.ellipse((center[0] - radius, center[1] - radius, center[0] + radius, center[1] + radius), fill="green")
+        mask = Image.new('RGBA', dim, 0)
+        draw = ImageDraw.Draw(mask)
+        radius = 100
+        draw.ellipse((radius, radius, tmpcenter[0]-radius, tmpcenter[1]-radius), fill="green")
+        base.paste(mask, (rest, rest), mask)
+    
 
     #DISPLAY NAME
     draw = ImageDraw.Draw(base)
-    font = ImageFont.truetype(WOSKER, size=350)
+    font = ImageFont.truetype(WOSKER, size=400)
     draw.text(((rest*2)+lildim, rest*2), name, fill=(0, 0, 0, 255), font=font)
-
-    #MEMBER SINCE
-    draw = ImageDraw.Draw(base)
-    font = ImageFont.truetype(SCHABO, size=120)
-    text = f" MEMBER SINCE : {date}"
-    draw.text(((rest*2)+lildim + 25, rest*2 + 270), text, fill=(0, 0, 0, 255), font=font)
 
     #BIG INFO
     draw = ImageDraw.Draw(base)
-    font = ImageFont.truetype(SCHABO, size=150)  # You can specify your custom font
+    font = ImageFont.truetype(SCHABO, size=180)  # You can specify your custom font
     text = f"{coins} Quack Coins"
-    draw.text(((rest*2)+lildim + 15, rest*2 + 500), text, fill=(0, 0, 0, 255), font=font)
+    draw.text(((rest*2)+lildim + 15, rest*2 + 440), text, fill=(0, 0, 0, 255), font=font)
 
     #SMALLER INFO
     draw = ImageDraw.Draw(base)
     font = ImageFont.truetype(SCHABO, size=120)  # You can specify your custom font
     text = f"MESSAGES : {mess} // VC HOURS : {voiceh} // LUCK : {luck}"
-    draw.text(((rest*2)+lildim + 15, rest*2 + 650), text, fill=(0, 0, 0, 255), font=font)
+    draw.text(((rest*2)+lildim + 15, rest*2 + 610), text, fill=(0, 0, 0, 255), font=font)
+
+    #MEMBER SINCE
+    draw = ImageDraw.Draw(base)
+    font = ImageFont.truetype(SCHABO, size=120)
+    text = f"MEMBER SINCE : {date}"
+    draw.text(((rest*2)+lildim + 15, rest*2 + 725), text, fill=(0, 0, 0, 255), font=font)
 
     #RANK
     draw = ImageDraw.Draw(base)
