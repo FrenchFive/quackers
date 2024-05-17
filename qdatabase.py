@@ -174,8 +174,15 @@ def leaderboard():
     CURSOR.execute("SELECT * FROM members ORDER BY coins DESC LIMIT 10")
     data = CURSOR.fetchall()
     result = []
+    emoji = ["🥇","🥈","🥉",""]
     for i in range(len(data)):
-        result.append(f'N.{i+1} :: {data[i][1].capitalize()} :: {data[i][2]} <:quackCoin:1124255606782578698>')
+        emo = i
+        if i >= 3:
+            emo = 3
+        bold = ""
+        if i <= 2:
+            bold = "**"
+        result.append(f'{emoji[emo]} N.{i+1} :: {bold}{data[i][1].capitalize()}{bold} :: {data[i][2]} <:quackCoin:1124255606782578698>')
     return(result)
 
 def voiceactive(name):
