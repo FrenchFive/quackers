@@ -1,7 +1,10 @@
 secret.env
 qlogs.log
 
-db
+/db/qbet.db
+/db/quackers.db
+/db/quserpet.db
+
 /txt/database.json
 tests
 __pycache__

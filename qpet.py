@@ -9,11 +9,12 @@ import qlogs
 SCRPTDITR = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'db/qpet.db'
 database_path = os.path.join(SCRPTDITR, folder_name)
+folder_name = 'db/quserpet.db'
+userdatabase_path = os.path.join(SCRPTDITR, folder_name)
 
-
-CONNECTION = sqlite3.connect(database_path)
-CURSOR = CONNECTION.cursor()
-CURSOR.execute('''
+PETDATA = sqlite3.connect(database_path)
+CURSORDATA = PETDATA.cursor()
+CURSORDATA.execute('''
 CREATE TABLE IF NOT EXISTS "accessories" (
     "id"	TEXT NOT NULL UNIQUE,
 	"name"	TEXT NOT NULL,
@@ -23,7 +24,9 @@ CREATE TABLE IF NOT EXISTS "accessories" (
 	PRIMARY KEY("id")
 );
 ''')
-CONNECTION.commit()
+PETDATA.commit()
+
+CONNECTION = sqlite3.connect(userdatabase_path)
 CURSOR = CONNECTION.cursor()
 CURSOR.execute('''
 CREATE TABLE IF NOT EXISTS "dashboard" (
@@ -40,5 +43,3 @@ CREATE TABLE IF NOT EXISTS "dashboard" (
 );
 ''')
 CONNECTION.commit()
-
-def add_pet(user):
