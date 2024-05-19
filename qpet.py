@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS "accessories" (
 	"name"	TEXT NOT NULL,
 	"path"	TEXT NOT NULL,
 	"position"	TEXT NOT NULL,
-    "price" INT NOT NULL,
+    "price" INT NOT NULL DEFAULT 1000,
 	PRIMARY KEY("id")
 );
 ''')
@@ -43,3 +43,32 @@ CREATE TABLE IF NOT EXISTS "dashboard" (
 );
 ''')
 CONNECTION.commit()
+
+def add_pet(user, name):
+    CURSOR.execute('''
+    INSERT INTO dashboard (user, name, xp, body, eyes, back, hand_left, hands_right, hat)
+    VALUES (?, ?, 0, 'null', 'null', 'null', 'null', 'null', 'null')
+    ''', (user, name))
+    CONNECTION.commit()
+    return(True)
+
+def add_xp(user, xp):
+    CURSOR.execute('''
+    UPDATE dashboard
+    SET xp = xp + ?
+    WHERE user = ?
+    ''', (xp, user))
+    CONNECTION.commit()
+    return(True)
+
+def user_has_pet(user):
+    CURSOR.execute('''
+    SELECT user
+    FROM dashboard
+    WHERE user = ?
+    ''', (user,))
+    result = CURSOR.fetchone()
+    if result:
+        return(True)
+    else:
+        return(False)
