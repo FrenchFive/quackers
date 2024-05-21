@@ -4,7 +4,7 @@
 A discord bot in Python with a lot of functionalities. 
 
 
-## FUNCTIONS :
+### FUNCTIONS :
 - **Admin Functions** [Allows Admins to change value for the bot]
   - Admin Add : Add QuackCoins for a specific User to the Quack Database
   - Admin Remove : Remove QuackCoins for a specific User to the Quack Database
@@ -20,4 +20,22 @@ A discord bot in Python with a lot of functionalities.
   - Bet : Bet as much as you want against other Users to win a TON of Coins
 - **PASSIVE Actions** : [Users are Rewarded for using the Discord Channel]
   - Messages : Each message sent through Discord gives a Coin
-  - Voice Channel : Connecting to a Voice Channel gives some coins | Each hour spent on the Voice Channel gives more coins to the user 
+  - Voice Channel : Connecting to a Voice Channel gives some coins | Each hour spent on the Voice Channel gives more coins to the user
+ 
+
+
+### What should be next : 
+- [ ] **Petting System** :
+  - [x] Create Images
+  - [ ] Create a Database for all accessories
+    - [ ] Make a function to recreate the database when Quackers goes online based on the files in the folder
+      - [ ] Make the ID unique and not change w/ time 
+      - [ ] How to transmit information like price and name => Attach a file ? with information into it ?
+  - [ ] Create a Database for Users and data about their pets
+  - [ ] Create functions to interact with the pet
+  - [ ] Create a Training interaction : Make it gain level through training
+    - [ ] Passive XP gain like earning coins while using the Discord
+  - [ ] Create a Mission interaction
+  - [ ] Create a Mission interaction 
+  - [ ] Create functions to buy the pet and accessories [SHOP SYSTEM]
+- [ ] **Crypto System** ? 
