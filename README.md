@@ -32,9 +32,10 @@ A discord bot in Python with a lot of functionalities.
       - [ ] Make the ID unique and not change w/ time 
       - [ ] How to transmit information like price and name => Attach a file ? with information into it ?
   - [ ] Create a Database for Users and data about their pets
-  - [ ] Create functions to interact with the pet
+  - [ ] Create functions to interact with the pet :: Get info about level and xp ... etc .. 
   - [ ] Create a Training interaction : Make it gain level through training
     - [ ] Passive XP gain like earning coins while using the Discord
   - [ ] Create a Mission interaction 
   - [ ] Create functions to buy the pet and accessories [SHOP SYSTEM]
-- [ ] **Crypto System** ? 
+- [ ] **Crypto System** ?
+- [ ] Power on KAEDE :: Kaede is a "Midjourney" like bot (that uses a lot of GPU and cannot afford to let it run all the time)
