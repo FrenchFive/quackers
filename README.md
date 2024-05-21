@@ -35,7 +35,6 @@ A discord bot in Python with a lot of functionalities.
   - [ ] Create functions to interact with the pet
   - [ ] Create a Training interaction : Make it gain level through training
     - [ ] Passive XP gain like earning coins while using the Discord
-  - [ ] Create a Mission interaction
   - [ ] Create a Mission interaction 
   - [ ] Create functions to buy the pet and accessories [SHOP SYSTEM]
 - [ ] **Crypto System** ? 
