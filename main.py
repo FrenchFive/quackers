@@ -20,6 +20,7 @@ import random
 import qlogs
 
 import time
+import requests
 
 scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'txt'
@@ -312,6 +313,11 @@ async def leaderboard(interaction: Interaction):
 
     await interaction.response.send_message(message)
 
+@bot.slash_command(name="duck", description="Send a well deserved image", guild_ids=testid)
+async def duck(interaction: Interaction):
+    response = requests.get("https://random-d.uk/api/v2/random").json()
+    url = response["url"]
+    await interaction.response.send_message(url)
 
 #GAMES
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
