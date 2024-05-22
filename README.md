@@ -39,3 +39,5 @@ A discord bot in Python with a lot of functionalities.
   - [ ] Create functions to buy the pet and accessories [SHOP SYSTEM]
 - [ ] **Crypto System** ?
 - [ ] **Power on KAEDE** :: Kaede is a "Midjourney" like bot (that uses a lot of GPU and cannot afford to let it run all the time)
+- [ ] **Random Duck Image from the internet**
+  - [ ] Find a **FREE** Database or API
