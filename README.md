@@ -40,4 +40,5 @@ A discord bot in Python with a lot of functionalities.
 - [ ] **Crypto System** ?
 - [ ] **Power on KAEDE** :: Kaede is a "Midjourney" like bot (that uses a lot of GPU and cannot afford to let it run all the time)
 - [ ] **Random Duck Image from the internet**
-  - [ ] Find a **FREE** Database or API
+  - [x] Find a **FREE** Database or API
+  - [x] Testing the command
