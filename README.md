@@ -4,7 +4,7 @@
 A discord bot in Python with a lot of functionalities. 
 
 
-### FUNCTIONS :
+### FEATURES :
 - 👨🏻‍💻 // **Admin Functions** <sub>[Allows Admins to change value for the bot]</sub>
   - Admin Add : Add QuackCoins for a specific User to the Quack Database
   - Admin Remove : Remove QuackCoins for a specific User to the Quack Database
@@ -26,6 +26,7 @@ A discord bot in Python with a lot of functionalities.
 
 ### What should be next : 
 - [ ] **Petting System** :
+  - [ ] Testing the command to Approve for ALL
   - [x] Create Images
   - [ ] Create a Database for all accessories
     - [ ] Make a function to recreate the database when Quackers goes online based on the files in the folder
@@ -41,4 +42,4 @@ A discord bot in Python with a lot of functionalities.
 - [ ] **Power on KAEDE** :: Kaede is a "Midjourney" like bot (that uses a lot of GPU and cannot afford to let it run all the time)
 - [ ] **Random Duck Image from the internet**
   - [x] Find a **FREE** Database or API
-  - [x] Testing the command
+  - [x] Testing the command to Approve for ALL
