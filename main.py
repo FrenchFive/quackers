@@ -313,7 +313,7 @@ async def leaderboard(interaction: Interaction):
 
     await interaction.response.send_message(message)
 
-@bot.slash_command(name="duck", description="Send a well deserved image", guild_ids=testid)
+@bot.slash_command(name="duck", description="Send a cute pic", guild_ids=testid)
 async def duck(interaction: Interaction):
     response = requests.get("https://random-d.uk/api/v2/random").json()
     url = response["url"]
