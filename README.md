@@ -47,7 +47,12 @@ A discord bot in Python with a lot of functionalities.
   - [ ] Create functions to buy the pet and accessories [SHOP SYSTEM]
 - [ ] **Crypto System** ?
 - [ ] **Power on KAEDE** :: Kaede is a "Midjourney" like bot (that uses a lot of GPU and cannot afford to let it run all the time)
-- [ ] Get rid of the "TO-DO-LIST.txt" : Because i do that on the README ... 
+- [ ] Get rid of the "TO-DO-LIST.txt" : Because i do that on the README ...
+- [ ] Programmable messages for ADMIN
+- [ ] 8 Ball
+  - [x] Pick an answer through a list
+  - [ ] Generate a long list of answers (probably a txt) ..
+    - [ ] Make the list have replacable parts for the program to insert Username .. (ex: {user} => `string.replace('{user}', user)`
 - [ ] **Random Duck Image from the internet**
   - [x] Find a **FREE** Database or API
   - [x] Testing the command to Approve for ALL
