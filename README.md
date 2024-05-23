@@ -5,19 +5,25 @@ A discord bot in Python with a lot of functionalities.
 
 
 ### FEATURES :
+- **GENERAL** Features :
+  - `/duck` : Send a Duck Picture
+  - `/info` : Send an image with information about a user 
 - 👨🏻‍💻 // **Admin Functions** <sub>[Allows Admins to change value for the bot]</sub>
-  - Admin Add : Add QuackCoins for a specific User to the Quack Database
-  - Admin Remove : Remove QuackCoins for a specific User to the Quack Database
-  - Admin Logs : Display the latest logs from Quackers to troubleshoot some errors
+  - `/admin-add` : Add QuackCoins for a specific User to the Quack Database
+  - `/admin-remove` : Remove QuackCoins for a specific User to the Quack Database
+  - `/admin-logs` : Display the latest logs from Quackers to troubleshoot some errors
 - 🪙 // **Coins** <sub>[Manage Coins earned on Discord]</sub>
-  - Coins : Display how much coins the user has
-  - Send : Send coins from a User to another
-  - Daily : Receive Daily Coins everyday (with a Streak function, the more you do it, the more you get)
-  - Leaderboard : Display the Top 10 Users with the most coins
+  - `/coins` : Display how much coins the user has
+  - `/send` : Send coins from a User to another
+  - `/daily` : Receive Daily Coins everyday (with a Streak function, the more you do it, the more you get)
+  - `/leaderboard` : Display the Top 10 Users with the most coins
 - 🎲 // **Games** <sub>[Play Games and earn Coins]</sub>
-  - Dices : Throw dices against Quackers, the one with the most points wins
-  - RPS : Play Rock Paper Scissors Lizard Spoke with Quackers
-  - Bet : Bet as much as you want against other Users to win a TON of Coins
+  - `/dices` : Throw dices against Quackers, the one with the most points wins
+  - `/rps` : Play Rock Paper Scissors Lizard Spoke with Quackers
+  - `/bet-...` : Bet as much as you want against other Users to win a TON of Coins
+    - `/bet-create` : Open a bet
+    - `/bet-close` : Close all bets and Display info about the bet
+    - `/bet-result` : Sends the money to the winners
 - 😴 // **PASSIVE Actions** <sub>[Users are Rewarded for using the Discord Channel]</sub>
   - Messages : Each message sent through Discord gives a Coin
   - Voice Channel : Connecting to a Voice Channel gives some coins | Each hour spent on the Voice Channel gives more coins to the user
