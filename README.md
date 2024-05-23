@@ -8,7 +8,7 @@ A discord bot in Python with a lot of functionalities.
 - **GENERAL** Features :
   - `/duck` : Send a Duck Picture
   - `/info` : Send an image with information about a user
-  - AI FEATURE : Quackers repond to Mention and Replies with his personnality using :: **GPT4-TURBO** Model by OpenAI
+  - Quackers repond to Mention and Replies with his personnality using :: **GPT4-TURBO** Model by OpenAI
 - 👨🏻‍💻 // **Admin Functions** <sub>[Allows Admins to change value for the bot]</sub>
   - `/admin-add` : Add QuackCoins for a specific User to the Quack Database
   - `/admin-remove` : Remove QuackCoins for a specific User to the Quack Database
