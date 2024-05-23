@@ -5,27 +5,27 @@ A discord bot in Python with a lot of functionalities.
 
 
 ### FEATURES :
-- **GENERAL** Features :
+- 🐤 || **GENERAL** Features :
   - `/duck` : Send a Duck Picture
   - `/info` : Send an image with information about a user
   - Quackers repond to Mention and Replies with his personnality using :: **GPT4-TURBO** Model by OpenAI
-- 👨🏻‍💻 // **Admin Functions** <sub>[Allows Admins to change value for the bot]</sub>
+- 👨🏻‍💻 || **Admin Functions** <sub>[Allows Admins to change value for the bot]</sub>
   - `/admin-add` : Add QuackCoins for a specific User to the Quack Database
   - `/admin-remove` : Remove QuackCoins for a specific User to the Quack Database
   - `/admin-logs` : Display the latest logs from Quackers to troubleshoot some errors
-- 🪙 // **Coins** <sub>[Manage Coins earned on Discord]</sub>
+- 🪙 || **Coins** <sub>[Manage Coins earned on Discord]</sub>
   - `/coins` : Display how much coins the user has
   - `/send` : Send coins from a User to another
   - `/daily` : Receive Daily Coins everyday (with a Streak function, the more you do it, the more you get)
   - `/leaderboard` : Display the Top 10 Users with the most coins
-- 🎲 // **Games** <sub>[Play Games and earn Coins]</sub>
+- 🎲 || **Games** <sub>[Play Games and earn Coins]</sub>
   - `/dices` : Throw dices against Quackers, the one with the most points wins
   - `/rps` : Play Rock Paper Scissors Lizard Spoke with Quackers
   - `/bet-...` : Bet as much as you want against other Users to win a TON of Coins
     - `/bet-create` : Open a bet
     - `/bet-close` : Close all bets and Display info about the bet
     - `/bet-result` : Sends the money to the winners
-- 😴 // **PASSIVE Actions** <sub>[Users are Rewarded for using the Discord Channel]</sub>
+- 😴 || **PASSIVE Actions** <sub>[Users are Rewarded for using the Discord Channel]</sub>
   - Messages : Each message sent through Discord gives a Coin
   - Voice Channel : Connecting to a Voice Channel gives some coins | Each hour spent on the Voice Channel gives more coins to the user
  
