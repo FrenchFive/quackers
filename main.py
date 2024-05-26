@@ -399,7 +399,7 @@ async def rps(
 @bot.slash_command(name="8ball", description="Quackers gives answers to any questions. [YES or NO questions]", guild_ids=testid)
 async def eightball(interaction: Interaction, question:str):
     result = games.hball(interaction.user.name)
-    message = f'> {interaction.user.name.capitalize()} asked : "{question}"" \n {result}'
+    message = f'> {interaction.user.name.capitalize()} asked : " *{question}* " \n {result}'
     await interaction.response.send_message(message)
 
 #BETTING SYSTEM
