@@ -396,6 +396,12 @@ async def rps(
         result = "Pas assez de QuackCoins disponibles."
     await interaction.response.send_message(result)
 
+@bot.slash_command(name="8ball", description="Quackers gives answers to any questions. [YES or NO questions]", guild_ids=testid)
+async def eightball(interaction: Interaction, question:str):
+    result = games.hball(interaction.user.name)
+    message = f'> {interaction.user.name.capitalize()} asked : "{question}"" \n {result}'
+    await interaction.response.send_message(message)
+
 #BETTING SYSTEM
 @bot.slash_command(name="bet-create", description="Create a BET", guild_ids=serverid)
 async def bet_create(interaction: nextcord.Interaction):

@@ -79,6 +79,14 @@ def rps(user, bet, name):
 
     return(tosay, gameresult)
 
+def hball(name):
+    listwords = []
+    with open('db/hball.txt', encoding='utf-8') as f:
+        for line in f:
+            listwords.append(line.strip())
+    result = random.choice(listwords).replace("{user}", name)
+    return(result)
+
 #BET  
 def bet_create(name, title, a, b):
     CURSOR.execute('INSERT INTO dashboard (user, title, status, a, b, total_a, total_b) VALUES(?, ?, ?, ?, ?, ?, ?)', (name, title, "open", a, b, 0, 0))
@@ -156,7 +164,6 @@ def bet_has_betted(name, id):
     CURSOR.execute(f"SELECT COUNT(*) FROM 'qbet-{id}' WHERE user = ?",(name,))
     data = CURSOR.fetchall()
     return(data[0][0])
-
 
 def bet_result(name, option):
     CURSOR.execute("SELECT id FROM dashboard WHERE user = ? and status != ?",(name,"result"))
