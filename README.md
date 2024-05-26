@@ -31,7 +31,7 @@ A discord bot in Python with a lot of functionalities.
  
 ---
 
-### What should be next : 
+### IN WORK : 
 - [ ] **Petting System** :
   - [ ] Testing the command to Approve for ALL
   - [x] Create Images
@@ -53,7 +53,7 @@ A discord bot in Python with a lot of functionalities.
   - [x] Pick an answer through a list
   - [ ] Generate a long list of answers (probably a txt) ..
     - [ ] Make the list have replacable parts for the program to insert Username .. (ex: {user} => `string.replace('{user}', user)` )
-- [ ] **Random Duck Image from the internet**
+- [x] **Random Duck Image from the internet**
   - [x] Find a **FREE** Database or API
   - [x] Testing the command to Approve for ALL
 - [ ] GPT4-O
