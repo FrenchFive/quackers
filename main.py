@@ -396,10 +396,11 @@ async def rps(
         result = "Pas assez de QuackCoins disponibles."
     await interaction.response.send_message(result)
 
-@bot.slash_command(name="8ball", description="Quackers gives answers to any questions. [YES or NO questions]", guild_ids=testid)
+@bot.slash_command(name="8ball", description="Quackers gives answers to any questions. [YES or NO questions]", guild_ids=serverid)
 async def eightball(interaction: Interaction, question:str):
     result = games.hball(interaction.user.name)
     message = f'> {interaction.user.name.capitalize()} asked : " *{question}* " \n {result}'
+    qdb.add(interaction.user.name, random.randint(0, 5))
     await interaction.response.send_message(message)
 
 #BETTING SYSTEM

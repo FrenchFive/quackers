@@ -21,6 +21,7 @@ A discord bot in Python with a lot of functionalities.
 - 🎲 || **Games** <sub>[Play Games and earn Coins]</sub>
   - `/dices` : Throw dices against Quackers, the one with the most points wins
   - `/rps` : Play Rock Paper Scissors Lizard Spoke with Quackers
+  - `/8ball` : Answer any **YE/NO** question
   - `/bet-...` : Bet as much as you want against other Users to win a TON of Coins
     - `/bet-create` : Open a bet
     - `/bet-close` : Close all bets and Display info about the bet
@@ -52,7 +53,7 @@ A discord bot in Python with a lot of functionalities.
 - [ ] 8 Ball
   - [x] Pick an answer through a list
   - [x] Generate a long list of answers (probably a txt)
-  - [ ] Add Coins and Add it to the README
+  - [x] Add Coins and Add it to the README
 - [x] **Random Duck Image from the internet**
   - [x] Find a **FREE** Database or API
   - [x] Testing the command to Approve for ALL
