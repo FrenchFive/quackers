@@ -29,7 +29,7 @@ A discord bot in Python with a lot of functionalities.
   - Messages : Each message sent through Discord gives a Coin
   - Voice Channel : Connecting to a Voice Channel gives some coins | Each hour spent on the Voice Channel gives more coins to the user
  
-
+---
 
 ### What should be next : 
 - [ ] **Petting System** :

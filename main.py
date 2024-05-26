@@ -299,7 +299,7 @@ async def info(interaction: Interaction, user:Optional[nextcord.Member]=SlashOpt
     imgfile = nextcord.File(path)
     await interaction.followup.send(files=[imgfile])
 
-@bot.slash_command(name="leaderboard", description="Display the Top.10 of the server.", guild_ids=serverid)
+@bot.slash_command(name="leaderboard", description="Display the Top.10 of the server", guild_ids=serverid)
 async def leaderboard(interaction: Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
