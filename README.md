@@ -52,6 +52,7 @@ A discord bot in Python with a lot of functionalities.
 - [ ] 8 Ball
   - [x] Pick an answer through a list
   - [x] Generate a long list of answers (probably a txt)
+  - [ ] Add Coins and Add it to the README
 - [x] **Random Duck Image from the internet**
   - [x] Find a **FREE** Database or API
   - [x] Testing the command to Approve for ALL
