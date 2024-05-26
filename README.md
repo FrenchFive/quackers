@@ -50,7 +50,7 @@ A discord bot in Python with a lot of functionalities.
 - [ ] **Power on KAEDE** :: Kaede is a "Midjourney" like bot (that uses a lot of GPU and cannot afford to let it run all the time)
 - [ ] Get rid of the "TO-DO-LIST.txt" : Because i do that on the README ...
 - [ ] Programmable messages for ADMIN
-- [ ] 8 Ball
+- [x] 8 Ball
   - [x] Pick an answer through a list
   - [x] Generate a long list of answers (probably a txt)
   - [x] Add Coins and Add it to the README
