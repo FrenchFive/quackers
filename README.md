@@ -21,7 +21,7 @@ A discord bot in Python with a lot of functionalities.
 - 🎲 || **Games** <sub>[Play Games and earn Coins]</sub>
   - `/dices` : Throw dices against Quackers, the one with the most points wins
   - `/rps` : Play Rock Paper Scissors Lizard Spoke with Quackers
-  - `/8ball` : Answer any **YE/NO** question
+  - `/8ball` : Answer any **YES/NO** question
   - `/bet-...` : Bet as much as you want against other Users to win a TON of Coins
     - `/bet-create` : Open a bet
     - `/bet-close` : Close all bets and Display info about the bet
