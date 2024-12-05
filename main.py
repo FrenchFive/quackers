@@ -50,38 +50,32 @@ testid = [1159282148042350642]
 afkchannellist = ["afk"]
 
 def context():
-    global thread
-    global bot_id
     global scrpt_dir
+    global bot_id
 
-    #DELETE FILES
-    assistant_files = CLIENT.beta.assistants.files.list(assistant_id=bot_id)
+    # DELETE FILES
     try:
-        for file in assistant_files:
-            CLIENT.beta.assistants.files.delete(
-                assistant_id = bot_id,
-                file_id = file.id
-            )
-            CLIENT.files.delete(file_id=file.id)
-    except:
-        pass
+        files = openai.File.list()  # List all files
+        for file in files['data']:
+            if file['purpose'] == "fine-tune":  # Adjust purpose to match your use case
+                openai.File.delete(file['id'])
+    except Exception as e:
+        print(f"Error while deleting files: {e}")
 
-    #EXPORT DATABASE TO .json
+    # EXPORT DATABASE TO .json
     qdb.export()
 
-    #ADD FILES
-    for fi in os.listdir(FOLDER_PATH):
-        filtmp = os.path.join(scrpt_dir, 'txt', fi)
-        if os.path.getsize(filtmp) > 100:
-            file_data = CLIENT.files.create(
-                file=open(filtmp , "rb"),
-                purpose="assistants"
-            )
-            CLIENT.beta.assistants.files.create(
-                assistant_id = bot_id,
-                file_id = file_data.id
-            )
-    
+    # ADD FILES
+    try:
+        for fi in os.listdir(FOLDER_PATH):
+            filtmp = os.path.join(scrpt_dir, 'txt', fi)
+            if os.path.getsize(filtmp) > 100:  # Skip files smaller than 100 bytes
+                with open(filtmp, "rb") as f:
+                    file_data = openai.File.create(file=f, purpose="fine-tune")  # Adjust purpose as needed
+                    print(f"File uploaded: {file_data['id']}")
+    except Exception as e:
+        print(f"Error while uploading files: {e}")
+
     print('-- ALL FILES PROCESSED')
 
 context()
