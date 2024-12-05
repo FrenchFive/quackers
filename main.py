@@ -54,8 +54,9 @@ def context():
     global bot_id
 
     # DELETE FILES
+    openai = CLIENT
     try:
-        files = CLIENT.File.list()  # List all files
+        files = openai.File.list()  # List all files
         for file in files['data']:
             if file['purpose'] == "fine-tune":  # Adjust purpose to match your use case
                 openai.File.delete(file['id'])
