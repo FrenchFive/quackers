@@ -55,6 +55,43 @@ def export():
     with open(export_path, 'w') as json_file:
         json.dump(json_data, json_file, indent=4)
 
+def export_to_jsonl():
+    global scrpt_dir
+    export_path = os.path.join(scrpt_dir, "txt", "training_data.jsonl")
+
+    CURSOR.execute('SELECT * FROM members')
+    data = CURSOR.fetchall()
+
+    # Convert data to a list of dictionaries
+    column_names = [desc[0] for desc in CURSOR.description]
+    json_data = []
+    for row in data:
+        json_data.append(dict(zip(column_names, row)))
+
+    # Write data to a .jsonl file in the required format
+    with open(export_path, 'w') as jsonl_file:
+        for entry in json_data:
+            # Construct the messages list based on your data
+            messages = []
+
+            # Optional: Add a system prompt if needed
+            # messages.append({"role": "system", "content": "Your system prompt here."})
+
+            # Assuming your database has 'user_input' and 'assistant_response' fields
+            if 'user_input' in entry and 'assistant_response' in entry:
+                messages.append({"role": "user", "content": entry['user_input']})
+                messages.append({"role": "assistant", "content": entry['assistant_response']})
+            else:
+                # Skip entries without required fields
+                continue
+
+            # Create the JSON object
+            json_line = {"messages": messages}
+
+            # Write the JSON object as a line in the .jsonl file
+            jsonl_file.write(json.dumps(json_line) + '\n')
+            
+
 def user_in_db(name):
     CURSOR.execute("SELECT COUNT(*) FROM members WHERE name = ?",(name,))
     data = CURSOR.fetchall()
