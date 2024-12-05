@@ -55,7 +55,7 @@ def context():
 
     # DELETE FILES
     try:
-        files = openai.File.list()  # List all files
+        files = CLIENT.File.list()  # List all files
         for file in files['data']:
             if file['purpose'] == "fine-tune":  # Adjust purpose to match your use case
                 openai.File.delete(file['id'])
