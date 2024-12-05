@@ -58,7 +58,7 @@ def context():
         print(f"Error while deleting files: {e}")
 
     # EXPORT DATABASE TO .json
-    qdb.export()
+    qdb.export_to_jsonl()
 
     # ADD FILES
     try:
