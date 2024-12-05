@@ -8,4 +8,6 @@ qlogs.log
 /txt/database.json
 tests
 __pycache__
-imgs
+imgsvenv/
+
+/venv
