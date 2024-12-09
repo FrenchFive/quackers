@@ -4,6 +4,11 @@ import requests
 
 SCRPTDIR = os.path.dirname(os.path.abspath(__file__))
 IMGFOLDER = os.path.join(SCRPTDIR, "imgs")
+
+# Check if the image folder exists, if not, create it
+if not os.path.exists(IMGFOLDER):
+    os.makedirs(IMGFOLDER)
+
 WOSKER = os.path.join(IMGFOLDER, 'fonts/thunder.ttf')
 SCHABO = os.path.join(IMGFOLDER, 'fonts/schabo.otf')
 
