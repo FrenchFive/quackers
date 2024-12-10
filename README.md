@@ -59,3 +59,4 @@ A discord bot in Python with a lot of functionalities.
   - [x] Testing the command to Approve for ALL
 - [ ] GPT4-O
   - [ ] Rewrite the API python integration
+- [x] Adding COIFFEUR Response
