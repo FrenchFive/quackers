@@ -484,7 +484,7 @@ async def on_message(ctx):
     #COIFFEUR
     pattern = re.compile(r"(?:^|\s)[qQ]+[uU]+[oO]+[iI]+[!? ]*$")
     feurlist = ["FEUR","FEUR !!!","feur"]
-    if bool(pattern.fullmatch(ctx.content)) == True:
+    if bool(pattern.search(ctx.content)) == True:
         await ctx.channel.send(random.choice(feurlist))
         return
 
