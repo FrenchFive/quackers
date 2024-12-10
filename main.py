@@ -21,6 +21,8 @@ import qlogs
 import time
 import requests
 
+import re
+
 scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'txt'
 FOLDER_PATH = os.path.join(scrpt_dir, folder_name)
@@ -478,6 +480,13 @@ async def on_message(ctx):
         qdb.add_user(ctx.author.name)
 
     qdb.add_mess(ctx.author.name)
+
+    #COIFFEUR
+    pattern = re.compile("(?:^|\s)[qQ]+[uU]+[oO]+[iI]+[!? ]*(?:$|\s)")
+    feurlist = ["FEUR","FEUR !!!","feur"]
+    if bool(pattern.fullmatch(ctx.content)) == True:
+        await ctx.channel.send(random.choice(feurlist))
+        return
 
     if not bot.user.mentioned_in(ctx):
         await bot.process_commands(ctx)
