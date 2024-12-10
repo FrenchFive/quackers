@@ -482,7 +482,7 @@ async def on_message(ctx):
     qdb.add_mess(ctx.author.name)
 
     #COIFFEUR
-    pattern = re.compile("(?:^|\s)[qQ]+[uU]+[oO]+[iI]+[!? ]*(?:$|\s)")
+    pattern = re.compile(r"(?:^|\s)[qQ]+[uU]+[oO]+[iI]+[!? ]*(?:$|\s)")
     feurlist = ["FEUR","FEUR !!!","feur"]
     if bool(pattern.fullmatch(ctx.content)) == True:
         await ctx.channel.send(random.choice(feurlist))
