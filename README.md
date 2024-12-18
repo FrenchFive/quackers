@@ -32,6 +32,99 @@ A discord bot in Python with a lot of functionalities.
  
 ---
 
+## QUACKERS BOT - INSTALLATION AND SETUP GUIDE
+
+Welcome to **Quackers**, a bot designed to bring quacking fun to your projects! Follow the steps below to install and run the bot successfully.
+
+---
+
+### PREREQUISITES:
+Before starting, ensure you have the following installed:
+
+1. [Python](https://www.python.org/downloads/) (version 3.X).
+2. [Git](https://git-scm.com/downloads).
+3. A terminal or command-line interface.
+
+---
+
+### INSTALLATION STEPS:
+
+#### 1. Clone the Repository
+First, clone the repository to your local machine using Git:
+
+```bash
+git clone https://github.com/FrenchFive/quackers.git
+```
+
+Navigate into the project directory:
+
+```bash
+cd quackers
+```
+
+#### 2. Create a Virtual Environment (Optional but Recommended)
+Create a virtual environment to isolate dependencies:
+
+```bash
+python3 -m venv venv
+```
+
+Activate the virtual environment:
+
+- **Windows**:
+  ```bash
+  venv\Scripts\activate
+  ```
+- **Mac/Linux**:
+  ```bash
+  source venv/bin/activate
+  ```
+
+#### 3. Install Dependencies
+Install the required Python libraries listed in `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+### RUNNING THE BOT:
+
+#### 1. Configure the `secret.env` File
+Quackers uses a file named `secret.env` to store all secret keys. This file should not be shared.
+
+Example structure for `secret.env`:
+
+```txt
+sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx (OPENAI Key)
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx (DISCORD Key)
+```
+
+- Generate an **OpenAI API Key** [here](https://platform.openai.com/settings).
+- Get your **Discord Bot Token** by navigating to the [Discord Developer Portal](https://discord.com/developers/docs/intro) and enabling necessary bot permissions.
+
+---
+
+#### 2. Start the Bot
+Run the bot script:
+
+```bash
+python bot.py
+```
+
+For additional support, open an issue in the [GitHub repository](https://github.com/FrenchFive/quackers/issues).
+
+---
+
+### CONTRIBUTION:
+
+Contributions are welcome! Feel free to fork the repository, make changes, and submit a pull request.
+
+Enjoy using **Quackers**! 🦆
+
+---
+
 ### IN WORK : 
 - [ ] **Petting System** :
   - [ ] Testing the command to Approve for ALL
