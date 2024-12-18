@@ -3,3 +3,4 @@ unidecode
 openai==0.28
 requests
 pillow
+setuptools
