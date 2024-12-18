@@ -53,6 +53,10 @@ Before starting, ensure you have the following installed:
 #### 1. Clone the Repository
 First, clone the repository to your local machine using Git:
 
+> [!TIP]
+> It is not necessary but **strongly** recommended.
+> It allows the use of librairies in a specific configuration, meaning not breaking other code on other projects.
+
 ```bash
 git clone https://github.com/FrenchFive/quackers.git
 ```
@@ -104,6 +108,24 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx (DISCORD Key)
 
 - Generate an **OpenAI API Key** [here](https://platform.openai.com/settings).
 - Get your **Discord Bot Token** by navigating to the [Discord Developer Portal](https://discord.com/developers/docs/intro) and enabling necessary bot permissions.
+
+---
+
+#### 2. Configure the server to monitor
+
+Modify the following code inside ```main.py```
+
+```python
+# Server IDs
+serverid = [1159282148042350642, 945445171670171668]
+testid = [1159282148042350642]
+afkchannellist = ["afk"]
+``` 
+
+It should match the server your [Server ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID)
+> [!NOTE]
+> Specifying the server is not something mendatory (ex: It is something youll avoid when sharing your bot to unknowm servers)
+> BUT it makes adding or changing commands appear instantly into the specified servers (It is also great to control which server has access to what command (Especially when testing))
 
 ---
 
