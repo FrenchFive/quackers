@@ -1,4 +1,5 @@
 # 🦆🤖 // QUACKERS
+
 ## DISCORD DUCK [BOT]
 
 A discord bot in Python with a lot of functionalities. 
@@ -32,7 +33,7 @@ A discord bot in Python with a lot of functionalities.
  
 ---
 
-## QUACKERS BOT - INSTALLATION AND SETUP GUIDE
+## INSTALLATION AND SETUP GUIDE
 
 Welcome to **Quackers**, a bot designed to bring quacking fun to your projects! Follow the steps below to install and run the bot successfully.
 
