@@ -129,7 +129,7 @@ It should match the server your [Server ID](https://support.discord.com/hc/en-us
 
 ---
 
-#### 2. Start the Bot
+#### 3. Start the Bot
 Run the bot script:
 
 ```bash
@@ -164,15 +164,16 @@ Enjoy using **Quackers**! 🦆
   - [ ] Create functions to buy the pet and accessories [SHOP SYSTEM]
 - [ ] **Crypto System** ?
 - [ ] **Power on KAEDE** :: Kaede is a "Midjourney" like bot (that uses a lot of GPU and cannot afford to let it run all the time)
-- [x] Get rid of the "TO-DO-LIST.txt" : Because i do that on the README ...
 - [ ] Programmable messages for ADMIN
-- [x] 8 Ball
-  - [x] Pick an answer through a list
-  - [x] Generate a long list of answers (probably a txt)
-  - [x] Add Coins and Add it to the README
-- [x] **Random Duck Image from the internet**
-  - [x] Find a **FREE** Database or API
-  - [x] Testing the command to Approve for ALL
+  - [ ] Making work programmed messages
+  - [ ] Having an interface to see what is planned by admin 
+  - [ ] Having messages to be sent once and some to be repeated every x amount of time
 - [ ] GPT4-O
   - [ ] Rewrite the API python integration
-- [x] Adding COIFFEUR Response
+  - [ ] Clean up what information is sent to OpenAi 
+- [ ] Welcome Messages
+  - [ ] Send a message to users when they join the server 
+  - [ ] Making a personnalized message to user
+  - [ ] Presentation 
+    - [ ] Making a quick questionnaire to answer by user that would generate a message for presentation 
+- [ ] Making a Discussion as logs on Github with the updates to keep track of the progress done 
