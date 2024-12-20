@@ -543,7 +543,8 @@ async def on_voice_state_update(member, before, after):
 @bot.event
 async def on_member_join(member):
     print(f"{member.name} has joined the server")
-    channel_id = "1225917633992462346"
+    qlogs.info(f"{member.name} has joined the server")
+    channel_id = 1225917633992462346
     channel = bot.get_channel(channel_id)
     if channel:
         await channel.send(f"Welcome {member.name} to the server!")
@@ -551,7 +552,8 @@ async def on_member_join(member):
 @bot.event
 async def on_member_remove(member):
     print(f"{member.name} has left the server")
-    channel_id = "1225917633992462346"
+    qlogs.info(f"{member.name} has left the server")
+    channel_id = 1225917633992462346
     channel = bot.get_channel(channel_id)
     if channel:
         await channel.send(f"{member.name} has left the server.")
