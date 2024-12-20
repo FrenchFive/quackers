@@ -176,4 +176,7 @@ Enjoy using **Quackers**! 🦆
   - [ ] Making a personnalized message to user
   - [ ] Presentation 
     - [ ] Making a quick questionnaire to answer by user that would generate a message for presentation 
-- [ ] Making a Discussion as logs on Github with the updates to keep track of the progress done 
+- [ ] Making a Discussion as logs on Github with the updates to keep track of the progress done
+- [ ] Make an UI for Admin to change some parameters of the BOT
+- [ ] Making a database for server
+  - [ ] Having function display only the servers info and not global info (ex : Leaderboard of the server and not leaderboard of the bot)
