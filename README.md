@@ -171,7 +171,8 @@ Enjoy using **Quackers**! 🦆
 - [ ] GPT4-O
   - [ ] Rewrite the API python integration
   - [ ] Clean up what information is sent to OpenAi 
-- [ ] Welcome Messages
+- [x] Welcome Messages
+  - [ ] Generate the welcome phrase from ChatGpt or make a list
   - [ ] Send a message to users when they join the server 
   - [ ] Making a personnalized message to user
   - [ ] Presentation 
