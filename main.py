@@ -539,5 +539,20 @@ async def on_voice_state_update(member, before, after):
         qdb.voicestalled(member.name)
         qlogs.info(f"{member.name} is disconnected")
 
+#WELCOME and GOODBYE
+@bot.event
+async def on_member_join(member):
+    channel_id = "1225917633992462346"
+    channel = bot.get_channel(channel_id)
+    if channel:
+        await channel.send(f"Welcome {member.name} to the server!")
+
+@bot.event
+async def on_member_remove(member):
+    channel_id = "1225917633992462346"
+    channel = bot.get_channel(channel_id)
+    if channel:
+        await channel.send(f"{member.name} has left the server.")
+
 
 bot.run(KEY_DISCORD)
