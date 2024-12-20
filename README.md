@@ -180,3 +180,4 @@ Enjoy using **Quackers**! 🦆
 - [ ] Make an UI for Admin to change some parameters of the BOT
 - [ ] Making a database for server
   - [ ] Having function display only the servers info and not global info (ex : Leaderboard of the server and not leaderboard of the bot)
+- [ ] Find a way for Admin to see the DB for troubleshooting
