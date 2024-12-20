@@ -181,3 +181,9 @@ Enjoy using **Quackers**! 🦆
 - [ ] Making a database for server
   - [ ] Having function display only the servers info and not global info (ex : Leaderboard of the server and not leaderboard of the bot)
 - [ ] Find a way for Admin to see the DB for troubleshooting
+- [ ] Add badges to INFO 
+  - [ ] Admin Badge
+  - [ ] Badge for newbies
+  - [ ] Badge for the one here for a long time
+  - [ ] Badge for Activity
+  - [ ] Badge for boost
