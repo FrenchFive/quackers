@@ -185,5 +185,9 @@ Enjoy using **Quackers**! 🦆
   - [ ] Admin Badge
   - [ ] Badge for newbies
   - [ ] Badge for the one here for a long time
-  - [ ] Badge for Activity
+  - [ ] Badge for Activity (Experience based)
   - [ ] Badge for boost
+- [ ] Making an EXP system (hidden)
+  - [ ] Exp cannot be reduced, used to see how Active are users
+  - [ ] Give them rank as they become more active
+  - [ ] Make progression exponential 
