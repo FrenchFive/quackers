@@ -208,12 +208,12 @@ class PresentationModal(nextcord.ui.Modal):
         )
 
         # Questions
-        self.name = nextcord.ui.TextInput(
-            label="Name",
-            placeholder="Quacky Quack III...",
+        self.pronouns = nextcord.ui.TextInput(
+            label="Pronouns",
+            placeholder="He/Him, She/Her, They/Them, ...",
             required=True,
         )
-        self.add_item(self.name)
+        self.add_item(self.pronouns)
 
         self.favorite_color = nextcord.ui.TextInput(
             label="Favorite Color",
@@ -231,8 +231,8 @@ class PresentationModal(nextcord.ui.Modal):
 
         self.favorite_animal = nextcord.ui.TextInput(
             label="Favorite Animal",
-            placeholder="Cat, Dog, Shark, Duck...",
-            required=False,
+            placeholder="Cats, Dogs, Land Sharks, Ducks, ...",
+            required=True,
         )
         self.add_item(self.favorite_animal)
 
@@ -247,8 +247,8 @@ class PresentationModal(nextcord.ui.Modal):
         # Dynamically generate a summary of the user's responses
         responses = []
 
-        if self.name.value:
-            responses.append(f"**Name**: {self.name.value}")
+        if self.pronouns.value:
+            responses.append(f"**Pronouns**: {self.pronouns.value}")
         if self.favorite_color.value:
             responses.append(f"**Favorite Color**: {self.favorite_color.value}")
         if self.introduced_by.value:
@@ -263,12 +263,6 @@ class PresentationModal(nextcord.ui.Modal):
             response_message = "\n".join(responses)
             await interaction.response.send_message(
                 f"Thank you for introducing yourself!\n{response_message}",
-                ephemeral=True
-            )
-        else:
-            await interaction.response.send_message(
-                "You did not provide any information to share!",
-                ephemeral=True
             )
 
 
