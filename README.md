@@ -173,8 +173,9 @@ Enjoy using **Quackers**! 🦆
   - [ ] Clean up what information is sent to OpenAi 
 - [x] Welcome Messages
   - [ ] Generate the welcome phrase from ChatGpt or make a list
-  - [ ] Tag the newbie
-  - [ ] Add Quackers emotes randomly (only positive emotes)
+  - [x] Tag the newbie
+  - [x] Add Quackers emotes randomly (only positive emotes)
+    - [ ] Add Quack Server custom emotes
   - [ ] Send a message to users when they join the server 
   - [ ] Making a personnalized message to user
   - [ ] Presentation 

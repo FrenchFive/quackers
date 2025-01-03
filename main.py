@@ -550,7 +550,10 @@ async def on_member_join(member):
         qdb.add_user(member.name)
     channel = bot.get_channel(welcomechannel)
     if channel:
-        await channel.send(f"Welcome {member.mention} sur le serveur de la team QUACK!")
+        message = await channel.send(f"Welcome {member.mention} sur le serveur de la team QUACK!")
+        emojis = ["\U0001F44C", "\U0001F4AF", "\U0001F389", "\U0001F38A"]
+        await message.add_reaction(random.choice(emojis))
+
 
 @bot.event
 async def on_member_remove(member):
