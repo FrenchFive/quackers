@@ -45,6 +45,8 @@ counter = 0
 serverid = [1159282148042350642, 945445171670171668]
 testid = [1159282148042350642]
 afkchannellist = ["afk"]
+welcomechannel = 1319691393442254962
+infochannel = 945688921038262313
 
 
 def context():
@@ -544,17 +546,17 @@ async def on_voice_state_update(member, before, after):
 async def on_member_join(member):
     print(f"{member.name} has joined the server")
     qlogs.info(f"{member.name} has joined the server")
-    channel_id = 1319691393442254962
-    channel = bot.get_channel(channel_id)
+    if qdb.user_in_db(member.name) == 0:
+        qdb.add_user(member.name)
+    channel = bot.get_channel(welcomechannel)
     if channel:
-        await channel.send(f"Welcome {member.name} sur le serveur de la team QUACK!")
+        await channel.send(f"Welcome {member.mention} sur le serveur de la team QUACK!")
 
 @bot.event
 async def on_member_remove(member):
     print(f"{member.name} has left the server")
     qlogs.info(f"{member.name} has left the server")
-    channel_id = 945688921038262313
-    channel = bot.get_channel(channel_id)
+    channel = bot.get_channel(infochannel)
     if channel:
         await channel.send(f"{member.name} a quitte le serveur de la team QUACK!")
 
