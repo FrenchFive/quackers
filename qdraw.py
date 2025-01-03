@@ -13,7 +13,7 @@ WOSKER = os.path.join(IMGFOLDER, 'fonts/thunder.ttf')
 SCHABO = os.path.join(IMGFOLDER, 'fonts/schabo.otf')
 
 
-def avatar(url):
+def avatar_download(url):
     #DOWNLOAD USER AVATAR
     img_data = requests.get(url).content
     tmpavatar = os.path.join(IMGFOLDER, "tmpuser.jpg")
@@ -37,7 +37,7 @@ def info(name, url, result, rank):
     base = Image.new('RGBA', GLBDIM, (255, 255, 255, 255))
 
     #DOWNLOAD USER AVATAR
-    tmpavatar = avatar(url)
+    tmpavatar = avatar_download(url)
     
     #AVATAR
     avatar = Image.open(tmpavatar).convert('RGB')
