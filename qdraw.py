@@ -12,6 +12,15 @@ if not os.path.exists(IMGFOLDER):
 WOSKER = os.path.join(IMGFOLDER, 'fonts/thunder.ttf')
 SCHABO = os.path.join(IMGFOLDER, 'fonts/schabo.otf')
 
+
+def avatar(url):
+    #DOWNLOAD USER AVATAR
+    img_data = requests.get(url).content
+    tmpavatar = os.path.join(IMGFOLDER, "tmpuser.jpg")
+    with open(tmpavatar, 'wb') as handler:
+        handler.write(img_data)
+    return tmpavatar
+
 def info(name, url, result, rank):
     name = name[:20].upper() #CUTTING THE NAME
 
@@ -88,11 +97,3 @@ def info(name, url, result, rank):
     final = os.path.join(IMGFOLDER, "final.png")
     base.save(final)
     return(final)
-
-def avatar(url):
-    #DOWNLOAD USER AVATAR
-    img_data = requests.get(url).content
-    tmpavatar = os.path.join(IMGFOLDER, "tmpuser.jpg")
-    with open(tmpavatar, 'wb') as handler:
-        handler.write(img_data)
-    return tmpavatar
