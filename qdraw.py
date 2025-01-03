@@ -28,10 +28,7 @@ def info(name, url, result, rank):
     base = Image.new('RGBA', GLBDIM, (255, 255, 255, 255))
 
     #DOWNLOAD USER AVATAR
-    img_data = requests.get(url).content
-    tmpavatar = os.path.join(IMGFOLDER, "tmpuser.jpg")
-    with open(tmpavatar, 'wb') as handler:
-        handler.write(img_data)
+    tmpavatar = avatar(url)
     
     #AVATAR
     avatar = Image.open(tmpavatar).convert('RGB')
@@ -91,3 +88,11 @@ def info(name, url, result, rank):
     final = os.path.join(IMGFOLDER, "final.png")
     base.save(final)
     return(final)
+
+def avatar(url):
+    #DOWNLOAD USER AVATAR
+    img_data = requests.get(url).content
+    tmpavatar = os.path.join(IMGFOLDER, "tmpuser.jpg")
+    with open(tmpavatar, 'wb') as handler:
+        handler.write(img_data)
+    return tmpavatar
