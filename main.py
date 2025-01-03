@@ -215,30 +215,6 @@ class PresentationModal(nextcord.ui.Modal):
         )
         self.add_item(self.name)
 
-        self.pronouns = nextcord.ui.TextInput(
-            label="Pronouns",
-            placeholder="e.g., He/Him, She/Her, They/Them",
-            required=False,
-        )
-        self.add_item(self.pronouns)
-
-        '''
-        # Dropdown for Age Choice
-        self.age_choice = nextcord.ui.Select(
-            placeholder="Select your age group...",
-            options=[
-                nextcord.SelectOption(label="Baby", description="Feeling youthful!"),
-                nextcord.SelectOption(label="Young", description="Full of energy!"),
-                nextcord.SelectOption(label="Adult", description="Adulting responsibly!"),
-                nextcord.SelectOption(label="Very Old", description="Wisdom accumulated!"),
-            ],
-            min_values=1,  # Minimum options the user must select
-            max_values=1,  # Maximum options the user can select
-        )
-        self.age_choice.callback = self.age_choice_callback
-        self.add_item(self.age_choice)
-        '''
-
         self.favorite_color = nextcord.ui.TextInput(
             label="Favorite Color",
             placeholder="Purple...",
@@ -260,13 +236,6 @@ class PresentationModal(nextcord.ui.Modal):
         )
         self.add_item(self.favorite_animal)
 
-        self.favorite_hobby = nextcord.ui.TextInput(
-            label="Favorite Hobby",
-            placeholder="What do you enjoy doing?",
-            required=False,
-        )
-        self.add_item(self.favorite_hobby)
-
         self.fun_fact = nextcord.ui.TextInput(
             label="Fun Fact About You",
             placeholder="Share something interesting about yourself!",
@@ -280,20 +249,12 @@ class PresentationModal(nextcord.ui.Modal):
 
         if self.name.value:
             responses.append(f"**Name**: {self.name.value}")
-        if self.pronouns.value:
-            responses.append(f"**Pronouns**: {self.pronouns.value}")
-        '''
-        if self.age_choice.value:
-            responses.append(f"**Age Choice**: {self.age_choice.value}")
-        '''
         if self.favorite_color.value:
             responses.append(f"**Favorite Color**: {self.favorite_color.value}")
         if self.introduced_by.value:
             responses.append(f"**Introduced By**: {self.introduced_by.value}")
         if self.favorite_animal.value:
             responses.append(f"**Favorite Animal**: {self.favorite_animal.value}")
-        if self.favorite_hobby.value:
-            responses.append(f"**Favorite Hobby**: {self.favorite_hobby.value}")
         if self.fun_fact.value:
             responses.append(f"**Fun Fact**: {self.fun_fact.value}")
 
