@@ -47,6 +47,7 @@ testid = [1159282148042350642]
 afkchannellist = ["afk"]
 welcomechannel = 1319691393442254962
 infochannel = 945688921038262313
+testchannel = 1189135263390236723
 
 
 def context():
@@ -201,11 +202,14 @@ class Betting(nextcord.ui.Modal):
                 await interaction.send(f'{interaction.user.mention} do not have enough QuackCoins', ephemeral=True)
 
 class PresentationModal(nextcord.ui.Modal):
-    def __init__(self):
+    def __init__(self, target_channel, user):
         super().__init__(
             title="PRESENTATIONS",
             timeout=None,
         )
+
+        self.target_channel = target_channel  # Save the target channel ID
+        self.user = user
 
         # Questions
         self.pronouns = nextcord.ui.TextInput(
@@ -245,7 +249,7 @@ class PresentationModal(nextcord.ui.Modal):
 
     async def callback(self, interaction: nextcord.Interaction):
         # Dynamically generate a summary of the user's responses
-        responses = []
+        responses = [f"**Submitted By**: {self.user}"]
 
         if self.pronouns.value:
             responses.append(f"**Pronouns**: {self.pronouns.value}")
@@ -257,13 +261,21 @@ class PresentationModal(nextcord.ui.Modal):
             responses.append(f"**Favorite Animal**: {self.favorite_animal.value}")
         if self.fun_fact.value:
             responses.append(f"**Fun Fact**: {self.fun_fact.value}")
+         
+        # Send a thank-you message to the user
+        await interaction.response.send_message(
+            "Thank you for introducing yourself! Your responses have been recorded.",
+            ephemeral=True,
+        )
 
-        # Combine all responses into a single message
+        # Send the combined message to the target channel
         if responses:
             response_message = "\n".join(responses)
-            await interaction.response.send_message(
-                f"Thank you for introducing yourself!\n{response_message}",
-            )
+            target_channel = interaction.guild.get_channel(self.target_channel)
+            if target_channel:
+                await target_channel.send(f"**New Introduction**\n{response_message}")
+            else:
+                print(f"Error: Channel {self.target_channel} not found.")
 
 
 @bot.event
@@ -353,12 +365,14 @@ async def duck(interaction: Interaction):
     url = response["url"]
     await interaction.response.send_message(url)
 
+
 @bot.slash_command(name="presentation", description="Introduce yourself to the server!", guild_ids=testid)
 async def introduce(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
     
-    await interaction.response.send_modal(PresentationModal())
+    await interaction.response.send_modal(PresentationModal(target_channel=testchannel, user=interaction.user.name))
+
 
 # GAMES
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
