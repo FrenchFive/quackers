@@ -48,7 +48,8 @@ afkchannellist = ["afk"]
 welcomechannel = 1319691393442254962
 infochannel = 945688921038262313
 testchannel = 1189135263390236723
-
+#role name
+role_newbies = "newbies"
 
 def context():
     global scrpt_dir
@@ -382,10 +383,24 @@ async def introduce(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
     
+    
+    user_roles = interaction.user.roles
+    has_required_role = any(
+        role.name == role_newbies for role in user_roles
+    )
+    if not has_required_role:
+        await interaction.response.send_message(
+            "You do not have the required role to use this command.",
+            ephemeral=True,
+        )
+        return
+
     url = interaction.user.display_avatar.url
     imgpath = qdraw.avatar_download(url)
 
     await interaction.response.send_modal(PresentationModal(target_channel=testchannel, user=interaction.user.name, imgpath=imgpath))
+
+    await interaction.user.remove_roles(role_newbies, reason="Role removed after presentation completion.")
 
 
 # GAMES
@@ -652,6 +667,18 @@ async def on_member_join(member):
         message = await channel.send(f"Welcome {member.mention} sur le serveur de la team QUACK!")
         emojis = ["\U0001F44C", "\U0001F4AF", "\U0001F389", "\U0001F38A"]
         await message.add_reaction(random.choice(emojis))
+    
+    guild = member.guild
+    role = next((r for r in guild.roles if r.name == role_newbies), None)
+
+    if role:
+        try:
+            await member.add_roles(role, reason="Assigned role upon joining the server.")
+            print(f"Assigned role '{role_newbies}' to {member.name}.")
+        except Exception as e:
+            print(f"Failed to assign role '{role_newbies}' to {member.name}: {e}")
+    else:
+        print(f"Role '{role_newbies}' not found in the server.")
 
 
 @bot.event
