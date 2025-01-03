@@ -383,11 +383,17 @@ async def introduce(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
     
-    
+    guild = interaction.guild
+    role = next((role for role in guild.roles if role.name == role_newbies), None)
+    if role is None:
+        await interaction.response.send_message(
+            "Required role not found in the server.",
+            ephemeral=True,
+        )
+        return
+
     user_roles = interaction.user.roles
-    has_required_role = any(
-        role.name == role_newbies for role in user_roles
-    )
+    has_required_role = any(role.name == role_newbies for role in user_roles)
     if not has_required_role:
         await interaction.response.send_message(
             "You do not have the required role to use this command.",
@@ -400,8 +406,8 @@ async def introduce(interaction: nextcord.Interaction):
 
     await interaction.response.send_modal(PresentationModal(target_channel=testchannel, user=interaction.user.name, imgpath=imgpath))
 
-    await interaction.user.remove_roles(role_newbies, reason="Role removed after presentation completion.")
-
+    await interaction.user.remove_roles(role, reason="Role removed after presentation completion.")
+    print(f"Role '{role_newbies}' removed from {interaction.user.name}.")
 
 # GAMES
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
