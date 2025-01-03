@@ -176,9 +176,11 @@ Enjoy using **Quackers**! 🦆
   - [x] Tag the newbie
   - [x] Add Quackers emotes randomly (only positive emotes)
     - [ ] Add Quack Server custom emotes
+    - [ ] Add more emotes/emojis
   - [ ] Send a message to users when they join the server 
   - [ ] Making a personnalized message to user
   - [ ] Presentation 
+    - [ ] Make a presentation using Discord Commands
     - [ ] Making a quick questionnaire to answer by user that would generate a message for presentation 
 - [ ] Making a Discussion as logs on Github with the updates to keep track of the progress done
 - [ ] Make an UI for Admin to change some parameters of the BOT

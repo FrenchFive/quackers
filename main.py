@@ -200,6 +200,112 @@ class Betting(nextcord.ui.Modal):
             else:
                 await interaction.send(f'{interaction.user.mention} do not have enough QuackCoins', ephemeral=True)
 
+class PresentationModal(nextcord.ui.Modal):
+    def __init__(self):
+        super().__init__(
+            title="PRESENTATIONS",
+            timeout=None,
+        )
+
+        # Questions
+        self.name = nextcord.ui.TextInput(
+            label="Name",
+            placeholder="Quacky Quack III...",
+            required=True,
+        )
+        self.add_item(self.name)
+
+        self.pronouns = nextcord.ui.TextInput(
+            label="Pronouns",
+            placeholder="e.g., He/Him, She/Her, They/Them",
+            required=False,
+        )
+        self.add_item(self.pronouns)
+
+        # Dropdown for Age Choice
+        self.age_choice = nextcord.ui.Select(
+            placeholder="Select your age group...",
+            options=[
+                nextcord.SelectOption(label="Baby", description="Feeling youthful!"),
+                nextcord.SelectOption(label="Young", description="Full of energy!"),
+                nextcord.SelectOption(label="Adult", description="Adulting responsibly!"),
+                nextcord.SelectOption(label="Very Old", description="Wisdom accumulated!"),
+            ],
+            min_values=1,  # Minimum options the user must select
+            max_values=1,  # Maximum options the user can select
+        )
+        self.age_choice.callback = self.age_choice_callback
+        self.add_item(self.age_choice)
+
+        self.favorite_color = nextcord.ui.TextInput(
+            label="Favorite Color",
+            placeholder="Purple...",
+            required=False,
+        )
+        self.add_item(self.favorite_color)
+
+        self.introduced_by = nextcord.ui.TextInput(
+            label="Who introduced you to the server?",
+            placeholder="Mention the user @username",
+            required=True,
+        )
+        self.add_item(self.introduced_by)
+
+        self.favorite_animal = nextcord.ui.TextInput(
+            label="Favorite Animal",
+            placeholder="Cat, Dog, Shark, Duck...",
+            required=False,
+        )
+        self.add_item(self.favorite_animal)
+
+        self.favorite_hobby = nextcord.ui.TextInput(
+            label="Favorite Hobby",
+            placeholder="What do you enjoy doing?",
+            required=False,
+        )
+        self.add_item(self.favorite_hobby)
+
+        self.fun_fact = nextcord.ui.TextInput(
+            label="Fun Fact About You",
+            placeholder="Share something interesting about yourself!",
+            required=False,
+        )
+        self.add_item(self.fun_fact)
+
+    async def callback(self, interaction: nextcord.Interaction):
+        # Dynamically generate a summary of the user's responses
+        responses = []
+
+        if self.name.value:
+            responses.append(f"**Name**: {self.name.value}")
+        if self.pronouns.value:
+            responses.append(f"**Pronouns**: {self.pronouns.value}")
+        if self.age_choice.value:
+            responses.append(f"**Age Choice**: {self.age_choice.value}")
+        if self.favorite_color.value:
+            responses.append(f"**Favorite Color**: {self.favorite_color.value}")
+        if self.introduced_by.value:
+            responses.append(f"**Introduced By**: {self.introduced_by.value}")
+        if self.favorite_animal.value:
+            responses.append(f"**Favorite Animal**: {self.favorite_animal.value}")
+        if self.favorite_hobby.value:
+            responses.append(f"**Favorite Hobby**: {self.favorite_hobby.value}")
+        if self.fun_fact.value:
+            responses.append(f"**Fun Fact**: {self.fun_fact.value}")
+
+        # Combine all responses into a single message
+        if responses:
+            response_message = "\n".join(responses)
+            await interaction.response.send_message(
+                f"Thank you for introducing yourself!\n{response_message}",
+                ephemeral=True
+            )
+        else:
+            await interaction.response.send_message(
+                "You did not provide any information to share!",
+                ephemeral=True
+            )
+
 
 @bot.event
 async def on_ready():
@@ -288,6 +394,12 @@ async def duck(interaction: Interaction):
     url = response["url"]
     await interaction.response.send_message(url)
 
+@bot.slash_command(name="presentation", description="Introduce yourself to the server!", guild_ids=testid)
+async def introduce(interaction: nextcord.Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user.name)
+    
+    await interaction.response.send_modal(PresentationModal())
 
 # GAMES
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
