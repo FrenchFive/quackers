@@ -274,15 +274,17 @@ class PresentationModal(nextcord.ui.Modal):
             description="Here's their introduction!",
             color=nextcord.Color.random(),
         )
-        embed.set_thumbnail(url=self.img)  # Set the image
 
         # Send the combined message to the target channel
         if responses:
             response_message = "\n".join(responses)
-            embed.add_field(name="📝 Presentation", value=response_message, inline=False)
+            embed.add_field(name="Presentation", value=response_message, inline=False)
             target_channel = interaction.guild.get_channel(self.target_channel)
             if target_channel:
-                await target_channel.send(embed=embed)
+                with open(self.img, 'rb') as img_file:
+                    file = nextcord.File(img_file, filename="thumbnail.png")
+                    embed.set_thumbnail(url=f"attachment://thumbnail.png")
+                    await target_channel.send(embed=embed, file=file)
             else:
                 print(f"Error: Channel {self.target_channel} not found.")
 
