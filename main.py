@@ -202,7 +202,7 @@ class Betting(nextcord.ui.Modal):
                 await interaction.send(f'{interaction.user.mention} do not have enough QuackCoins', ephemeral=True)
 
 class PresentationModal(nextcord.ui.Modal):
-    def __init__(self, target_channel, user):
+    def __init__(self, target_channel, user, imgpath):
         super().__init__(
             title="PRESENTATIONS",
             timeout=None,
@@ -210,6 +210,7 @@ class PresentationModal(nextcord.ui.Modal):
 
         self.target_channel = target_channel  # Save the target channel ID
         self.user = user
+        self.img = imgpath
 
         # Questions
         self.pronouns = nextcord.ui.TextInput(
@@ -268,12 +269,20 @@ class PresentationModal(nextcord.ui.Modal):
             ephemeral=True,
         )
 
+        embed = nextcord.Embed(
+            title=f"🎉 Welcome {self.user} to the Server! 🎉",
+            description="Here's their introduction!",
+            color=nextcord.Color.random(),
+        )
+        embed.set_thumbnail(url=self.img)  # Set the image
+
         # Send the combined message to the target channel
         if responses:
             response_message = "\n".join(responses)
+            embed.add_field(name="📝 Presentation", value=response_message, inline=False)
             target_channel = interaction.guild.get_channel(self.target_channel)
             if target_channel:
-                await target_channel.send(f"**New Introduction**\n{response_message}")
+                await target_channel.send(embed=embed)
             else:
                 print(f"Error: Channel {self.target_channel} not found.")
 
@@ -371,7 +380,10 @@ async def introduce(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
     
-    await interaction.response.send_modal(PresentationModal(target_channel=testchannel, user=interaction.user.name))
+    url = interaction.user.display_avatar.url
+    imgpath = qdraw.avatar(url)
+    
+    await interaction.response.send_modal(PresentationModal(target_channel=testchannel, user=interaction.user.name, imgpath=imgpath))
 
 
 # GAMES
