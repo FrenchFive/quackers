@@ -381,8 +381,8 @@ async def introduce(interaction: nextcord.Interaction):
         qdb.add_user(interaction.user.name)
     
     url = interaction.user.display_avatar.url
-    imgpath = qdraw.avatar(url)
-    
+    imgpath = qdraw.avatar_download(url)
+
     await interaction.response.send_modal(PresentationModal(target_channel=testchannel, user=interaction.user.name, imgpath=imgpath))
 
 
