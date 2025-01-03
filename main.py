@@ -222,6 +222,7 @@ class PresentationModal(nextcord.ui.Modal):
         )
         self.add_item(self.pronouns)
 
+        '''
         # Dropdown for Age Choice
         self.age_choice = nextcord.ui.Select(
             placeholder="Select your age group...",
@@ -236,6 +237,7 @@ class PresentationModal(nextcord.ui.Modal):
         )
         self.age_choice.callback = self.age_choice_callback
         self.add_item(self.age_choice)
+        '''
 
         self.favorite_color = nextcord.ui.TextInput(
             label="Favorite Color",
@@ -280,8 +282,10 @@ class PresentationModal(nextcord.ui.Modal):
             responses.append(f"**Name**: {self.name.value}")
         if self.pronouns.value:
             responses.append(f"**Pronouns**: {self.pronouns.value}")
+        '''
         if self.age_choice.value:
             responses.append(f"**Age Choice**: {self.age_choice.value}")
+        '''
         if self.favorite_color.value:
             responses.append(f"**Favorite Color**: {self.favorite_color.value}")
         if self.introduced_by.value:
