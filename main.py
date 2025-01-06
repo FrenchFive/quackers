@@ -591,6 +591,53 @@ async def admin_logs(interaction: Interaction):
     except FileNotFoundError:
         await interaction.response.send_message("Error: qlogs.log file not found.")
 
+@bot.slash_command(name="admin-scan", description="Scans the server and retrieves details about channels and roles.", guild_ids=testid)
+async def admin_scan(interaction: Interaction):
+    guild = interaction.guild  # Get the guild (server) where the command was invoked
+
+    if not guild:
+        await interaction.response.send_message("This command can only be used in a server.", ephemeral=True)
+        return
+
+    # Get the server ID and name
+    server_id = guild.id
+    server_name = guild.name
+
+    # Get all voice channels
+    voice_channels = {channel.id: channel.name for channel in guild.voice_channels}
+
+    # Get all text channels
+    text_channels = {channel.id: channel.name for channel in guild.text_channels}
+
+    # Get all roles
+    roles = {role.id: role.name for role in guild.roles}
+
+    # Construct a response message
+    response_message = (
+        f"**Server Name**: {server_name}\n"
+        f"**Server ID**: {server_id}\n"
+        f"**Voice Channels**: {len(voice_channels)}\n"
+        f"**Text Channels**: {len(text_channels)}\n"
+        f"**Roles**: {len(roles)}\n"
+    )
+
+    # Prepare detailed information as a dictionary to log or store
+    detailed_info = {
+        "Server Name": server_name,
+        "Server ID": server_id,
+        "Voice Channels": voice_channels,
+        "Text Channels": text_channels,
+        "Roles": roles
+    }
+
+    # Optionally log or store the detailed info here (e.g., write to a file or database)
+    
+    # Send a summary to the user
+    await interaction.response.send_message(
+        f"Scan Complete:\n\n{response_message}",
+        ephemeral=True
+    )
+
 
 # EVENTS
 @bot.event

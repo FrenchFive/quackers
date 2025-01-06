@@ -172,16 +172,16 @@ Enjoy using **Quackers**! 🦆
   - [ ] Rewrite the API python integration
   - [ ] Clean up what information is sent to OpenAi 
 - [x] Welcome Messages
-  - [ ] Generate the welcome phrase from ChatGpt or make a list
+  - [ ] Generate a list of Welcome Messages with placeholder for the name 
   - [x] Tag the newbie
   - [x] Add Quackers emotes randomly (only positive emotes)
     - [ ] Add Quack Server custom emotes
     - [ ] Add more emotes/emojis
   - [ ] Send a message to users when they join the server 
-  - [ ] Making a personnalized message to user
   - [ ] Presentation 
-    - [ ] Make a presentation using Discord Commands
-    - [ ] Making a quick questionnaire to answer by user that would generate a message for presentation 
+    - [x] Make a presentation using Discord Commands
+    - [x] Making a quick questionnaire to answer by user that would generate a message for presentation 
+    - [ ] Use AI Gen to spice up the answers in Quackers style
 - [ ] Making a Discussion as logs on Github with the updates to keep track of the progress done
 - [ ] Make an UI for Admin to change some parameters of the BOT
 - [ ] Making a database for server
