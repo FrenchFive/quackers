@@ -647,6 +647,16 @@ async def admin_scan(interaction: Interaction):
         }
     }
 
+    '''
+    # Send a summary to the user
+    await interaction.response.send_message(
+        f"Scan Complete:\n\n{response_message} \n \n {detailed_info}"
+    )
+    '''
+
+    # Send a summary to the user
+    await interaction.response.defer(ephemeral=True)  # Defer the response to allow further actions
+
     class ConfirmationView(nextcord.ui.View):
         def __init__(self):
             super().__init__()
@@ -678,7 +688,7 @@ async def admin_scan(interaction: Interaction):
         answers = {}
         for question in questions:
             modal = SingleQuestionModal(question)
-            await interaction.response.send_modal(modal)
+            await interaction.followup.send_modal(modal)  # Use followup for additional modals
             await modal.wait()
             answers[question["label"]] = modal.response
         return answers
