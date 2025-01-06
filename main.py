@@ -613,7 +613,7 @@ async def admin_scan(interaction: Interaction):
     roles = {role.id: role.name for role in guild.roles}
 
     # Get all members and their join dates
-    members = {member.id: member.joined_at.strftime('%Y-%m-%d %H:%M:%S') if member.joined_at else "Unknown" for member in guild.members}
+    members = {member.name: member.joined_at.strftime('%Y-%m-%d %H:%M') if member.joined_at else "Unknown" for member in guild.members}
 
     # Construct a response message
     response_message = (
