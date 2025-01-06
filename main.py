@@ -646,11 +646,6 @@ async def admin_scan(interaction: Interaction):
             "Details": members
         }
     }
-  
-    # Send a summary to the user
-    await interaction.response.send_message(
-        f"Scan Complete:\n\n{response_message} \n \n {detailed_info}"
-    )
 
     class ConfirmationView(nextcord.ui.View):
         def __init__(self):
