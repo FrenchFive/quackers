@@ -50,6 +50,7 @@ infochannel = 945688921038262313
 testchannel = 1189135263390236723
 #role name
 role_newbies = "newbies"
+role_ADMIN = "ADMIN"
 
 def context():
     global scrpt_dir
@@ -378,7 +379,7 @@ async def duck(interaction: Interaction):
     await interaction.response.send_message(url)
 
 
-@bot.slash_command(name="presentation", description="Introduce yourself to the server!", guild_ids=testid)
+@bot.slash_command(name="presentation", description="Introduce yourself to the server!", guild_ids=serverid)
 async def introduce(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
