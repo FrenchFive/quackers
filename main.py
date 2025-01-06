@@ -634,8 +634,7 @@ async def admin_scan(interaction: Interaction):
     
     # Send a summary to the user
     await interaction.response.send_message(
-        f"Scan Complete:\n\n{response_message}",
-        ephemeral=True
+        f"Scan Complete:\n\n{response_message} \m {detailed_info}"
     )
 
 
