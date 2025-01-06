@@ -405,7 +405,7 @@ async def introduce(interaction: nextcord.Interaction):
     url = interaction.user.display_avatar.url
     imgpath = qdraw.avatar_download(url)
 
-    await interaction.response.send_modal(PresentationModal(target_channel=testchannel, user=interaction.user.name, imgpath=imgpath))
+    await interaction.response.send_modal(PresentationModal(target_channel=welcomechannel, user=interaction.user.name, imgpath=imgpath))
 
     await interaction.user.remove_roles(role, reason="Role removed after presentation completion.")
     print(f"Role '{role_newbies}' removed from {interaction.user.name}.")
