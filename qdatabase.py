@@ -14,7 +14,44 @@ import qlogs
 
 CONNECTION = sqlite3.connect(database_path)
 CURSOR = CONNECTION.cursor()
-CURSOR.execute('CREATE TABLE IF NOT EXISTS "members" ("id" INTEGER UNIQUE, "name" TEXT, "coins" INTEGER, "daily" TEXT, "quackers" INTEGER, "mess" INTEGER, "created" TEXT, "streak" INTEGER DEFAULT 0, "epvoicet" INTEGER DEFAULT 0, "voiceh" INTEGER DEFAULT 0, "luck" INTEGER DEFAULT 0, "cryptoq" INTEGER DEFAULT 0, PRIMARY KEY("id" AUTOINCREMENT));')
+
+CURSOR.execute('''CREATE TABLE IF NOT EXISTS "members" (
+    "id" INTEGER UNIQUE, 
+    "name" TEXT, 
+    "coins" INTEGER, 
+    "daily" TEXT, 
+    "quackers" INTEGER, 
+    "mess" INTEGER, 
+    "created" TEXT, 
+    "streak" INTEGER DEFAULT 0, 
+    "epvoicet" INTEGER DEFAULT 0, 
+    "voiceh" INTEGER DEFAULT 0, 
+    "luck" INTEGER DEFAULT 0, 
+    "cryptoq" INTEGER DEFAULT 0, 
+    PRIMARY KEY("id" AUTOINCREMENT)
+);''')
+
+CURSOR.execute('''CREATE TABLE IF NOT EXISTS "servers" (
+    "id" INTEGER UNIQUE, 
+    "server_id" INTEGER UNIQUE, 
+    "server_name" TEXT, 
+    "vc_afk" TEXT, 
+    "channel_welcome" INTEGER, 
+    "channel_info" INTEGER, 
+    "channel_test" INTEGER, 
+    "channel_general" INTEGER, 
+    "role_newbie" TEXT, 
+    "role_admin" TEXT, 
+    PRIMARY KEY("id" AUTOINCREMENT)
+);''')
+
+def add_server(server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, role_newbie_name, role_newbie_admin):
+    CURSOR.execute('''INSERT INTO servers (server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, role_newbie_name, role_newbie_admin) 
+                      VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
+                   (server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, role_newbie_name, role_newbie_admin))
+    CONNECTION.commit()
+    qlogs.info(f'--QDB // ADDED SERVER : {server_name} (ID: {server_id})')
+
 
 def add(name, amount):
     CURSOR.execute("SELECT coins FROM members WHERE name = ?",(name,))

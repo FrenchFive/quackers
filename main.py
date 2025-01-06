@@ -612,6 +612,9 @@ async def admin_scan(interaction: Interaction):
     # Get all roles
     roles = {role.id: role.name for role in guild.roles}
 
+    # Get all members and their join dates
+    members = {member.id: member.joined_at.strftime('%Y-%m-%d %H:%M:%S') if member.joined_at else "Unknown" for member in guild.members}
+
     # Construct a response message
     response_message = (
         f"**Server Name**: {server_name}\n"
@@ -619,22 +622,36 @@ async def admin_scan(interaction: Interaction):
         f"**Voice Channels**: {len(voice_channels)}\n"
         f"**Text Channels**: {len(text_channels)}\n"
         f"**Roles**: {len(roles)}\n"
+        f"**Members**: {len(members)}\n"
     )
 
     # Prepare detailed information as a dictionary to log or store
     detailed_info = {
         "Server Name": server_name,
         "Server ID": server_id,
-        "Voice Channels": voice_channels,
-        "Text Channels": text_channels,
-        "Roles": roles
+        "Voice Channels": {
+            "Count": len(voice_channels),
+            "Details": voice_channels
+        },
+        "Text Channels": {
+            "Count": len(text_channels),
+            "Details": text_channels
+        },
+        "Roles": {
+            "Count": len(roles),
+            "Details": roles
+        },
+        "Members": {
+            "Count": len(members),
+            "Details": members
+        }
     }
 
     # Optionally log or store the detailed info here (e.g., write to a file or database)
     
     # Send a summary to the user
     await interaction.response.send_message(
-        f"Scan Complete:\n\n{response_message} \m {detailed_info}"
+        f"Scan Complete:\n\n{response_message} \n \n {detailed_info}"
     )
 
 
