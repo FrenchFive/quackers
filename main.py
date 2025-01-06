@@ -646,13 +646,68 @@ async def admin_scan(interaction: Interaction):
             "Details": members
         }
     }
-
-    # Optionally log or store the detailed info here (e.g., write to a file or database)
-    
+  
     # Send a summary to the user
     await interaction.response.send_message(
         f"Scan Complete:\n\n{response_message} \n \n {detailed_info}"
     )
+
+    class ConfirmationView(nextcord.ui.View):
+        def __init__(self):
+            super().__init__()
+            self.value = None
+
+        @nextcord.ui.button(label="YES", style=nextcord.ButtonStyle.green)
+        async def yes_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+            self.value = True
+            self.stop()
+
+        @nextcord.ui.button(label="NO", style=nextcord.ButtonStyle.red)
+        async def no_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+            self.value = False
+            self.stop()
+
+    class SingleQuestionModal(nextcord.ui.Modal):
+        def __init__(self, question):
+            super().__init__(title="Update Server Information")
+            self.question = question
+            self.response = None
+
+            self.add_item(nextcord.ui.TextInput(label=question["label"], placeholder=question["placeholder"], custom_id="response"))
+
+        async def callback(self, interaction: nextcord.Interaction):
+            self.response = self.children[0].value
+            self.stop()
+
+    async def ask_questions(interaction, questions):
+        answers = {}
+        for question in questions:
+            modal = SingleQuestionModal(question)
+            await interaction.response.send_modal(modal)
+            await modal.wait()
+            answers[question["label"]] = modal.response
+        return answers
+
+
+    questions = [
+        {"label": "AFK Channel Name", "placeholder": "Enter the AFK channel name"},
+        {"label": "Welcome Channel Name", "placeholder": "Enter the welcome channel name"},
+        {"label": "Info Channel Name", "placeholder": "Enter the info channel name"},
+        {"label": "Test Channel Name", "placeholder": "Enter the test channel name"},
+        {"label": "General Channel Name", "placeholder": "Enter the general channel name"},
+        {"label": "Newbie Role Name", "placeholder": "Enter the newbie role name"},
+        {"label": "Admin Role Name", "placeholder": "Enter the admin role name"}
+    ]
+
+    view = ConfirmationView()
+    await interaction.response.send_message("Would you like to update Quackers info?", view=view, ephemeral=True)
+    await view.wait()
+
+    if view.value:
+        answers = await ask_questions(interaction, questions)
+        summary_message = "\n".join([f"**{key}**: {value}" for key, value in answers.items()])
+        await interaction.followup.send_message(f"Here are the updated details:\n{summary_message}", ephemeral=True)
+
 
 
 # EVENTS
