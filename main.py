@@ -54,6 +54,7 @@ role_ADMIN = "ADMIN"
 
 questions = [
     {"q": "Select an AFK Voice Channel", "type": "audio"},
+    {"q": "Select a Welcome Channel", "type": "text"},
     {"q": "Select a Newbie Role", "type": "role"},
 ]
 
@@ -309,7 +310,7 @@ class DynamicDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label=name, value=str(id_)) for id_, name in items.items()
         ]
         super().__init__(
-            placeholder="Select an option...",
+            placeholder=question["q"],  # Set placeholder to the question
             min_values=1,
             max_values=1,
             options=options,
@@ -330,6 +331,7 @@ class DynamicDropdownView(nextcord.ui.View):
         self.guild = guild
         self.answers = {}
 
+        # Add dropdowns with their questions
         for question in questions:
             if question["type"] == "audio":
                 items = {channel.id: channel.name for channel in guild.voice_channels}
@@ -342,10 +344,13 @@ class DynamicDropdownView(nextcord.ui.View):
 
             if items:
                 dropdown = DynamicDropdown(question, items)
+                # Add text for the question as a static label (via message content)
                 self.add_item(dropdown)
 
-    @nextcord.ui.button(label="Submit", style=nextcord.ButtonStyle.primary)
-    async def submit_button(self, button: nextcord.ui.Button, interaction: Interaction):
+        # Add the submit button at the end
+        self.add_item(nextcord.ui.Button(label="Submit", style=nextcord.ButtonStyle.primary, custom_id="submit_button"))
+
+    async def submit_button_callback(self, interaction: Interaction):
         # Collect all selected values
         for child in self.children:
             if isinstance(child, DynamicDropdown) and child.selected_value:
@@ -359,7 +364,6 @@ class DynamicDropdownView(nextcord.ui.View):
         await interaction.response.send_message(
             f"Here are your selections:\n\n{answer_text}",
         )
-
 
 #QUACKER IS READY 
 @bot.event
