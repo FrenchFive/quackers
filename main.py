@@ -696,13 +696,13 @@ async def admin_scan(interaction: Interaction):
     ]
 
     view = ConfirmationView()
-    await interaction.followup.send_message("Would you like to update Quackers info?", view=view, ephemeral=True)
+    await interaction.followup.send_message(content="Would you like to update Quackers info?", view=view, ephemeral=True)
     await view.wait()
 
     if view.value:
         answers = await ask_questions(interaction, questions)
         summary_message = "\n".join([f"**{key}**: {value}" for key, value in answers.items()])
-        await interaction.followup.send_message(f"Here are the updated details:\n{summary_message}", ephemeral=True)
+        await interaction.followup.send_message(content=f"Here are the updated details:\n{summary_message}", ephemeral=True)
 
 
 # EVENTS
