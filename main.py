@@ -318,10 +318,12 @@ class DynamicDropdown(nextcord.ui.Select):
         self.selected_value = self.values[0]
         await interaction.response.defer()  # Acknowledge the interaction
 
+
 class DynamicDropdownView(nextcord.ui.View):
-    def __init__(self, questions, guild):
+    def __init__(self, questions, guild, max_items=24):
         super().__init__()
         self.answers = {}
+        self.added_views = []
 
         for question in questions:
             if question["type"] == "audio":
@@ -335,7 +337,14 @@ class DynamicDropdownView(nextcord.ui.View):
 
             if items:
                 dropdown = DynamicDropdown(question, items)
-                self.add_item(dropdown)
+                if len(self.children) < max_items:  # Check limit
+                    self.add_item(dropdown)
+                else:
+                    # If limit exceeded, store the dropdown for another view
+                    self.added_views.append(dropdown)
+
+        # Add submit button to the view
+        self.add_item(nextcord.ui.Button(label="Submit", style=nextcord.ButtonStyle.primary))
 
     @nextcord.ui.button(label="Submit", style=nextcord.ButtonStyle.primary)
     async def submit_button(self, button: nextcord.ui.Button, interaction: Interaction):
@@ -351,7 +360,7 @@ class DynamicDropdownView(nextcord.ui.View):
         )
 
         await interaction.response.send_message(
-            f"Here are your selections:\n\n{answer_text}",
+            f"Here are your selections:\n\n{answer_text}", ephemeral=True
         )
 
 
