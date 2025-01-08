@@ -293,6 +293,7 @@ class PresentationModal(nextcord.ui.Modal):
 # Dropdown menu class
 class ChannelDropdown(nextcord.ui.Select):
     def __init__(self, channels):
+        self.selected_channel_id = None
         options = [
             nextcord.SelectOption(label=channel.name, value=str(channel.id)) for channel in channels
         ]
@@ -304,22 +305,21 @@ class ChannelDropdown(nextcord.ui.Select):
         )
 
     async def callback(self, interaction: Interaction):
-        # Store the selected channel ID in the interaction
-        interaction.message.channel_id = self.values[0]
-        await interaction.response.defer()  # Defer the response for the dropdown
+        # Store the selected channel ID
+        self.selected_channel_id = self.values[0]
 
 # View with dropdown and button
 class DropdownWithButton(nextcord.ui.View):
     def __init__(self, channels):
         super().__init__()
-        self.add_item(ChannelDropdown(channels))
+        self.dropdown = ChannelDropdown(channels)
+        self.add_item(self.dropdown)
 
     @nextcord.ui.button(label="Submit", style=nextcord.ButtonStyle.primary)
     async def submit_button(self, button: nextcord.ui.Button, interaction: Interaction):
-        # Retrieve the selected channel ID from the interaction
-        dropdown = self.children[0]  # Assuming the dropdown is the first item in the view
-        if isinstance(dropdown, ChannelDropdown) and dropdown.values:
-            selected_channel_id = dropdown.values[0]
+        # Retrieve the selected channel ID from the dropdown
+        selected_channel_id = self.dropdown.selected_channel_id
+        if selected_channel_id:
             selected_channel = interaction.guild.get_channel(int(selected_channel_id))
             if selected_channel:
                 await interaction.response.send_message(
