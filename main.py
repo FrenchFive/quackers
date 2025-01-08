@@ -341,14 +341,13 @@ class DynamicDropdownView(nextcord.ui.View):
             if isinstance(child, DynamicDropdown) and child.selected_value:
                 self.answers[child.question["q"]] = child.selected_value
 
-        # Format the answers
+        # Display the answers in a simple format
         answer_text = "\n".join(
-            f"**{question}**: {interaction.guild.get_channel_or_role(int(value)).name}"
-            for question, value in self.answers.items()
+            f"**{question}**: {value}" for question, value in self.answers.items()
         )
 
         await interaction.response.send_message(
-            f"Here are your selections:\n\n{answer_text}", ephemeral=True
+            f"Here are your selections:\n\n{answer_text}",
         )
 
 
