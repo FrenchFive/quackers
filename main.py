@@ -54,10 +54,6 @@ role_ADMIN = "ADMIN"
 
 questions = [
     {"q": "Select an AFK Voice Channel", "type": "audio"},
-    {"q": "Select a Welcome Channel", "type": "text"},
-    {"q": "Select an Info Channel", "type": "text"},
-    {"q": "Select a Newbie Role", "type": "role"},
-    {"q": "Select an Admin Role", "type": "role"},
 ]
 
 def context():
@@ -320,10 +316,9 @@ class DynamicDropdown(nextcord.ui.Select):
 
 
 class DynamicDropdownView(nextcord.ui.View):
-    def __init__(self, questions, guild, max_items=24):
+    def __init__(self, questions, guild):
         super().__init__()
         self.answers = {}
-        self.added_views = []
 
         for question in questions:
             if question["type"] == "audio":
@@ -337,14 +332,7 @@ class DynamicDropdownView(nextcord.ui.View):
 
             if items:
                 dropdown = DynamicDropdown(question, items)
-                if len(self.children) < max_items:  # Check limit
-                    self.add_item(dropdown)
-                else:
-                    # If limit exceeded, store the dropdown for another view
-                    self.added_views.append(dropdown)
-
-        # Add submit button to the view
-        self.add_item(nextcord.ui.Button(label="Submit", style=nextcord.ButtonStyle.primary))
+                self.add_item(dropdown)
 
     @nextcord.ui.button(label="Submit", style=nextcord.ButtonStyle.primary)
     async def submit_button(self, button: nextcord.ui.Button, interaction: Interaction):
