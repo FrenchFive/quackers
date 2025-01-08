@@ -54,7 +54,6 @@ role_ADMIN = "ADMIN"
 
 questions = [
     {"q": "Select an AFK Voice Channel", "type": "audio"},
-    {"q": "Select a Welcome Channel", "type": "text"},
 ]
 
 def context():
@@ -295,7 +294,6 @@ class PresentationModal(nextcord.ui.Modal):
             else:
                 print(f"Error: Channel {self.target_channel} not found.")
 
-
 class DynamicDropdown(nextcord.ui.Select):
     def __init__(self, question, items):
         options = [
@@ -319,6 +317,8 @@ class DynamicDropdown(nextcord.ui.Select):
 class DynamicDropdownView(nextcord.ui.View):
     def __init__(self, questions, guild):
         super().__init__()
+        self.questions = questions
+        self.guild = guild
         self.answers = {}
 
         for question in questions:
@@ -332,13 +332,8 @@ class DynamicDropdownView(nextcord.ui.View):
                 items = {}
 
             if items:
-                # Add a label for the question above the dropdown
-                self.add_item(nextcord.ui.Label(question["q"]))
                 dropdown = DynamicDropdown(question, items)
                 self.add_item(dropdown)
-
-        # Add submit button at the end
-        self.add_item(nextcord.ui.Button(label="UPDATE", style=nextcord.ButtonStyle.primary, custom_id="submit_button"))
 
     @nextcord.ui.button(label="Submit", style=nextcord.ButtonStyle.primary)
     async def submit_button(self, button: nextcord.ui.Button, interaction: Interaction):
@@ -347,7 +342,7 @@ class DynamicDropdownView(nextcord.ui.View):
             if isinstance(child, DynamicDropdown) and child.selected_value:
                 self.answers[child.question["q"]] = child.selected_value
 
-        # Display the answers in a simple format
+        # Format the answers for the message
         answer_text = "\n".join(
             f"**{question}**: {value}" for question, value in self.answers.items()
         )
@@ -714,10 +709,15 @@ async def admin_scan(interaction: Interaction):
         }
     }
 
-    # Create the view with dropdowns based on questions
+    # Prepare the text message with questions
+    question_text = "\n".join(f"**{q['q']}**" for q in questions)
+
+    # Create the view with dropdowns
     view = DynamicDropdownView(questions, guild)
     await interaction.response.send_message(
-        "Answer the following questions by selecting from the dropdowns:", view=view,
+        f"Answer the following questions:\n\n{question_text}",
+        view=view,
+        ephemeral=True
     )
 
 
