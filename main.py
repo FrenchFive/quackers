@@ -298,50 +298,62 @@ class PresentationModal(nextcord.ui.Modal):
             else:
                 print(f"Error: Channel {self.target_channel} not found.")
 
-# Dropdown menu class
-class ChannelDropdown(nextcord.ui.Select):
-    def __init__(self, channels):
-        self.selected_channel_id = None
+
+class DynamicDropdown(nextcord.ui.Select):
+    def __init__(self, question, items):
         options = [
-            nextcord.SelectOption(label=channel.name, value=str(channel.id)) for channel in channels
+            nextcord.SelectOption(label=name, value=str(id_)) for id_, name in items.items()
         ]
         super().__init__(
-            placeholder="Select a channel...",
+            placeholder=question["q"],
             min_values=1,
             max_values=1,
             options=options,
         )
+        self.question = question
+        self.selected_value = None
 
     async def callback(self, interaction: Interaction):
-        # Store the selected channel ID
-        self.selected_channel_id = self.values[0]
+        # Store the selected value
+        self.selected_value = self.values[0]
+        await interaction.response.defer()  # Acknowledge the interaction
 
-# View with dropdown and button
-class DropdownWithButton(nextcord.ui.View):
-    def __init__(self, channels):
+class DynamicDropdownView(nextcord.ui.View):
+    def __init__(self, questions, guild):
         super().__init__()
-        self.dropdown = ChannelDropdown(channels)
-        self.add_item(self.dropdown)
+        self.answers = {}
+
+        for question in questions:
+            if question["type"] == "audio":
+                items = {channel.id: channel.name for channel in guild.voice_channels}
+            elif question["type"] == "text":
+                items = {channel.id: channel.name for channel in guild.text_channels}
+            elif question["type"] == "role":
+                items = {role.id: role.name for role in guild.roles}
+            else:
+                items = {}
+
+            if items:
+                dropdown = DynamicDropdown(question, items)
+                self.add_item(dropdown)
 
     @nextcord.ui.button(label="Submit", style=nextcord.ButtonStyle.primary)
     async def submit_button(self, button: nextcord.ui.Button, interaction: Interaction):
-        # Retrieve the selected channel ID from the dropdown
-        selected_channel_id = self.dropdown.selected_channel_id
-        if selected_channel_id:
-            selected_channel = interaction.guild.get_channel(int(selected_channel_id))
-            if selected_channel:
-                await interaction.response.send_message(
-                    f"You selected: {selected_channel.name} (ID: {selected_channel.id})",
-                    ephemeral=True,
-                )
-            else:
-                await interaction.response.send_message(
-                    "Invalid channel selected.", ephemeral=True
-                )
-        else:
-            await interaction.response.send_message(
-                "No channel was selected.", ephemeral=True
-            )
+        # Collect all selected values
+        for child in self.children:
+            if isinstance(child, DynamicDropdown) and child.selected_value:
+                self.answers[child.question["q"]] = child.selected_value
+
+        # Format the answers
+        answer_text = "\n".join(
+            f"**{question}**: {interaction.guild.get_channel_or_role(int(value)).name}"
+            for question, value in self.answers.items()
+        )
+
+        await interaction.response.send_message(
+            f"Here are your selections:\n\n{answer_text}",
+        )
+
 
 #QUACKER IS READY 
 @bot.event
@@ -700,13 +712,10 @@ async def admin_scan(interaction: Interaction):
         }
     }
 
-    # Get all text channels in the server
-    text_channels = guild.text_channels
-
-    # Send the message with the dropdown and button
-    view = DropdownWithButton(text_channels)
+    # Create the view with dropdowns based on questions
+    view = DynamicDropdownView(questions, guild)
     await interaction.response.send_message(
-        "Select a channel from the dropdown and click Submit:", view=view, ephemeral=True
+        "Answer the following questions by selecting from the dropdowns:", view=view,
     )
 
 
