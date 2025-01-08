@@ -54,6 +54,15 @@ role_ADMIN = "ADMIN"
 
 questions = [
     {"q": "Select an AFK Voice Channel", "type": "audio"},
+    {"q": "Select a Newbie Role", "type": "role"},
+]
+
+questionstemp = [
+    {"q": "Select an AFK Voice Channel", "type": "audio"},
+    {"q": "Select a Welcome Channel", "type": "text"},
+    {"q": "Select an Info Channel", "type": "text"},
+    {"q": "Select a Newbie Role", "type": "role"},
+    {"q": "Select an Admin Role", "type": "role"},
 ]
 
 def context():
@@ -717,7 +726,6 @@ async def admin_scan(interaction: Interaction):
     await interaction.response.send_message(
         f"Answer the following questions:\n\n{question_text}",
         view=view,
-        ephemeral=True
     )
 
 
