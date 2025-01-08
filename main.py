@@ -52,6 +52,13 @@ testchannel = 1189135263390236723
 role_newbies = "newbies"
 role_ADMIN = "ADMIN"
 
+# Define the list of questions
+questions = [
+    {"question": "Qui est le plus beau ?", "type": "membre"},
+    {"question": "Qui est le plus moche ?", "type": "membre"},
+    {"question": "Ou est le meilleur endroit ?", "type": "place"},
+]
+
 def context():
     global scrpt_dir
 
@@ -314,6 +321,67 @@ class UpdateInfoModal(nextcord.ui.Modal):
         # Handle the user's input
         reason = self.reason.value
         await interaction.response.send_message(f"Information update requested for the following reason: {reason}", ephemeral=True)
+
+class DynamicQuestionView(nextcord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.current_question_index = 0
+        self.answers = []
+
+    @nextcord.ui.button(label="Start Questions", style=nextcord.ButtonStyle.primary, custom_id="start_questions_button")
+    async def start_questions_button(self, button: nextcord.ui.Button, interaction: Interaction):
+        # Start with the first question
+        if self.current_question_index < len(questions):
+            await interaction.response.send_modal(
+                QuestionModal(
+                    questions[self.current_question_index]["question"],
+                    self.current_question_index,
+                    self.answers,
+                )
+            )
+        else:
+            await interaction.response.send_message("All questions have been answered!", ephemeral=True)
+
+class QuestionModal(nextcord.ui.Modal):
+    def __init__(self, question_text, question_index, answers):
+        super().__init__(title=f"Question {question_index + 1}")
+        self.question_index = question_index
+        self.answers = answers
+        self.question_text = question_text
+
+        self.answer_input = nextcord.ui.TextInput(
+            label=self.question_text,
+            placeholder="Your answer here...",
+            required=True,
+        )
+        self.add_item(self.answer_input)
+
+    async def callback(self, interaction: Interaction):
+        # Store the answer
+        self.answers.append({"question": self.question_text, "answer": self.answer_input.value})
+
+        # Check if there are more questions
+        if self.question_index + 1 < len(questions):
+            # Show the next question
+            await interaction.response.send_modal(
+                QuestionModal(
+                    questions[self.question_index + 1]["question"],
+                    self.question_index + 1,
+                    self.answers,
+                )
+            )
+        else:
+            # All questions are answered
+            await interaction.response.send_message(
+                "Thank you! Here are all your answers:",
+                ephemeral=True,
+            )
+
+            # Format and send all answers
+            answers_text = "\n".join(
+                [f"**{q['question']}**: {q['answer']}" for q in self.answers]
+            )
+            await interaction.followup.send(answers_text)
 
 
 #QUACKER IS READY 
@@ -675,6 +743,13 @@ async def admin_scan(interaction: Interaction):
 
     await interaction.response.send_message(response_message, view=UpdateInfoView(), ephemeral=True)
 
+# Add a command to trigger the question process
+@bot.slash_command(name="start-questions", description="Start answering dynamic questions", guild_ids=testid)
+async def start_questions(interaction: Interaction):
+    view = DynamicQuestionView()
+    await interaction.response.send_message(
+        "Click the button to start answering questions!", view=view, ephemeral=True
+    )
 
 # EVENTS
 @bot.event
