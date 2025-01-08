@@ -592,6 +592,7 @@ async def admin_logs(interaction: Interaction):
         await interaction.response.send_message("Error: qlogs.log file not found.")
 
 @bot.slash_command(name="admin-scan", description="Scans the server and retrieves details about channels and roles.", guild_ids=testid)
+@bot.slash_command(name="admin-scan", description="Scans the server and retrieves details about channels and roles.", guild_ids=testid)
 async def admin_scan(interaction: Interaction):
     guild = interaction.guild  # Get the guild (server) where the command was invoked
 
@@ -647,15 +648,7 @@ async def admin_scan(interaction: Interaction):
         }
     }
 
-    '''
-    # Send a summary to the user
-    await interaction.response.send_message(
-        f"Scan Complete:\n\n{response_message} \n \n {detailed_info}"
-    )
-    '''
-
-    # Send a summary to the user
-    await interaction.response.defer(ephemeral=True)  # Defer the response to allow further actions
+    await interaction.response.defer(ephemeral=True)  # Defer the initial response
 
     class ConfirmationView(nextcord.ui.View):
         def __init__(self):
@@ -693,7 +686,6 @@ async def admin_scan(interaction: Interaction):
             answers[question["label"]] = modal.response
         return answers
 
-
     questions = [
         {"label": "AFK Channel Name", "placeholder": "Enter the AFK channel name"},
         {"label": "Welcome Channel Name", "placeholder": "Enter the welcome channel name"},
@@ -705,14 +697,13 @@ async def admin_scan(interaction: Interaction):
     ]
 
     view = ConfirmationView()
-    await interaction.response.send_message("Would you like to update Quackers info?", view=view, ephemeral=True)
+    await interaction.followup.send_message("Would you like to update Quackers info?", view=view, ephemeral=True)
     await view.wait()
 
     if view.value:
         answers = await ask_questions(interaction, questions)
         summary_message = "\n".join([f"**{key}**: {value}" for key, value in answers.items()])
         await interaction.followup.send_message(f"Here are the updated details:\n{summary_message}", ephemeral=True)
-
 
 
 # EVENTS
