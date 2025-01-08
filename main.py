@@ -290,7 +290,33 @@ class PresentationModal(nextcord.ui.Modal):
             else:
                 print(f"Error: Channel {self.target_channel} not found.")
 
+class UpdateInfoView(nextcord.ui.View):
+    def __init__(self):
+        super().__init__()
 
+    @nextcord.ui.button(label="Update Info", style=nextcord.ButtonStyle.primary, custom_id="update_info_button")
+    async def update_info_button(self, button: nextcord.ui.Button, interaction: Interaction):
+        # Show a modal when the button is clicked
+        await interaction.response.send_modal(UpdateInfoModal())
+
+class UpdateInfoModal(nextcord.ui.Modal):
+    def __init__(self):
+        super().__init__(title="Update Information")
+        self.reason = nextcord.ui.TextInput(
+            label="Reason for Update",
+            placeholder="Why do you want to update this info?",
+            required=True,
+            max_length=100
+        )
+        self.add_item(self.reason)
+
+    async def callback(self, interaction: Interaction):
+        # Handle the user's input
+        reason = self.reason.value
+        await interaction.response.send_message(f"Information update requested for the following reason: {reason}", ephemeral=True)
+
+
+#QUACKER IS READY 
 @bot.event
 async def on_ready():
     qlogs.info("QUACKERS IS ONLINE")
@@ -647,33 +673,7 @@ async def admin_scan(interaction: Interaction):
         }
     }
 
-    await interaction.response.defer(ephemeral=True)  # Defer the initial response
-
-    class UpdateView(nextcord.ui.View):
-        @nextcord.ui.button(label="UPDATE", style=nextcord.ButtonStyle.green)
-        async def update_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-            modal = UpdateModal()
-            await interaction.response.send_modal(modal)
-
-    class UpdateModal(nextcord.ui.Modal):
-        def __init__(self):
-            super().__init__(title="Update Server Information")
-            self.server_info = nextcord.ui.TextInput(
-                label="Server Info",
-                placeholder="Enter the server info details",
-                style=nextcord.TextInputStyle.paragraph,
-                required=True
-            )
-            self.add_item(self.server_info)
-
-        async def callback(self, interaction: nextcord.Interaction):
-            user_input = self.server_info.value
-            await interaction.followup.send_message(
-                content=f"Here is the updated server info provided:\n{user_input}", ephemeral=True
-            )
-
-    view = UpdateView()
-    await interaction.followup.send_message(content="Would you like to update the server info?", view=view, ephemeral=True)
+    await interaction.response.send_message(response_message, view=UpdateInfoView(), ephemeral=True)
 
 
 # EVENTS
