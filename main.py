@@ -54,6 +54,7 @@ role_ADMIN = "ADMIN"
 
 questions = [
     {"q": "Select an AFK Voice Channel", "type": "audio"},
+    {"q": "Select a Welcome Channel", "type": "text"},
 ]
 
 def context():
@@ -301,7 +302,7 @@ class DynamicDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label=name, value=str(id_)) for id_, name in items.items()
         ]
         super().__init__(
-            placeholder=question["q"],
+            placeholder="Select an option...",
             min_values=1,
             max_values=1,
             options=options,
@@ -331,8 +332,13 @@ class DynamicDropdownView(nextcord.ui.View):
                 items = {}
 
             if items:
+                # Add a label for the question above the dropdown
+                self.add_item(nextcord.ui.Label(question["q"]))
                 dropdown = DynamicDropdown(question, items)
                 self.add_item(dropdown)
+
+        # Add submit button at the end
+        self.add_item(nextcord.ui.Button(label="UPDATE", style=nextcord.ButtonStyle.primary, custom_id="submit_button"))
 
     @nextcord.ui.button(label="Submit", style=nextcord.ButtonStyle.primary)
     async def submit_button(self, button: nextcord.ui.Button, interaction: Interaction):
