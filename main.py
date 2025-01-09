@@ -321,6 +321,35 @@ class DynamicQuestionDropdown(nextcord.ui.Select):
         await interaction.response.defer()  # Acknowledge the interaction
 
 
+
+class DynamicQuestionDropdown(nextcord.ui.Select):
+    def __init__(self, question, items):
+        # Truncate items if there are too many
+        max_option= 25
+        if len(items) > max_option:
+            truncated_items = dict(list(items.items())[:max_option])
+            truncated_items["..."] = "Too many items, truncated"
+        else:
+            truncated_items = items
+
+        options = [
+            nextcord.SelectOption(label=name, value=str(id_)) for id_, name in truncated_items.items()
+        ]
+        super().__init__(
+            placeholder=question["q"],
+            min_values=1,
+            max_values=1,
+            options=options,
+        )
+        self.question = question
+        self.selected_value = None
+
+    async def callback(self, interaction: Interaction):
+        # Store the selected value
+        self.selected_value = self.values[0]
+        await interaction.response.defer()  # Acknowledge the interaction
+
+
 class DynamicQuestionView(nextcord.ui.View):
     def __init__(self, questions, guild, current_index=0, answers=None):
         super().__init__()
@@ -343,13 +372,21 @@ class DynamicQuestionView(nextcord.ui.View):
 
     def get_items(self, question):
         if question["type"] == "audio":
-            return {channel.id: channel.name for channel in self.guild.voice_channels}
+            items = {channel.id: channel.name for channel in self.guild.voice_channels}
         elif question["type"] == "text":
-            return {channel.id: channel.name for channel in self.guild.text_channels}
+            items = {channel.id: channel.name for channel in self.guild.text_channels}
         elif question["type"] == "role":
-            return {role.id: role.name for role in self.guild.roles}
+            items = {role.id: role.name for role in self.guild.roles}
         else:
-            return {}
+            items = {}
+
+        # Truncate items if necessary
+        max_option = 25
+        if len(items) > max_option:
+            truncated_items = dict(list(items.items())[:max_option])
+            truncated_items["..."] = "Too many items, truncated"
+            return truncated_items
+        return items
 
     async def next_button_callback(self, interaction: Interaction):
         # Collect the answer from the dropdown
@@ -358,7 +395,9 @@ class DynamicQuestionView(nextcord.ui.View):
                 # Save based on the "format"
                 question = self.questions[self.current_index]
                 if question["format"] == "name":
-                    self.answers[question["q"]] = self.get_items(question)[int(child.selected_value)]
+                    self.answers[question["q"]] = self.get_items(question).get(
+                        int(child.selected_value), "Unknown"
+                    )
                 elif question["format"] == "id":
                     self.answers[question["q"]] = child.selected_value
 
@@ -383,13 +422,13 @@ class DynamicQuestionView(nextcord.ui.View):
             qdb.add_or_update_server(
                 server_id=self.guild.id,
                 server_name=self.guild.name,
-                vc_afk=self.answers.get(self.questions[2]["q"], None),
-                channel_welcome_id=self.answers.get(self.questions[5]["q"], None),
-                channel_info_id=self.answers.get(self.questions[6]["q"], None),
-                channel_test_id=self.answers.get(self.questions[4]["q"], None),
-                channel_general_id=self.answers.get(self.questions[3]["q"], None),
-                role_newbie_name=self.answers.get(self.questions[1]["q"], None),
-                role_admin_name=self.answers.get(self.questions[0]["q"], None),
+                vc_afk=self.answers.get(self.questions[0]["q"], None),
+                channel_welcome_id=self.answers.get(self.questions[1]["q"], None),
+                channel_info_id=self.answers.get(self.questions[2]["q"], None),
+                channel_test_id=None,  # Optional field
+                channel_general_id=None,  # Optional field
+                role_newbie_name=self.answers.get(self.questions[3]["q"], None),
+                role_admin_name=self.answers.get(self.questions[4]["q"], None),
             )
 
             await interaction.response.edit_message(
