@@ -698,7 +698,7 @@ async def admin_logs(interaction: Interaction):
     except FileNotFoundError:
         await interaction.response.send_message("Error: qlogs.log file not found.")
 
-@bot.slash_command(name="admin-scan", description="Scans the server and retrieves details about channels and roles.", guild_ids=testid)
+@bot.slash_command(name="admin-scan", description="Scans the server and retrieves details about channels and roles.") #NO GUILD SPECIFIED SO ANY SERVER CAN BE ADDED
 async def admin_scan(interaction: Interaction):
     guild = interaction.guild  # Get the guild (server) where the command was invoked
 
