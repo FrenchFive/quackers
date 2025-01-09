@@ -53,11 +53,14 @@ role_newbies = "newbies"
 role_ADMIN = "ADMIN"
 
 questions = [
-    {"q": "Select an AFK Voice Channel", "type": "audio", "format": "name"},
-    {"q": "Select a Welcome Channel", "type": "text", "format": "id"},
-    {"q": "Select an Info Channel", "type": "text", "format": "id"},
-    {"q": "Select a Newbie Role", "type": "role", "format": "name"},
     {"q": "Select an Admin Role", "type": "role", "format": "name"},
+    {"q": "Select a Newbie Role", "type": "role", "format": "name"},
+    {"q": "Select an AFK Voice Channel", "type": "audio", "format": "name"},
+    {"q": "Select a General Channel", "type": "text", "format": "id"},
+    {"q": "Select a Debugging Channel", "type": "text", "format": "id"},
+    {"q": "Select a Welcome Channel", "type": "text", "format": "id"},
+    {"q": "Select an Admin Info Channel", "type": "text", "format": "id"},
+    
 ]
 
 def context():
@@ -376,6 +379,19 @@ class DynamicQuestionView(nextcord.ui.View):
             answer_text = "\n".join(
                 f"**{question}**: {value}" for question, value in self.answers.items()
             )
+            # Add or update server in database
+            qdb.add_or_update_server(
+                server_id=self.guild.id,
+                server_name=self.guild.name,
+                vc_afk=self.answers.get(self.questions[2]["q"], None),
+                channel_welcome_id=self.answers.get(self.questions[5]["q"], None),
+                channel_info_id=self.answers.get(self.questions[6]["q"], None),
+                channel_test_id=self.answers.get(self.questions[4]["q"], None),
+                channel_general_id=self.answers.get(self.questions[3]["q"], None),
+                role_newbie_name=self.answers.get(self.questions[1]["q"], None),
+                role_admin_name=self.answers.get(self.questions[0]["q"], None),
+            )
+
             await interaction.response.edit_message(
                 content=f"Here are your selections:\n\n{answer_text}",
                 view=None,  # Remove the view
@@ -687,33 +703,20 @@ async def admin_scan(interaction: Interaction):
     guild = interaction.guild  # Get the guild (server) where the command was invoked
 
     if not guild:
-        await interaction.response.send_message("This command can only be used in a server.", ephemeral=True)
+        await interaction.response.send_message("This command can only be used in a server.")
         return
 
     # Get the server ID and name
     server_id = guild.id
     server_name = guild.name
 
-    # Get all voice channels
-    voice_channels = {channel.id: channel.name for channel in guild.voice_channels}
-
-    # Get all text channels
-    text_channels = {channel.id: channel.name for channel in guild.text_channels}
-
-    # Get all roles
-    roles = {role.id: role.name for role in guild.roles}
-
-    # Get all members and their join dates
-    members = {member.name: member.joined_at.strftime('%Y-%m-%d %H:%M') if member.joined_at else "Unknown" for member in guild.members}
-
     # Construct a response message
     response_message = (
         f"**Server Name**: {server_name}\n"
         f"**Server ID**: {server_id}\n"
-        f"**Voice Channels**: {len(voice_channels)}\n"
-        f"**Text Channels**: {len(text_channels)}\n"
-        f"**Roles**: {len(roles)}\n"
-        f"**Members**: {len(members)}\n"
+        f"**Voice Channels**: {len(guild.voice_channels)}\n"
+        f"**Text Channels**: {len(guild.text_channels)}\n"
+        f"**Roles**: {len(guild.roles)}\n"
     )
 
     # Send the initial message with server details
