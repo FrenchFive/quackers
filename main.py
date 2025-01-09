@@ -42,16 +42,10 @@ bot = commands.Bot(command_prefix='!', intents=nextcord.Intents.all())
 counter = 0
 
 # Server IDs
-serverid = [1159282148042350642, 945445171670171668]
+serverid = qdb.get_all_server_ids()
 testid = [1159282148042350642]
-afkchannellist = ["afk"]
-welcomechannel = 1319691393442254962
-infochannel = 945688921038262313
-testchannel = 1189135263390236723
-#role name
-role_newbies = "newbies"
-role_ADMIN = "ADMIN"
 
+#SERVER QUESTIONS
 questions = [
     {"q": "Select an Admin Role", "type": "role", "format": "name"},
     {"q": "Select a Newbie Role", "type": "role", "format": "name"},
@@ -531,6 +525,7 @@ async def introduce(interaction: nextcord.Interaction):
         qdb.add_user(interaction.user.name)
     
     guild = interaction.guild
+    role_newbies = qdb.get_role_newbie(guild.id)
     role = next((role for role in guild.roles if role.name == role_newbies), None)
     if role is None:
         await interaction.response.send_message(
@@ -551,7 +546,8 @@ async def introduce(interaction: nextcord.Interaction):
     url = interaction.user.display_avatar.url
     imgpath = qdraw.avatar_download(url)
 
-    await interaction.response.send_modal(PresentationModal(target_channel=welcomechannel, user=interaction.user.name, imgpath=imgpath))
+    channel_welcome = qdb.get_ch_welcome(guild.id)
+    await interaction.response.send_modal(PresentationModal(target_channel=channel_welcome, user=interaction.user.name, imgpath=imgpath))
 
     await interaction.user.remove_roles(role, reason="Role removed after presentation completion.")
     print(f"Role '{role_newbies}' removed from {interaction.user.name}.")
@@ -816,6 +812,8 @@ async def on_message(ctx):
 
 @bot.event
 async def on_voice_state_update(member, before, after):
+    guild = member.guild
+
     if before.channel is None and after.channel is not None:
         # User connected to a voice channel
         if qdb.user_in_db(member.name) == 0:
@@ -825,7 +823,7 @@ async def on_voice_state_update(member, before, after):
         qdb.add(member.name, 15)
         qlogs.info(f"{member.name} is connected to a Voice Channel")
 
-    if before.channel is None and after.channel.name in afkchannellist:
+    if before.channel is None and after.channel.name == qdb.get_vc_afk(guild.id):
         # USER CONNECTED TO AFK
         if qdb.user_in_db(member.name) == 0:
             qdb.add_user(member.name)
@@ -845,15 +843,19 @@ async def on_voice_state_update(member, before, after):
 async def on_member_join(member):
     print(f"{member.name} has joined the server")
     qlogs.info(f"{member.name} has joined the server")
+    
     if qdb.user_in_db(member.name) == 0:
         qdb.add_user(member.name)
-    channel = bot.get_channel(welcomechannel)
+    
+    guild = member.guild
+
+    channel = bot.get_channel(qdb.get_ch_welcome(guild.id))
     if channel:
         message = await channel.send(f"Welcome {member.mention} sur le serveur de la team QUACK!")
         emojis = ["\U0001F44C", "\U0001F4AF", "\U0001F389", "\U0001F38A"]
         await message.add_reaction(random.choice(emojis))
     
-    guild = member.guild
+    role_newbies = qdb.get_role_newbie(guild.id)
     role = next((r for r in guild.roles if r.name == role_newbies), None)
 
     if role:
@@ -870,7 +872,10 @@ async def on_member_join(member):
 async def on_member_remove(member):
     print(f"{member.name} has left the server")
     qlogs.info(f"{member.name} has left the server")
-    channel = bot.get_channel(infochannel)
+
+    guild = member.guild
+
+    channel = bot.get_channel(qdb.get_ch_info(guild.id))
     if channel:
         await channel.send(f"{member.name} a quitte le serveur de la team QUACK!")
 

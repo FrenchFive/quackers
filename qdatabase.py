@@ -45,6 +45,8 @@ CURSOR.execute('''CREATE TABLE IF NOT EXISTS "servers" (
     PRIMARY KEY("id" AUTOINCREMENT)
 );''')
 
+
+#SERVERS
 def add_or_update_server(server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, role_newbie_name, role_admin_name):
     # Check if the server already exists in the database
     CURSOR.execute('SELECT * FROM servers WHERE server_id = ?', (server_id,))
@@ -70,7 +72,52 @@ def add_or_update_server(server_id, server_name, vc_afk, channel_welcome_id, cha
 
     CONNECTION.commit()
 
+def get_all_server_ids():
+    # Query the database for all server IDs
+    CURSOR.execute('SELECT server_id FROM servers')
+    rows = CURSOR.fetchall()
+    
+    # Extract the server IDs from the query results
+    server_ids = [row[0] for row in rows]
+    
+    return server_ids
 
+def get_vc_afk(guild_id):
+    CURSOR.execute('SELECT vc_afk FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_ch_welcome(guild_id):
+    CURSOR.execute('SELECT channel_welcome FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_ch_info(guild_id):
+    CURSOR.execute('SELECT channel_info FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_ch_test(guild_id):
+    CURSOR.execute('SELECT channel_test FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_ch_general(guild_id):
+    CURSOR.execute('SELECT channel_general FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_role_newbie(guild_id):
+    CURSOR.execute('SELECT role_newbie FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_role_admin(guild_id):
+    CURSOR.execute('SELECT role_admin FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+#MEMBERS
 def add(name, amount):
     CURSOR.execute("SELECT coins FROM members WHERE name = ?",(name,))
     rows = CURSOR.fetchall()
