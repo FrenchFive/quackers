@@ -54,11 +54,19 @@ role_ADMIN = "ADMIN"
 
 questions = [
     {"q": "Select an AFK Voice Channel", "type": "audio"},
+    {"q": "Select an Info Channel", "type": "text"},
+    {"q": "Select an Admin Role", "type": "role"},
+]
+
+'''
+questions = [
+    {"q": "Select an AFK Voice Channel", "type": "audio"},
     {"q": "Select a Welcome Channel", "type": "text"},
     {"q": "Select an Info Channel", "type": "text"},
     {"q": "Select a Newbie Role", "type": "role"},
     {"q": "Select an Admin Role", "type": "role"},
 ]
+'''
 
 def context():
     global scrpt_dir
