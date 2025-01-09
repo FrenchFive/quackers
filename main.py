@@ -325,7 +325,7 @@ class DynamicQuestionDropdown(nextcord.ui.Select):
 class DynamicQuestionDropdown(nextcord.ui.Select):
     def __init__(self, question, items):
         # Truncate items if there are too many
-        max_option= 25
+        max_option= 24
         if len(items) > max_option:
             truncated_items = dict(list(items.items())[:max_option])
             truncated_items["..."] = "Too many items, truncated"
@@ -381,7 +381,7 @@ class DynamicQuestionView(nextcord.ui.View):
             items = {}
 
         # Truncate items if necessary
-        max_option = 25
+        max_option = 24
         if len(items) > max_option:
             truncated_items = dict(list(items.items())[:max_option])
             truncated_items["..."] = "Too many items, truncated"
