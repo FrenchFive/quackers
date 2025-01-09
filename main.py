@@ -60,14 +60,6 @@ questions = [
     {"q": "Select an Admin Role", "type": "role"},
 ]
 
-questionstemp = [
-    {"q": "Select an AFK Voice Channel", "type": "audio"},
-    {"q": "Select a Welcome Channel", "type": "text"},
-    {"q": "Select an Info Channel", "type": "text"},
-    {"q": "Select a Newbie Role", "type": "role"},
-    {"q": "Select an Admin Role", "type": "role"},
-]
-
 def context():
     global scrpt_dir
 
@@ -306,13 +298,13 @@ class PresentationModal(nextcord.ui.Modal):
             else:
                 print(f"Error: Channel {self.target_channel} not found.")
 
-class DynamicDropdown(nextcord.ui.Select):
+class DynamicQuestionDropdown(nextcord.ui.Select):
     def __init__(self, question, items):
         options = [
             nextcord.SelectOption(label=name, value=str(id_)) for id_, name in items.items()
         ]
         super().__init__(
-            placeholder=question["q"],  # Set placeholder to the question
+            placeholder=question["q"],
             min_values=1,
             max_values=1,
             options=options,
@@ -326,46 +318,61 @@ class DynamicDropdown(nextcord.ui.Select):
         await interaction.response.defer()  # Acknowledge the interaction
 
 
-class DynamicDropdownView(nextcord.ui.View):
-    def __init__(self, questions, guild):
+class DynamicQuestionView(nextcord.ui.View):
+    def __init__(self, questions, guild, current_index=0, answers=None):
         super().__init__()
         self.questions = questions
         self.guild = guild
-        self.answers = {}
+        self.current_index = current_index
+        self.answers = answers or {}
 
-        # Add dropdowns with their questions
-        for question in questions:
-            if question["type"] == "audio":
-                items = {channel.id: channel.name for channel in guild.voice_channels}
-            elif question["type"] == "text":
-                items = {channel.id: channel.name for channel in guild.text_channels}
-            elif question["type"] == "role":
-                items = {role.id: role.name for role in guild.roles}
-            else:
-                items = {}
+        # Add the dropdown for the current question
+        question = questions[current_index]
+        items = self.get_items(question)
+        if items:
+            dropdown = DynamicQuestionDropdown(question, items)
+            self.add_item(dropdown)
 
-            if items:
-                dropdown = DynamicDropdown(question, items)
-                # Add text for the question as a static label (via message content)
-                self.add_item(dropdown)
+        # Add the "Next" button
+        self.add_item(nextcord.ui.Button(label="Next", style=nextcord.ButtonStyle.primary, custom_id="next_button"))
 
-        # Add the submit button at the end
-        self.add_item(nextcord.ui.Button(label="Submit", style=nextcord.ButtonStyle.primary, custom_id="submit_button"))
+    def get_items(self, question):
+        if question["type"] == "audio":
+            return {channel.id: channel.name for channel in self.guild.voice_channels}
+        elif question["type"] == "text":
+            return {channel.id: channel.name for channel in self.guild.text_channels}
+        elif question["type"] == "role":
+            return {role.id: role.name for role in self.guild.roles}
+        else:
+            return {}
 
-    async def submit_button_callback(self, interaction: Interaction):
-        # Collect all selected values
+    async def next_button_callback(self, interaction: Interaction):
+        # Collect the answer from the dropdown
         for child in self.children:
-            if isinstance(child, DynamicDropdown) and child.selected_value:
-                self.answers[child.question["q"]] = child.selected_value
+            if isinstance(child, DynamicQuestionDropdown) and child.selected_value:
+                self.answers[self.questions[self.current_index]["q"]] = child.selected_value
 
-        # Format the answers for the message
-        answer_text = "\n".join(
-            f"**{question}**: {value}" for question, value in self.answers.items()
-        )
-
-        await interaction.response.send_message(
-            f"Here are your selections:\n\n{answer_text}",
-        )
+        # Move to the next question
+        if self.current_index + 1 < len(self.questions):
+            next_view = DynamicQuestionView(
+                questions=self.questions,
+                guild=self.guild,
+                current_index=self.current_index + 1,
+                answers=self.answers,
+            )
+            await interaction.response.edit_message(
+                content=f"**{self.questions[self.current_index + 1]['q']}**",
+                view=next_view,
+            )
+        else:
+            # All questions answered
+            answer_text = "\n".join(
+                f"**{question}**: {value}" for question, value in self.answers.items()
+            )
+            await interaction.response.edit_message(
+                content=f"Here are your selections:\n\n{answer_text}",
+                view=None,  # Remove the view
+            )
 
 #QUACKER IS READY 
 @bot.event
@@ -724,13 +731,11 @@ async def admin_scan(interaction: Interaction):
         }
     }
 
-    # Prepare the text message with questions
-    question_text = "\n".join(f"**{q['q']}**" for q in questions)
-
-    # Create the view with dropdowns
-    view = DynamicDropdownView(questions, guild)
+        # Start with the first question
+    question = questions[0]
+    view = DynamicQuestionView(questions, guild)
     await interaction.response.send_message(
-        f"Answer the following questions:\n\n{question_text}",
+        f"**{question['q']}**",
         view=view,
     )
 
