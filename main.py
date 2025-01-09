@@ -53,22 +53,12 @@ role_newbies = "newbies"
 role_ADMIN = "ADMIN"
 
 questions = [
-    {"q": "Select an AFK Voice Channel", "type": "audio"},
-    {"q": "Select a Welcome Channel", "type": "text"},
-    {"q": "Select an Info Channel", "type": "text"},
-    {"q": "Select a Newbie Role", "type": "role"},
-    {"q": "Select an Admin Role", "type": "role"},
+    {"q": "Select an AFK Voice Channel", "type": "audio", "format": "name"},
+    {"q": "Select a Welcome Channel", "type": "text", "format": "id"},
+    {"q": "Select an Info Channel", "type": "text", "format": "id"},
+    {"q": "Select a Newbie Role", "type": "role", "format": "name"},
+    {"q": "Select an Admin Role", "type": "role", "format": "name"},
 ]
-
-'''
-questions = [
-    {"q": "Select an AFK Voice Channel", "type": "audio"},
-    {"q": "Select a Welcome Channel", "type": "text"},
-    {"q": "Select an Info Channel", "type": "text"},
-    {"q": "Select a Newbie Role", "type": "role"},
-    {"q": "Select an Admin Role", "type": "role"},
-]
-'''
 
 def context():
     global scrpt_dir
@@ -362,7 +352,12 @@ class DynamicQuestionView(nextcord.ui.View):
         # Collect the answer from the dropdown
         for child in self.children:
             if isinstance(child, DynamicQuestionDropdown) and child.selected_value:
-                self.answers[self.questions[self.current_index]["q"]] = child.selected_value
+                # Save based on the "format"
+                question = self.questions[self.current_index]
+                if question["format"] == "name":
+                    self.answers[question["q"]] = self.get_items(question)[int(child.selected_value)]
+                elif question["format"] == "id":
+                    self.answers[question["q"]] = child.selected_value
 
         # Move to the next question
         if self.current_index + 1 < len(self.questions):
@@ -721,32 +716,13 @@ async def admin_scan(interaction: Interaction):
         f"**Members**: {len(members)}\n"
     )
 
-    # Prepare detailed information as a dictionary to log or store
-    detailed_info = {
-        "Server Name": server_name,
-        "Server ID": server_id,
-        "Voice Channels": {
-            "Count": len(voice_channels),
-            "Details": voice_channels
-        },
-        "Text Channels": {
-            "Count": len(text_channels),
-            "Details": text_channels
-        },
-        "Roles": {
-            "Count": len(roles),
-            "Details": roles
-        },
-        "Members": {
-            "Count": len(members),
-            "Details": members
-        }
-    }
+    # Send the initial message with server details
+    await interaction.response.send_message(response_message)
 
-        # Start with the first question
+    # Start with the first question
     question = questions[0]
     view = DynamicQuestionView(questions, guild)
-    await interaction.response.send_message(
+    await interaction.followup.send(
         f"**{question['q']}**",
         view=view,
     )
