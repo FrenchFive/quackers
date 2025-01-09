@@ -418,17 +418,17 @@ class DynamicQuestionView(nextcord.ui.View):
             answer_text = "\n".join(
                 f"**{question}**: {value}" for question, value in self.answers.items()
             )
-            # Add or update server in database
+            # Explicitly map answers to database fields
             qdb.add_or_update_server(
                 server_id=self.guild.id,
                 server_name=self.guild.name,
-                vc_afk=self.answers.get(self.questions[0]["q"], None),
-                channel_welcome_id=self.answers.get(self.questions[1]["q"], None),
-                channel_info_id=self.answers.get(self.questions[2]["q"], None),
-                channel_test_id=None,  # Optional field
-                channel_general_id=None,  # Optional field
-                role_newbie_name=self.answers.get(self.questions[3]["q"], None),
-                role_admin_name=self.answers.get(self.questions[4]["q"], None),
+                vc_afk=self.answers.get("Select an AFK Voice Channel", None),
+                channel_welcome_id=self.answers.get("Select a Welcome Channel", None),
+                channel_info_id=self.answers.get("Select an Admin Info Channel", None),
+                channel_test_id=self.answers.get("Select a Debugging Channel", None),
+                channel_general_id=self.answers.get("Select a General Channel", None),
+                role_newbie_name=self.answers.get("Select a Newbie Role", None),
+                role_admin_name=self.answers.get("Select an Admin Role", None),
             )
 
             await interaction.response.edit_message(

@@ -53,10 +53,10 @@ def add_or_update_server(server_id, server_name, vc_afk, channel_welcome_id, cha
     if existing_server:
         # Update the existing server information
         CURSOR.execute('''UPDATE servers
-                           SET server_name = ?, vc_afk = ?, channel_welcome = ?, channel_info = ?, channel_test = ?, 
-                               channel_general = ?, role_newbie = ?, role_admin = ?
-                           WHERE server_id = ?''',
-                       (server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id,
+                            SET server_name = ?, vc_afk = ?, channel_welcome = ?, channel_info = ?, channel_test = ?, 
+                            channel_general = ?, role_newbie = ?, role_admin = ?
+                            WHERE server_id = ?''',
+                        (server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id,
                         role_newbie_name, role_admin_name, server_id))
         qlogs.info(f'--QDB // UPDATED SERVER: {server_name} (ID: {server_id})')
     else:
@@ -64,7 +64,7 @@ def add_or_update_server(server_id, server_name, vc_afk, channel_welcome_id, cha
         CURSOR.execute('''INSERT INTO servers (server_id, server_name, vc_afk, channel_welcome, channel_info, 
                                                channel_test, channel_general, role_newbie, role_admin) 
                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                       (server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, 
+                        (server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, 
                         channel_general_id, role_newbie_name, role_admin_name))
         qlogs.info(f'--QDB // ADDED SERVER: {server_name} (ID: {server_id})')
 
