@@ -342,7 +342,9 @@ class DynamicQuestionView(nextcord.ui.View):
             self.add_item(dropdown)
 
         # Add the "Next" button
-        self.add_item(nextcord.ui.Button(label="Next", style=nextcord.ButtonStyle.primary, custom_id="next_button"))
+        next_button = nextcord.ui.Button(label="Next", style=nextcord.ButtonStyle.primary)
+        next_button.callback = self.next_button_callback  # Attach the callback
+        self.add_item(next_button)
 
     def get_items(self, question):
         if question["type"] == "audio":
