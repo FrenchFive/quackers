@@ -11,6 +11,7 @@ A discord bot in Python with a lot of functionalities.
   - `/info` : Send an image with information about a user
   - Quackers repond to Mention and Replies with his personnality using :: **GPT4-TURBO** Model by OpenAI
 - 👨🏻‍💻 || **Admin Functions** <sub>[Allows Admins to change value for the bot]</sub>
+  - `/admin-scan` : Easy and quick bot setup
   - `/admin-add` : Add QuackCoins for a specific User to the Quack Database
   - `/admin-remove` : Remove QuackCoins for a specific User to the Quack Database
   - `/admin-logs` : Display the latest logs from Quackers to troubleshoot some errors
@@ -111,25 +112,7 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx (DISCORD Key)
 
 ---
 
-#### 2. Configure the server to monitor
-
-Modify the following code inside ```main.py```
-
-```python
-# Server IDs
-serverid = [1159282148042350642, 945445171670171668]
-testid = [1159282148042350642]
-afkchannellist = ["afk"]
-``` 
-
-It should match the server your [Server ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID)
-> [!NOTE]
-> Specifying the server is not something mendatory (ex: It is something youll avoid when sharing your bot to unknowm servers)
-> BUT it makes adding or changing commands appear instantly into the specified servers (It is also great to control which server has access to what command (Especially when testing))
-
----
-
-#### 3. Start the Bot
+#### 2. Start the Bot
 Run the bot script:
 
 ```bash
@@ -137,6 +120,48 @@ python bot.py
 ```
 
 For additional support, open an issue in the [GitHub repository](https://github.com/FrenchFive/quackers/issues).
+
+---
+
+#### 3. Configure the server to monitor
+
+Once the bot is launched and added to your discord channel, excecute the following /command in discord ```/admin_scan```
+
+Answer all questions asked to personnalize your experience
+
+```
+Admin Role : The only role allowed to use "admin_..." /commands (except for "/admin_scan")
+Newbie Role : The role assigned to New Members - allowing them access to "/presentation"
+AFK Voice Channel : Voice Channel managed by discord - poeple going to this channel wont receive coins
+General Channel : The main text channel of the server
+Debugging Channel : Channel used to debug for dev 
+Welcome Channel : Channel where Quackers will send Welcome Messages and Presentations from Members
+Admin Info Channel : Channel used to share sensitive information to admin
+```
+
+For dev only - it is possible to access work-in-progress functions by modifying the `main.py`
+<br><sub>`/admin_scan function displays the ID of the current server`</sub>
+```python
+# Server IDs
+serverid = qdb.get_all_server_ids()
+testid = [1159282148042350642] #server id for W.I.P functionnalities
+``` 
+It should match the server your [Server ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID)
+
+
+> [!NOTE]
+> It is necessary to RESTART the bot once the /admin_scan has been done.
+> This way the server will be added to the list of servers to use the commands.
+
+---
+
+#### 4. Good Practices
+
+It is strongly recommended to go in DISCORD into :
+Server SETTINGS // Integrations // Quackers
+
+And "Add Derogations" to all `/admin_...` commands 
+And not allow @everyone to use them
 
 ---
 
@@ -184,8 +209,10 @@ Enjoy using **Quackers**! 🦆
     - [ ] Use AI Gen to spice up the answers in Quackers style
 - [ ] Making a Discussion as logs on Github with the updates to keep track of the progress done
 - [ ] Make an UI for Admin to change some parameters of the BOT
-- [ ] Making a database for server
+- [x] Making a database for server
+  - [x] Making a SETUP function to easly register and Update the server info
   - [ ] Having function display only the servers info and not global info (ex : Leaderboard of the server and not leaderboard of the bot)
+  - [ ] Making a database / server using their id
 - [ ] Find a way for Admin to see the DB for troubleshooting
 - [ ] Add badges to INFO 
   - [ ] Admin Badge
