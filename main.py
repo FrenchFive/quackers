@@ -198,7 +198,7 @@ class PresentationModal(nextcord.ui.Modal):
             placeholder=self.questions[0][1],
             required=False,
         )
-        self.add_item(self.favorite_color)
+        self.add_item(self.question1)
 
         self.introduced_by = nextcord.ui.TextInput(
             label="Who introduced you to the server?",
@@ -212,14 +212,14 @@ class PresentationModal(nextcord.ui.Modal):
             placeholder=self.questions[1][1],
             required=True,
         )
-        self.add_item(self.favorite_animal)
+        self.add_item(self.question2)
 
         self.question3 = nextcord.ui.TextInput(
             label=self.questions[2][0],
             placeholder=self.questions[2][1],
             required=False,
         )
-        self.add_item(self.fun_fact)
+        self.add_item(self.question3)
 
     async def callback(self, interaction: nextcord.Interaction):
         # Dynamically generate a summary of the user's responses
