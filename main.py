@@ -57,7 +57,7 @@ introduction = [
     ("Favorite Color","Purple, Blue, Green ..."),
     ("Favorite Animal","Cats, Dogs, Land Sharks, Ducks, ..."),
     ("What would be your superpower?","Flying, Invisibility, Teleportation, ..."),
-    ("What is your favorite food?","Pizza, Sushi, Tacos, ..."),
+    ("Favorite food","Pizza, Sushi, Tacos, ..."),
     ("Favorite song","Billie Jean, Bohemian Rhapsody, ..."),
     ("Favorite movie","Star Wars, The Godfather, ..."),
     ("Favorite book","Harry Potter, The Lord of the Rings, ..."),
@@ -193,7 +193,7 @@ class PresentationModal(nextcord.ui.Modal):
         )
         self.add_item(self.pronouns)
 
-        self.favorite_color = nextcord.ui.TextInput(
+        self.question1 = nextcord.ui.TextInput(
             label=self.questions[0][0],
             placeholder=self.questions[0][1],
             required=False,
@@ -207,14 +207,14 @@ class PresentationModal(nextcord.ui.Modal):
         )
         self.add_item(self.introduced_by)
 
-        self.favorite_animal = nextcord.ui.TextInput(
+        self.question2 = nextcord.ui.TextInput(
             label=self.questions[1][0],
             placeholder=self.questions[1][1],
             required=True,
         )
         self.add_item(self.favorite_animal)
 
-        self.fun_fact = nextcord.ui.TextInput(
+        self.question3 = nextcord.ui.TextInput(
             label=self.questions[2][0],
             placeholder=self.questions[2][1],
             required=False,
@@ -227,14 +227,14 @@ class PresentationModal(nextcord.ui.Modal):
 
         if self.pronouns.value:
             responses.append(f"**Pronouns**: {self.pronouns.value}")
-        if self.favorite_color.value:
-            responses.append(f"**{self.questions[0][0]}**: {self.favorite_color.value}")
+        if self.question1.value:
+            responses.append(f"**{self.questions[0][0]}**: {self.question1.value}")
         if self.introduced_by.value:
             responses.append(f"**Introduced By**: {self.introduced_by.value}")
-        if self.favorite_animal.value:
-            responses.append(f"**{self.questions[1][0]}**: {self.favorite_animal.value}")
-        if self.fun_fact.value:
-            responses.append(f"**{self.questions[2][0]}**: {self.fun_fact.value}")
+        if self.question2.value:
+            responses.append(f"**{self.questions[1][0]}**: {self.question2.value}")
+        if self.question3.value:
+            responses.append(f"**{self.questions[2][0]}**: {self.question3.value}")
          
         # Send a thank-you message to the user
         await interaction.response.send_message(
@@ -702,7 +702,7 @@ async def admin_logs(interaction: Interaction):
     except FileNotFoundError:
         await interaction.response.send_message("Error: qlogs.log file not found.")
 
-@bot.slash_command(name="admin-scan", description="Scans the server and retrieves details about channels and roles.") #NO GUILD SPECIFIED SO ANY SERVER CAN BE ADDED
+@bot.slash_command(name="admin-scan", description="[ADMIN] scans the server and retrieves details about channels and roles.") #NO GUILD SPECIFIED SO ANY SERVER CAN BE ADDED
 async def admin_scan(interaction: Interaction):
     guild = interaction.guild  # Get the guild (server) where the command was invoked
 
