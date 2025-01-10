@@ -10,30 +10,42 @@ with open(ENV, 'r') as env_file:
 client = OpenAI(api_key=KEY_OPENAI)
 
 # Read personality from file
-try:
-    personality = "BASE KNOWLEDGE : " + open("/txt/base-knowledge.txt", "r").read()
-except FileNotFoundError:
+docu = "txt/base-knowledge.txt"
+if os.path.isfile(docu):
+    personality = "BASE KNOWLEDGE : " + open(docu, "r").read()
+else:
     personality = "BASE KNOWLEDGE : None"
+    #create the file
+    with open(docu, "w") as doc:
+        doc.write("")
 
 # Read emoji from file
-try:
-    emoji = open("/txt/emoji.txt", "r").read()
-except FileNotFoundError:
+docu = "txt/emoji.txt"
+if os.path.isfile(docu):
+    emoji = open(docu, "r").read()
+else:
     emoji = ""
-
-memory_file_path = "/txt/memory.txt"
-interactions_file_path = "/txt/interactions.txt"
+    with open(docu, "w") as doc:
+        doc.write("")
 
 # Read memory from file
-try:
+memory_file_path = "txt/memory.txt"
+if os.path.isfile(memory_file_path):
     memory = open(memory_file_path, "r").read()
-except FileNotFoundError:
+else:
     memory = ""
+    #create the file
+    with open(memory_file_path, "w") as doc:
+        doc.write("")
 
 # Read interactions from file
-try:
+interactions_file_path = "txt/interactions.txt"
+if os.path.isfile(interactions_file_path):
     interactions = open(interactions_file_path, "r").readlines()
-except FileNotFoundError:
+else:
+    #create the file
+    with open(memory_file_path, "w") as doc:
+        doc.write("")
     interactions = []
 
 def generation(messages):
