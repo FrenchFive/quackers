@@ -1,6 +1,6 @@
 nextcord
 unidecode
-openai==0.28
+openai
 requests
 pillow
 setuptools

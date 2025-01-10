@@ -10,18 +10,19 @@ import openai
 from datetime import datetime
 
 import qdatabase as qdb
-import games
+import qgames
 import qdraw
+import qopenai
+import qlogs
 
 import os
 import random
-
-import qlogs
 
 import time
 import requests
 
 import re
+
 
 scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'txt'
@@ -39,8 +40,6 @@ LOGFILE = os.path.join(scrpt_dir, "qlogs.log")
 
 bot = commands.Bot(command_prefix='!', intents=nextcord.Intents.all())
 
-counter = 0
-
 # Server IDs
 serverid = qdb.get_all_server_ids()
 testid = [1159282148042350642]
@@ -56,54 +55,6 @@ questions = [
     {"q": "Select an Admin Info Channel", "type": "text", "format": "id"},
     
 ]
-
-def context():
-    global scrpt_dir
-
-    # DELETE FILES
-    try:
-        files = openai.File.list()  # List all files
-        for file in files['data']:
-            if file['purpose'] == "fine-tune":  # Adjust purpose to match your use case
-                openai.File.delete(file['id'])
-    except Exception as e:
-        print(f"Error while deleting files: {e}")
-
-    # EXPORT DATABASE TO .json
-    qdb.export()
-
-    # ADD FILES
-    try:
-        for fi in os.listdir(FOLDER_PATH):
-            filtmp = os.path.join(scrpt_dir, 'txt', fi)
-            if os.path.getsize(filtmp) > 100:  # Skip files smaller than 100 bytes
-                with open(filtmp, "rb") as f:
-                    file_data = openai.File.create(file=f, purpose="fine-tune")  # Adjust purpose as needed
-                    print(f"File uploaded: {file_data['id']}")
-    except Exception as e:
-        print(f"Error while uploading files: {e}")
-
-    print('-- ALL FILES PROCESSED')
-
-
-context()
-
-
-def generate(prompt):
-    messages = [
-        {"role": "assistant", "content": "You are a helpful assistant."},
-        {"role": "user", "content": prompt}
-    ]
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Or the model you want to use
-            messages=messages
-        )
-        return response['choices'][0]['message']['content']
-    except Exception as e:
-        print(f"Error during OpenAI API call: {e}")
-        return "I am having difficulties => see w/ Five"
-
 
 # MODAL DISCORD
 class BetCreation(nextcord.ui.Modal):
@@ -140,7 +91,7 @@ class BetCreation(nextcord.ui.Modal):
         title = self.bettitle.value
         a = self.optionone.value if self.optionone.value else "YES"
         b = self.optiontwo.value if self.optiontwo.value else "NO"
-        id = games.bet_create(interaction.user.name, title, a, b)
+        id = qgames.bet_create(interaction.user.name, title, a, b)
         view = ButtonMessage(id)
 
         mess = f"{interaction.user.name} initiated a bet : \n"
@@ -159,7 +110,7 @@ class ButtonMessage(nextcord.ui.View):
     async def beta(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if qdb.user_in_db(interaction.user.name) == 0:
             qdb.add_user(interaction.user.name)
-        if games.bet_status(self.id) == "open" and games.bet_has_betted(interaction.user.name, self.id) == 0:
+        if qgames.bet_status(self.id) == "open" and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
             await interaction.response.send_modal(Betting(self.id, "A"))
             self.value = True
         else:
@@ -167,9 +118,9 @@ class ButtonMessage(nextcord.ui.View):
 
     @nextcord.ui.button(label="BET : B", style=nextcord.ButtonStyle.blurple)
     async def betb(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if qdb.user_in_db(interaction.user.name) == 0 and games.bet_has_betted(interaction.user.name, self.id) == 0:
+        if qdb.user_in_db(interaction.user.name) == 0 and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
             qdb.add_user(interaction.user.name)
-        if games.bet_status(self.id) == "open":
+        if qgames.bet_status(self.id) == "open":
             await interaction.response.send_modal(Betting(self.id, "B"))
             self.value = True
         else:
@@ -202,7 +153,7 @@ class Betting(nextcord.ui.Modal):
 
         if amount > 0:
             if qdb.qcheck(interaction.user.name, amount) == 0:
-                games.bet_join(self.id, interaction.user.name, amount, self.option)
+                qgames.bet_join(self.id, interaction.user.name, amount, self.option)
                 qdb.add(interaction.user.name, (amount * -1))
                 await interaction.send(f"Confirming Joining Bet : {self.option}, with : {amount} QuackCoins", ephemeral=True)
             else:
@@ -552,7 +503,7 @@ async def introduce(interaction: nextcord.Interaction):
     await interaction.user.remove_roles(role, reason="Role removed after presentation completion.")
     print(f"Role '{role_newbies}' removed from {interaction.user.name}.")
 
-# GAMES
+# qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
 async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(required=False), roll: Optional[int] = SlashOption(required=False)):
     bet = bet if bet else 100
@@ -576,7 +527,7 @@ async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(requi
 
     if money_check == 0:
         intro = f"{name.upper()} vs QUACKERS \n {amount} QuackCoins on the table for {roll} rounds !!!\n" + ' \n'
-        response, result = games.dices(roll, amount, name)
+        response, result = qgames.dices(roll, amount, name)
         response = intro + response
 
         if result == 0:
@@ -616,7 +567,7 @@ async def rps(
     money_check = qdb.qcheck(name, bet)
 
     if money_check == 0:
-        result, mult = games.rps(element, bet, name)
+        result, mult = qgames.rps(element, bet, name)
 
         bet *= mult
         qdb.add(name, bet)
@@ -628,7 +579,7 @@ async def rps(
 
 @bot.slash_command(name="8ball", description="Quackers gives answers to any questions. [YES or NO questions]", guild_ids=serverid)
 async def eightball(interaction: Interaction, question: str):
-    result = games.hball(interaction.user.name)
+    result = qgames.hball(interaction.user.name)
     message = f'> {interaction.user.name.capitalize()} asked : " *{question}* " \n {result}'
     qdb.add(interaction.user.name, random.randint(0, 5))
     await interaction.response.send_message(message)
@@ -640,7 +591,7 @@ async def bet_create(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
 
-    if games.bet_has_a_bet_going_on(interaction.user.name) == 0:
+    if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_modal(BetCreation())
     else:
         await interaction.response.send_message('You already have a Bet going on. || send results of your bet before creating another one "/bet-result"', ephemeral=True)
@@ -651,10 +602,10 @@ async def bet_close(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
 
-    if games.bet_has_a_bet_going_on(interaction.user.name) == 0:
+    if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
     else:
-        totala, totalb, totalbetter, totalbettera, totalbetterb, highest = games.bet_close(interaction.user.name)
+        totala, totalb, totalbetter, totalbettera, totalbetterb, highest = qgames.bet_close(interaction.user.name)
         # GET INFO FROM THE BET
         await interaction.response.send_message('Status Updated', ephemeral=True)
         mess = "BET CLOSED !!! \n \n"
@@ -677,11 +628,11 @@ async def bet_result(
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
 
-    if games.bet_has_a_bet_going_on(interaction.user.name) == 0:
+    if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
     else:
         option = "A" if option == 0 else "B"
-        games.bet_result(interaction.user.name, option)
+        qgames.bet_result(interaction.user.name, option)
         await interaction.response.send_message('MONEY SENT !!!')
 
 
@@ -769,7 +720,6 @@ async def admin_scan(interaction: Interaction):
 # EVENTS
 @bot.event
 async def on_message(ctx):
-    global counter
     if ctx.guild is None or ctx.author == bot.user:
         return
 
@@ -789,12 +739,9 @@ async def on_message(ctx):
         return
 
     qdb.add_quackers(ctx.author.name)
-    counter += 1
-    qlogs.info(f'{counter:02} // RESPONDING TO : {ctx.author.name}')
+    qlogs.info(f'// RESPONDING TO : {ctx.author.name}')
 
-    prompt = ctx.content  # You can modify the prompt as needed
-
-    message = unidecode(generate(prompt))
+    message = unidecode(qopenai.generate_response(ctx.content, ctx.author.name))
 
     chunk = 1800
     if len(message) < chunk:
@@ -803,11 +750,6 @@ async def on_message(ctx):
         li_tosend = [message[i:i + chunk] for i in range(0, len(message), chunk)]
         for mess in li_tosend:
             await ctx.channel.send(mess)
-
-    if counter >= 10:
-        counter = 0
-        qlogs.info("/// RESETTING COUNTER")
-        context()
 
 
 @bot.event

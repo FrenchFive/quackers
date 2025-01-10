@@ -1,0 +1,95 @@
+from openai import OpenAI
+client = OpenAI()
+
+# Read personality from file
+try:
+    personality = "BASE KNOWLEDGE : " + open("/txt/base-knowledge.txt", "r").read()
+except FileNotFoundError:
+    personality = "BASE KNOWLEDGE : None"
+
+# Read emoji from file
+try:
+    emoji = open("/txt/emoji.txt", "r").read()
+except FileNotFoundError:
+    emoji = ""
+
+memory_file_path = "/txt/memory.txt"
+interactions_file_path = "/txt/interactions.txt"
+
+# Read memory from file
+try:
+    memory = open(memory_file_path, "r").read()
+except FileNotFoundError:
+    memory = ""
+
+# Read interactions from file
+try:
+    interactions = open(interactions_file_path, "r").readlines()
+except FileNotFoundError:
+    interactions = []
+
+def generation(messages):
+    global client
+
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=messages
+    )
+    
+    response_content = response.choices[0].message
+
+    return response_content
+
+def generate_response(prompt, user):
+    global personality, emoji, memory, interactions
+    
+    messages=[
+        {"role": "system", "content": personality},
+        {"role": "system", "content": emoji},
+        {"role": "system", "content": memory},
+        {"role": "system", "content": interactions},
+        {"role": "system", "content": f"Message sent by {user}"},
+        {"role": "user", "content": prompt}
+    ]
+
+    response_content = generation(messages)
+    
+    # Update memory file
+    interaction_update(prompt, response_content)
+    
+    return response_content
+
+def interaction_update(prompt, response_content):
+    global interactions, interactions_file_path
+
+    # Append new interaction
+    interactions.append(f"User: {prompt}\n")
+    interactions.append(f"Assistant: {response_content}\n")
+    
+    # Keep only the last 10 interactions
+    if len(interactions) > 20:
+        interactions = interactions[-20:]
+    
+    with open(interactions_file_path, "w") as interactions_file:
+        interactions_file.writelines(interactions)
+
+def update_memory_summary():
+    global personality, memory, interactions, memory_file_path
+    
+    memory = "MEMORY : " + memory
+
+    prompt = "Based on the Memory provided and Interactions with user, write 10 bullet points of what Quackers needs to remember. Different from the Base Knowledge."
+    
+    messages=[
+        {"role": "system", "content": personality},
+        {"role": "system", "content": memory},
+        {"role": "system", "content": "".join(interactions)},
+        {"role": "user", "content": prompt}
+    ]
+    
+    summary = generation(messages)
+    
+    with open(memory_file_path, "w") as memory_file:
+        memory_file.write(summary)
+
+    memory = summary

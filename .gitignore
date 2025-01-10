@@ -5,7 +5,7 @@ qlogs.log
 /db/quackers.db
 /db/quserpet.db
 
-/txt/database.json
+/txt/memory.txt
 tests
 __pycache__
 
