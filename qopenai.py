@@ -57,6 +57,7 @@ def generation(messages):
     )
     
     response_content = response.choices[0].message.content
+    response_content = response_content[:1000]
 
     return response_content
 
