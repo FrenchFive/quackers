@@ -54,10 +54,6 @@ Before starting, ensure you have the following installed:
 #### 1. Clone the Repository
 First, clone the repository to your local machine using Git:
 
-> [!TIP]
-> It is not necessary but **strongly** recommended.
-> It allows the use of librairies in a specific configuration, meaning not breaking other code on other projects.
-
 ```bash
 git clone https://github.com/FrenchFive/quackers.git
 ```
@@ -70,6 +66,10 @@ cd quackers
 
 #### 2. Create a Virtual Environment (Optional but Recommended)
 Create a virtual environment to isolate dependencies:
+
+> [!TIP]
+> It is not necessary but **strongly** recommended.
+> It allows the use of librairies in a specific configuration, meaning not breaking other code on other projects.
 
 ```bash
 python3 -m venv venv
