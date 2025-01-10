@@ -1,0 +1,1 @@
+Welcome {name} sur le serveur de la team QUACK!
