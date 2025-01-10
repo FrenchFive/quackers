@@ -227,3 +227,5 @@ Enjoy using **Quackers**! 🦆
   - [ ] Exp cannot be reduced, used to see how Active are users
   - [ ] Give them rank as they become more active
   - [ ] Make progression exponential 
+- [ ] Have different languages mapped to Quackers 
+  - [ ] Making the default language English
