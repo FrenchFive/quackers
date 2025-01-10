@@ -9,6 +9,7 @@ A discord bot in Python with a lot of functionalities.
 - 🐤 || **GENERAL** Features :
   - `/duck` : Send a Duck Picture
   - `/info` : Send an image with information about a user
+  - `/presentation` : User answer few questions about themselves, used to know new members
   - Quackers repond to Mention and Replies with his personnality using :: **GPT4-TURBO** Model by OpenAI
 - 👨🏻‍💻 || **Admin Functions** <sub>[Allows Admins to change value for the bot]</sub>
   - `/admin-scan` : Easy and quick bot setup
@@ -209,7 +210,8 @@ Enjoy using **Quackers**! 🦆
   - [ ] Presentation 
     - [x] Make a presentation using Discord Commands
     - [x] Making a quick questionnaire to answer by user that would generate a message for presentation 
-    - [ ] Use AI Gen to spice up the answers in Quackers style
+    - [x] Use AI Gen to spice up the answers in Quackers style
+    - [ ] Make a list of random questions and alternate to have each to be unique
 - [ ] Making a Discussion as logs on Github with the updates to keep track of the progress done
 - [ ] Make an UI for Admin to change some parameters of the BOT
 - [x] Making a database for server

@@ -53,6 +53,23 @@ questions = [
     
 ]
 
+introduction = [
+    {"Favorite Color","Purple, Blue, Green ..."},
+    {"Favorite Animal","Cats, Dogs, Land Sharks, Ducks, ..."},
+    {"What would be your superpower?","Flying, Invisibility, Teleportation, ..."},
+    {"What is your favorite food?","Pizza, Sushi, Tacos, ..."},
+    {"Favorite song","Billie Jean, Bohemian Rhapsody, ..."},
+    {"Favorite movie","Star Wars, The Godfather, ..."},
+    {"Favorite book","Harry Potter, The Lord of the Rings, ..."},
+    {"Favorite video game","Zelda, Mario, ..."},
+    {"Favorite TV show","Friends, Game of Thrones, ..."},
+    {"Favorite sport","Soccer, Basketball, ..."},
+    {"Favorite hobby","Painting, Reading, ..."},
+    {"Favorite place","Paris, Tokyo, ..."},
+    {"Favorite app","Spotify, TikTok, ..."},
+    {"Favorite fictional character","Harry Potter, Batman, ..."},
+]
+
 # MODAL DISCORD
 class BetCreation(nextcord.ui.Modal):
     def __init__(self):
@@ -157,7 +174,7 @@ class Betting(nextcord.ui.Modal):
                 await interaction.send(f'{interaction.user.mention} do not have enough QuackCoins', ephemeral=True)
 
 class PresentationModal(nextcord.ui.Modal):
-    def __init__(self, target_channel, user, imgpath):
+    def __init__(self, target_channel, user, imgpath, questions):
         super().__init__(
             title="PRESENTATIONS",
             timeout=None,
@@ -166,6 +183,7 @@ class PresentationModal(nextcord.ui.Modal):
         self.target_channel = target_channel  # Save the target channel ID
         self.user = user
         self.img = imgpath
+        self.questions = questions
 
         # Questions
         self.pronouns = nextcord.ui.TextInput(
@@ -176,8 +194,8 @@ class PresentationModal(nextcord.ui.Modal):
         self.add_item(self.pronouns)
 
         self.favorite_color = nextcord.ui.TextInput(
-            label="Favorite Color",
-            placeholder="Purple...",
+            label=questions[0][0],
+            placeholder=questions[0][1],
             required=False,
         )
         self.add_item(self.favorite_color)
@@ -190,15 +208,15 @@ class PresentationModal(nextcord.ui.Modal):
         self.add_item(self.introduced_by)
 
         self.favorite_animal = nextcord.ui.TextInput(
-            label="Favorite Animal",
-            placeholder="Cats, Dogs, Land Sharks, Ducks, ...",
+            label=questions[1][0],
+            placeholder=questions[1][1],
             required=True,
         )
         self.add_item(self.favorite_animal)
 
         self.fun_fact = nextcord.ui.TextInput(
-            label="Fun Fact About You",
-            placeholder="Share something interesting about yourself!",
+            label=questions[2][0],
+            placeholder=questions[2][1],
             required=False,
         )
         self.add_item(self.fun_fact)
@@ -494,8 +512,11 @@ async def introduce(interaction: nextcord.Interaction):
     url = interaction.user.display_avatar.url
     imgpath = qdraw.avatar_download(url)
 
+    #get 3 random questions from introduction
+    random_questions = random.sample(introduction, 3)
+
     channel_welcome = qdb.get_ch_welcome(guild.id)
-    await interaction.response.send_modal(PresentationModal(target_channel=channel_welcome, user=interaction.user.name, imgpath=imgpath))
+    await interaction.response.send_modal(PresentationModal(target_channel=channel_welcome, user=interaction.user.name, imgpath=imgpath, questions=random_questions))
 
     await interaction.user.remove_roles(role, reason="Role removed after presentation completion.")
     print(f"Role '{role_newbies}' removed from {interaction.user.name}.")
