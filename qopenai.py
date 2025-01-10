@@ -67,7 +67,7 @@ def generate_response(prompt, user):
         {"role": "system", "content": personality},
         {"role": "system", "content": emoji},
         {"role": "system", "content": memory},
-        {"role": "system", "content": interactions},
+        {"role": "system", "content": "".join(interactions)},
         {"role": "system", "content": f"Message sent by {user}"},
         {"role": "user", "content": prompt}
     ]
