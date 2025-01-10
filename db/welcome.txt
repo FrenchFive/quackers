@@ -1,24 +1,24 @@
 Welcome {name} sur le serveur de la team QUACK!
-Quack, quack, [name]! Prepare-toi a plonger dans l'univers canardesque le plus enchante du web, ou chaque coin est aussi mysterieux qu'une mare sous la lune.
-Bienvenue, [name]! Tu viens de trouver le seul endroit sur internet ou les canards sont les stars et Quackers, le robot sarcastique, leur humble serviteur. Bon desespoir!
-Salut, [name]! Tu es entre dans la Quack Team, ou les talents et le sarcasme flottent dans l'air comme des plumes de canard apres une tempete. Ici, etre un peu fou, c'est fortement encourage! <:laugh:1124224547332304997>
-Hey, [name]! Comme on dit dans la mare : sautille bien en avant et evite les serpents. Ok, je viens de l'inventer, mais toi profite du voyage ici!
-[name], bienvenue dans la famille de la Quack Team! Sache que chaque canard a sa place ici, et si tu te perds, suis simplement les quacks. Ils te guideront plus ou moins dans la bonne direction. <:cropped:1124224568106688583>"
-Ah, un nouveau canard nomme [name]! Pose tes valises dans le coin et laisse ta creativite voguer avec nous. On attend de voir comment tu agites cette mare d'idees!
-Enchante de te rencontrer, [name]! Mets tes ailes au repos et fais un plongeon dans la vallee des canards irreverencieux et joyeux. Amuse-toi et cree sans demi-mesure!
-Salut, [name]! Pret a nager parmi nous, canards aguerris? Ne perds pas ton bec ici, car les idees coulent comme l'eau d'une fontaine en cascade.
-[name], tu es tombe dans le meilleur marais a talents du net! Ajoute ton propre soupcon de dissidence canardesque et faisons ensemble un grand remous dans cet etang terre-a-terre.
-Hey [name]! Qui a besoin de la realite quand tu as une communaute canardesque virtuelle aussi dingue et brillante qu'ici ! Prends place, apres tout, des plumes colorees egayent notre volee.
-Bienvenue dans le recoin le plus farfelu d'internet, [name]! La ou les canards sont des idoles et ou l'absurde devient normalite. Embrase cette aventure de chaque coin de ta palme ! <:surprised:1124224536389365821>
-Nouvelle recrue alert, [name]! Prends tes aises, plonge dans les projets artistiques et rappelle-toi : chaque plume a son propre eclat dans ce coin de creativite.
-Quackatastrophe de plaisir, [name]! Pret a plonger tete premiere dans une maree de talents et de rires? Apporte ta creativite et montons ensemble une tempete de quacks.
-Alerte nouvelle arrivee ! [name], bienvenue dans notre flottille ! Pret a naviguer dans les eaux capricieuses mais follement inspirees de ce serveur ? Allons-y!
-[name], tu es maintenant un canard honoraire dans notre troupeau virtuose! On espere que tu feras des eclaboussures parmi nos creatifs et reveurs inveteres. <:love:1126474652764618752>
-Bienvenue, [name]! Pret pour un bain de folie canardesque?
-Quack a toi, [name]! Que l'aventure commence!
-[name], envole-toi dans ce ciel de quacks inspires!
-Hey [name], amuse-toi bien dans notre mare creative!
-Hoi, [name]! Que ton arrivee soit une eclaboussure!
-[name], on t'accueille a ailes grandes ouvertes!
-Bienvenue [name], dans la Quack Team. Ne perds pas ton bec!
-[name], pret a rejoindre notre volee de talents?
+Quack, quack, {name}! Prepare-toi a plonger dans l'univers canardesque le plus enchante du web, ou chaque coin est aussi mysterieux qu'une mare sous la lune.
+Bienvenue, {name}! Tu viens de trouver le seul endroit sur internet ou les canards sont les stars et Quackers, le robot sarcastique, leur humble serviteur. Bon desespoir!
+Salut, {name}! Tu es entre dans la Quack Team, ou les talents et le sarcasme flottent dans l'air comme des plumes de canard apres une tempete. Ici, etre un peu fou, c'est fortement encourage! <:laugh:1124224547332304997>
+Hey, {name}! Comme on dit dans la mare : sautille bien en avant et evite les serpents. Ok, je viens de l'inventer, mais toi profite du voyage ici!
+{name}, bienvenue dans la famille de la Quack Team! Sache que chaque canard a sa place ici, et si tu te perds, suis simplement les quacks. Ils te guideront plus ou moins dans la bonne direction. <:cropped:1124224568106688583>"
+Ah, un nouveau canard nomme {name}! Pose tes valises dans le coin et laisse ta creativite voguer avec nous. On attend de voir comment tu agites cette mare d'idees!
+Enchante de te rencontrer, {name}! Mets tes ailes au repos et fais un plongeon dans la vallee des canards irreverencieux et joyeux. Amuse-toi et cree sans demi-mesure!
+Salut, {name}! Pret a nager parmi nous, canards aguerris? Ne perds pas ton bec ici, car les idees coulent comme l'eau d'une fontaine en cascade.
+{name}, tu es tombe dans le meilleur marais a talents du net! Ajoute ton propre soupcon de dissidence canardesque et faisons ensemble un grand remous dans cet etang terre-a-terre.
+Hey {name}! Qui a besoin de la realite quand tu as une communaute canardesque virtuelle aussi dingue et brillante qu'ici ! Prends place, apres tout, des plumes colorees egayent notre volee.
+Bienvenue dans le recoin le plus farfelu d'internet, {name}! La ou les canards sont des idoles et ou l'absurde devient normalite. Embrase cette aventure de chaque coin de ta palme ! <:surprised:1124224536389365821>
+Nouvelle recrue alert, {name}! Prends tes aises, plonge dans les projets artistiques et rappelle-toi : chaque plume a son propre eclat dans ce coin de creativite.
+Quackatastrophe de plaisir, {name}! Pret a plonger tete premiere dans une maree de talents et de rires? Apporte ta creativite et montons ensemble une tempete de quacks.
+Alerte nouvelle arrivee ! {name}, bienvenue dans notre flottille ! Pret a naviguer dans les eaux capricieuses mais follement inspirees de ce serveur ? Allons-y!
+{name}, tu es maintenant un canard honoraire dans notre troupeau virtuose! On espere que tu feras des eclaboussures parmi nos creatifs et reveurs inveteres. <:love:1126474652764618752>
+Bienvenue, {name}! Pret pour un bain de folie canardesque?
+Quack a toi, {name}! Que l'aventure commence!
+{name}, envole-toi dans ce ciel de quacks inspires!
+Hey {name}, amuse-toi bien dans notre mare creative!
+Hoi, {name}! Que ton arrivee soit une eclaboussure!
+{name}, on t'accueille a ailes grandes ouvertes!
+Bienvenue {name}, dans la Quack Team. Ne perds pas ton bec!
+{name}, pret a rejoindre notre volee de talents?
