@@ -233,7 +233,8 @@ class PresentationModal(nextcord.ui.Modal):
         # Send the combined message to the target channel
         if responses:
             response_message = "\n".join(responses)
-            embed.add_field(name="Presentation", value=response_message, inline=False)
+            gen_pres = qopenai.welcome(response_message)
+            embed.add_field(name="Presentation", value=gen_pres, inline=False)
             target_channel = interaction.guild.get_channel(self.target_channel)
             if target_channel:
                 with open(self.img, 'rb') as img_file:
@@ -261,7 +262,6 @@ class DynamicQuestionDropdown(nextcord.ui.Select):
         # Store the selected value
         self.selected_value = self.values[0]
         await interaction.response.defer()  # Acknowledge the interaction
-
 
 
 class DynamicQuestionDropdown(nextcord.ui.Select):

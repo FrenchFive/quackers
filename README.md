@@ -194,9 +194,11 @@ Enjoy using **Quackers**! 🦆
   - [ ] Making work programmed messages
   - [ ] Having an interface to see what is planned by admin 
   - [ ] Having messages to be sent once and some to be repeated every x amount of time
-- [ ] GPT4-O
-  - [ ] Rewrite the API python integration
-  - [ ] Clean up what information is sent to OpenAi 
+- [x] GPT4-O
+  - [x] Rewrite the API python integration
+  - [x] Clean up what information is sent to OpenAi
+  - [ ] Make it so short and long memory are dependant on the server and not global 
+    - [ ] Transmit information about the server as server name and server context unique to each server 
 - [x] Welcome Messages
   - [ ] Generate a list of Welcome Messages with placeholder for the name 
   - [x] Tag the newbie

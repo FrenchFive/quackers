@@ -113,3 +113,17 @@ def update_memory_summary():
         memory_file.write(summary)
 
     memory = summary
+
+def welcome(presentation):
+    global personality, emoji, memory, interactions
+    
+    messages=[
+        {"role": "system", "content": personality},
+        {"role": "system", "content": emoji},
+        {"role": "system", "content": "User answered question about themselves, write from the given information a presentation for the user to the other member of the server."},
+        {"role": "user", "content": presentation}
+    ]
+    
+    response_content = generation(messages)
+
+    return response_content
