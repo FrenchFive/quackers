@@ -194,8 +194,8 @@ class PresentationModal(nextcord.ui.Modal):
         self.add_item(self.pronouns)
 
         self.favorite_color = nextcord.ui.TextInput(
-            label=questions[0][0],
-            placeholder=questions[0][1],
+            label=self.questions[0][0],
+            placeholder=self.questions[0][1],
             required=False,
         )
         self.add_item(self.favorite_color)
@@ -208,15 +208,15 @@ class PresentationModal(nextcord.ui.Modal):
         self.add_item(self.introduced_by)
 
         self.favorite_animal = nextcord.ui.TextInput(
-            label=questions[1][0],
-            placeholder=questions[1][1],
+            label=self.questions[1][0],
+            placeholder=self.questions[1][1],
             required=True,
         )
         self.add_item(self.favorite_animal)
 
         self.fun_fact = nextcord.ui.TextInput(
-            label=questions[2][0],
-            placeholder=questions[2][1],
+            label=self.questions[2][0],
+            placeholder=self.questions[2][1],
             required=False,
         )
         self.add_item(self.fun_fact)
@@ -228,13 +228,13 @@ class PresentationModal(nextcord.ui.Modal):
         if self.pronouns.value:
             responses.append(f"**Pronouns**: {self.pronouns.value}")
         if self.favorite_color.value:
-            responses.append(f"**Favorite Color**: {self.favorite_color.value}")
+            responses.append(f"**{self.questions[0][0]}**: {self.favorite_color.value}")
         if self.introduced_by.value:
             responses.append(f"**Introduced By**: {self.introduced_by.value}")
         if self.favorite_animal.value:
-            responses.append(f"**Favorite Animal**: {self.favorite_animal.value}")
+            responses.append(f"**{self.questions[1][0]}**: {self.favorite_animal.value}")
         if self.fun_fact.value:
-            responses.append(f"**Fun Fact**: {self.fun_fact.value}")
+            responses.append(f"**{self.questions[2][0]}**: {self.fun_fact.value}")
          
         # Send a thank-you message to the user
         await interaction.response.send_message(
