@@ -812,9 +812,13 @@ async def on_member_join(member):
     
     guild = member.guild
 
+    with open("db/welcome.txt", "r") as file:
+        welcome_message = file.readlines()
+    random_welcome = random.choice(welcome_message).replace("{name}", member.mention)
+
     channel = bot.get_channel(qdb.get_ch_welcome(guild.id))
     if channel:
-        message = await channel.send(f"Welcome {member.mention} sur le serveur de la team QUACK!")
+        message = await channel.send(random_welcome)
         emojis = ["\U0001F44C", "\U0001F4AF", "\U0001F389", "\U0001F38A"]
         await message.add_reaction(random.choice(emojis))
     
@@ -831,7 +835,7 @@ async def on_member_join(member):
         print(f"Role '{role_newbies}' not found in the server.")
     
     message_welcome = f'''
-    **Bienvenue {member.mame} sur le serveur Quackers, jeune canard ! 🦆**
+    **Bienvenue {member.name} sur le serveur Quackers, jeune canard ! 🦆**
 
     Pour t'intégrer parmi tes compagnons de paddock, n'oublie pas de te **présenter** avec la commande `/presentation` 
     dans les** 7 jours** (*sinon tu risquerais de te faire "plumer" et être exclu… c'est pas la fête !*). 🎤
