@@ -207,11 +207,12 @@ Enjoy using **Quackers**! 🦆
     - [ ] Add Quack Server custom emotes
     - [ ] Add more emotes/emojis
   - [ ] Send a message to users when they join the server 
-  - [ ] Presentation 
+  - [ ] Presentation
+    - [ ] Make it so not finishing /presentation doenst remove the role newbie
     - [x] Make a presentation using Discord Commands
     - [x] Making a quick questionnaire to answer by user that would generate a message for presentation 
     - [x] Use AI Gen to spice up the answers in Quackers style
-    - [ ] Make a list of random questions and alternate to have each to be unique
+    - [x] Make a list of random questions and alternate to have each to be unique
 - [ ] Making a Discussion as logs on Github with the updates to keep track of the progress done
 - [ ] Make an UI for Admin to change some parameters of the BOT
 - [x] Making a database for server

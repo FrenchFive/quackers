@@ -16,3 +16,8 @@ def admin(message):
     print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} :: {message}')
     logging.critical(message)
     return(message)
+
+def error(message):
+    print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} :: {message}')
+    logging.error(message)
+    return(message)

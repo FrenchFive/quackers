@@ -70,6 +70,7 @@ introduction = [
     ("Favorite fictional character","Harry Potter, Batman, ..."),
 ]
 
+
 # MODAL DISCORD
 class BetCreation(nextcord.ui.Modal):
     def __init__(self):
@@ -828,6 +829,24 @@ async def on_member_join(member):
             print(f"Failed to assign role '{role_newbies}' to {member.name}: {e}")
     else:
         print(f"Role '{role_newbies}' not found in the server.")
+    
+    message_welcome = f'''
+    **Bienvenue {member.mame} sur le serveur Quackers, jeune canard ! 🦆**
+
+    Pour t'intégrer parmi tes compagnons de paddock, n'oublie pas de te **présenter** avec la commande `/presentation` 
+    dans les** 7 jours** (*sinon tu risquerais de te faire "plumer" et être exclu… c'est pas la fête !*). 🎤
+
+    En attendant, pour éviter de te faire trop spammer, on te conseille de **muter** les channels **#muted** (et #pokemon et #musique si nécessaire) – nos bots sont un peu bruyants, et tu n’as pas envie qu'ils te fassent perdre la tête comme un canard sans son nid !
+
+    **Allez, fais-toi bien au bassin et profite du serveur ! 🦆🎉**
+    '''
+
+    # Send a private message to the user
+    try:
+        await member.send(message_welcome)
+        qlogs.info(f"- Sent a welcome message to {member.name}")
+    except Exception as e:
+        qlogs.error(f"Failed to send a welcome message to {member.name}: {e}")
 
 
 @bot.event
