@@ -92,6 +92,8 @@ def interaction_update(prompt, response_content):
     
     with open(interactions_file_path, "w") as interactions_file:
         interactions_file.writelines(interactions)
+    
+    update_memory_summary()
 
 def update_memory_summary():
     global personality, memory, interactions, memory_file_path
