@@ -6,6 +6,7 @@ qlogs.log
 /db/quserpet.db
 
 /txt/memory.txt
+/txt/interactions.txt
 tests
 __pycache__
 
