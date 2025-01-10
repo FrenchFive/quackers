@@ -54,20 +54,20 @@ questions = [
 ]
 
 introduction = [
-    {"Favorite Color","Purple, Blue, Green ..."},
-    {"Favorite Animal","Cats, Dogs, Land Sharks, Ducks, ..."},
-    {"What would be your superpower?","Flying, Invisibility, Teleportation, ..."},
-    {"What is your favorite food?","Pizza, Sushi, Tacos, ..."},
-    {"Favorite song","Billie Jean, Bohemian Rhapsody, ..."},
-    {"Favorite movie","Star Wars, The Godfather, ..."},
-    {"Favorite book","Harry Potter, The Lord of the Rings, ..."},
-    {"Favorite video game","Zelda, Mario, ..."},
-    {"Favorite TV show","Friends, Game of Thrones, ..."},
-    {"Favorite sport","Soccer, Basketball, ..."},
-    {"Favorite hobby","Painting, Reading, ..."},
-    {"Favorite place","Paris, Tokyo, ..."},
-    {"Favorite app","Spotify, TikTok, ..."},
-    {"Favorite fictional character","Harry Potter, Batman, ..."},
+    ("Favorite Color","Purple, Blue, Green ..."),
+    ("Favorite Animal","Cats, Dogs, Land Sharks, Ducks, ..."),
+    ("What would be your superpower?","Flying, Invisibility, Teleportation, ..."),
+    ("What is your favorite food?","Pizza, Sushi, Tacos, ..."),
+    ("Favorite song","Billie Jean, Bohemian Rhapsody, ..."),
+    ("Favorite movie","Star Wars, The Godfather, ..."),
+    ("Favorite book","Harry Potter, The Lord of the Rings, ..."),
+    ("Favorite video game","Zelda, Mario, ..."),
+    ("Favorite TV show","Friends, Game of Thrones, ..."),
+    ("Favorite sport","Soccer, Basketball, ..."),
+    ("Favorite hobby","Painting, Reading, ..."),
+    ("Favorite place","Paris, Tokyo, ..."),
+    ("Favorite app","Spotify, TikTok, ..."),
+    ("Favorite fictional character","Harry Potter, Batman, ..."),
 ]
 
 # MODAL DISCORD
