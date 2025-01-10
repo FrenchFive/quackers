@@ -1,15 +1,13 @@
 import os
 from openai import OpenAI
 
-client = OpenAI()
-
 ENV = os.path.join(os.path.dirname(os.path.abspath(__file__)), "secret.env")
 with open(ENV, 'r') as env_file:
     env_data = env_file.readlines()
     KEY_OPENAI = env_data[0].strip()
     KEY_DISCORD = env_data[1].strip()
 
-client.api_key = KEY_OPENAI
+client = OpenAI(api_key=KEY_OPENAI)
 
 # Read personality from file
 try:
