@@ -56,7 +56,7 @@ def generation(messages):
         messages=messages
     )
     
-    response_content = response.choices[0].message['content']
+    response_content = response.choices[0].message.content
 
     return response_content
 
