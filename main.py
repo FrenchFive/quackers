@@ -6,7 +6,6 @@ from typing import Optional
 
 from unidecode import unidecode
 
-import openai
 from datetime import datetime
 
 import qdatabase as qdb
@@ -33,8 +32,6 @@ with open(ENV, 'r') as env_file:
     env_data = env_file.readlines()
     KEY_OPENAI = env_data[0].strip()
     KEY_DISCORD = env_data[1].strip()
-
-openai.api_key = KEY_OPENAI
 
 LOGFILE = os.path.join(scrpt_dir, "qlogs.log")
 
