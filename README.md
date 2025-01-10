@@ -174,6 +174,7 @@ Enjoy using **Quackers**! 🦆
 ---
 
 ### IN WORK : 
+- [ ] Making Admin Commands check for the roles in the db
 - [ ] **Petting System** :
   - [ ] Testing the command to Approve for ALL
   - [x] Create Images
