@@ -179,11 +179,17 @@ def bet_result(name, option):
     
     CURSOR.execute(f"SELECT total_{winlet} FROM dashboard WHERE id = ?",(id,))
     data = CURSOR.fetchall()
-    wintotal = data[0][0]
+    if not data:
+        wintotal = 0
+    else:
+        wintotal = data[0][0]
 
     CURSOR.execute(f"SELECT total_{loslet} FROM dashboard WHERE id = ?",(id,))
     data = CURSOR.fetchall()
-    lostotal = data[0][0]
+    if not data:
+        lostotal = 0
+    else:
+        lostotal = data[0][0]
 
     CURSOR.execute(f"SELECT user, amount FROM 'qbet-{id}' WHERE option = ?",(winlet.upper(),))
     data = CURSOR.fetchall()
