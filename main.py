@@ -747,6 +747,8 @@ async def on_message(ctx):
         li_tosend = [message[i:i + chunk] for i in range(0, len(message), chunk)]
         for mess in li_tosend:
             await ctx.channel.send(mess)
+    
+    qopenai.update_memory_summary()
 
 
 @bot.event
