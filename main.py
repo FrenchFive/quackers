@@ -50,7 +50,7 @@ questions = [
     {"q": "Select a Debugging Channel", "type": "text", "format": "id"},
     {"q": "Select a Welcome Channel", "type": "text", "format": "id"},
     {"q": "Select an Admin Info Channel", "type": "text", "format": "id"},
-    
+    {"q": "Select a Bot Channel", "type": "text", "format": "id"},
 ]
 
 introduction = [
@@ -370,11 +370,13 @@ class DynamicQuestionView(nextcord.ui.View):
             qdb.add_or_update_server(
                 server_id=self.guild.id,
                 server_name=self.guild.name,
+                emoji_list=self.guild.emojis,
                 vc_afk=self.answers.get("Select an AFK Voice Channel", None),
                 channel_welcome_id=self.answers.get("Select a Welcome Channel", None),
                 channel_info_id=self.answers.get("Select an Admin Info Channel", None),
                 channel_test_id=self.answers.get("Select a Debugging Channel", None),
                 channel_general_id=self.answers.get("Select a General Channel", None),
+                channel_bot_id=self.answers.get("Select a Bot Channel", None),
                 role_newbie_name=self.answers.get("Select a Newbie Role", None),
                 role_admin_name=self.answers.get("Select an Admin Role", None),
             )

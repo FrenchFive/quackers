@@ -39,35 +39,32 @@ CURSOR.execute('''CREATE TABLE IF NOT EXISTS "servers" (
     "channel_welcome" INTEGER, 
     "channel_info" INTEGER, 
     "channel_test" INTEGER, 
-    "channel_general" INTEGER, 
+    "channel_general" INTEGER,
+    "channel_bot" INTEGER,
     "role_newbie" TEXT, 
     "role_admin" TEXT, 
+    "emoji_list" TEXT,
     PRIMARY KEY("id" AUTOINCREMENT)
 );''')
 
 
 #SERVERS
-def add_or_update_server(server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, role_newbie_name, role_admin_name):
+def add_or_update_server(server_id, server_name, emoji_list, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, channel_bot_id, role_newbie_name, role_admin_name):
+    emoji_list = json.dumps(emoji_list)
+    
     # Check if the server already exists in the database
     CURSOR.execute('SELECT * FROM servers WHERE server_id = ?', (server_id,))
     existing_server = CURSOR.fetchone()
 
     if existing_server:
         # Update the existing server information
-        CURSOR.execute('''UPDATE servers
-                            SET server_name = ?, vc_afk = ?, channel_welcome = ?, channel_info = ?, channel_test = ?, 
-                            channel_general = ?, role_newbie = ?, role_admin = ?
-                            WHERE server_id = ?''',
-                        (server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id,
-                        role_newbie_name, role_admin_name, server_id))
+        CURSOR.execute('''UPDATE servers SET server_name = ?, emoji_list = ?, vc_afk = ?, channel_welcome = ?, channel_info = ?, channel_test = ?, channel_general = ?, channel_bot = ?, role_newbie = ?, role_admin = ? WHERE server_id = ?''',
+                        (server_name, emoji_list, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, channel_bot_id, role_newbie_name, role_admin_name, server_id))
         qlogs.info(f'--QDB // UPDATED SERVER: {server_name} (ID: {server_id})')
     else:
         # Add a new server entry
-        CURSOR.execute('''INSERT INTO servers (server_id, server_name, vc_afk, channel_welcome, channel_info, 
-                                               channel_test, channel_general, role_newbie, role_admin) 
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                        (server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, 
-                        channel_general_id, role_newbie_name, role_admin_name))
+        CURSOR.execute('''INSERT INTO servers (server_id, server_name, emoji_list, vc_afk, channel_welcome, channel_info, channel_test, channel_general, channel_bot, role_newbie, role_admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                        (server_id, server_name, emoji_list, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, channel_bot_id, role_newbie_name, role_admin_name))
         qlogs.info(f'--QDB // ADDED SERVER: {server_name} (ID: {server_id})')
 
     CONNECTION.commit()
@@ -116,6 +113,11 @@ def get_role_admin(guild_id):
     CURSOR.execute('SELECT role_admin FROM servers WHERE server_id = ?', (guild_id,))
     result = CURSOR.fetchone()
     return result[0] if result else None
+
+def get_emoji_list(guild_id):
+    CURSOR.execute('SELECT emoji_list FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return json.loads(result[0]) if result else None
 
 #MEMBERS
 def add(name, amount):
