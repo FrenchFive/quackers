@@ -176,7 +176,7 @@ Enjoy using **Quackers**! 🦆
 
 ### IN WORK : 
 - [ ] Making Admin Commands check for the roles in the db (except for admin scan if the server already is in the db)
-- [ ] Add a bot channel in the `/admin-scan`
+- [x] Add a bot channel in the `/admin-scan`
 - [ ] **Petting System** :
   - [x] Create Images
   - [ ] Create a Database for all accessories
@@ -247,7 +247,7 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make progression exponential 
 - [ ] Have different languages mapped to Quackers 
   - [ ] Making the default language English
-- [ ] Make `/admin-scan` scan Emojis for the server
+- [x] Make `/admin-scan` scan Emojis for the server
   - [ ] Make Quackers use custom emojis from each server
 - [ ] Bank Vault 
   - [ ] Make user be able to give their coins to the bank to gain interest over them 

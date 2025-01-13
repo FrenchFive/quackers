@@ -811,6 +811,8 @@ async def on_member_join(member):
     if channel:
         message = await channel.send(random_welcome)
         emojis = ["\U0001F44C", "\U0001F4AF", "\U0001F389", "\U0001F38A"]
+        server_emojis = guild.emojis
+        emojis.extend([str(e) for e in server_emojis])
         await message.add_reaction(random.choice(emojis))
     
     role_newbies = qdb.get_role_newbie(guild.id)
@@ -825,16 +827,9 @@ async def on_member_join(member):
     else:
         print(f"Role '{role_newbies}' not found in the server.")
     
-    message_welcome = f'''
-    **Bienvenue {member.name} sur le serveur Quackers, jeune canard ! 🦆**
-
-    Pour t'intégrer parmi tes compagnons de paddock, n'oublie pas de te **présenter** avec la commande `/presentation` 
-    dans les** 7 jours** (*sinon tu risquerais de te faire "plumer" et être exclu… c'est pas la fête !*). 🎤
-
-    En attendant, pour éviter de te faire trop spammer, on te conseille de **muter** les channels **#muted** (et #pokemon et #musique si nécessaire) – nos bots sont un peu bruyants, et tu n’as pas envie qu'ils te fassent perdre la tête comme un canard sans son nid !
-
-    **Allez, fais-toi bien au bassin et profite du serveur ! 🦆🎉**
-    '''
+    #read from the file
+    with open("db/welcome_private.txt", "r") as file:
+        message_welcome = file.readlines().replace("{name}", member.mention)
 
     # Send a private message to the user
     try:
