@@ -201,12 +201,12 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make it so short and long memory are dependant on the server and not global 
     - [ ] Transmit information about the server as server name and server context unique to each server 
 - [x] Welcome Messages
-  - [ ] Generate a list of Welcome Messages with placeholder for the name 
+  - [x] Generate a list of Welcome Messages with placeholder for the name 
   - [x] Tag the newbie
   - [x] Add Quackers emotes randomly (only positive emotes)
     - [ ] Add Quack Server custom emotes
     - [ ] Add more emotes/emojis
-  - [ ] Send a message to users when they join the server 
+  - [x] Send a message to users when they join the server 
   - [ ] Presentation
     - [ ] Make it so not finishing /presentation doenst remove the role newbie
     - [x] Make a presentation using Discord Commands

@@ -175,14 +175,17 @@ class Betting(nextcord.ui.Modal):
                 await interaction.send(f'{interaction.user.mention} do not have enough QuackCoins', ephemeral=True)
 
 class PresentationModal(nextcord.ui.Modal):
-    def __init__(self, target_channel, user, imgpath, questions):
+    def __init__(self, target_channel, user, imgpath, questions, role, newbies):
         super().__init__(
             title="PRESENTATIONS",
             timeout=None,
         )
 
+        self.interaction = user
+        self.role = role
+        self.newbies = newbies
         self.target_channel = target_channel  # Save the target channel ID
-        self.user = user
+        self.user = user.name
         self.img = imgpath
         self.questions = questions
 
@@ -262,6 +265,9 @@ class PresentationModal(nextcord.ui.Modal):
                     await target_channel.send(embed=embed, file=file)
             else:
                 print(f"Error: Channel {self.target_channel} not found.")
+            
+            await self.interaction.remove_roles(self.role, reason="Role removed after presentation completion.")
+            qlogs.info(f"Role '{self.newbies}' removed from {self.user}.")
 
 class DynamicQuestionDropdown(nextcord.ui.Select):
     def __init__(self, question, items):
@@ -517,10 +523,7 @@ async def introduce(interaction: nextcord.Interaction):
     random_questions = random.sample(introduction, 3)
 
     channel_welcome = qdb.get_ch_welcome(guild.id)
-    await interaction.response.send_modal(PresentationModal(target_channel=channel_welcome, user=interaction.user.name, imgpath=imgpath, questions=random_questions))
-
-    await interaction.user.remove_roles(role, reason="Role removed after presentation completion.")
-    print(f"Role '{role_newbies}' removed from {interaction.user.name}.")
+    await interaction.response.send_modal(PresentationModal(target_channel=channel_welcome, user=interaction.user, imgpath=imgpath, questions=random_questions, role=role, newbies=role_newbies))  
 
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
