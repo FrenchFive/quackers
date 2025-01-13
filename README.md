@@ -204,7 +204,6 @@ Enjoy using **Quackers**! 🦆
         - [ ] Sell to get coins 
         - [ ] Send to another user
   - [ ] Make a role "pet" and have it display all functions except /pet => user buy a pet if doesnt have one already
-- [ ] **Crypto System** ?
 - [ ] **Power on KAEDE** :: Kaede is a "Midjourney" like bot (that uses a lot of GPU and cannot afford to let it run all the time)
 - [ ] Programmable messages for ADMIN
   - [ ] Making work programmed messages

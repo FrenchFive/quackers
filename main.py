@@ -726,6 +726,10 @@ async def admin_scan(interaction: Interaction):
         f"**Voice Channels**: {len(guild.voice_channels)}\n"
         f"**Text Channels**: {len(guild.text_channels)}\n"
         f"**Roles**: {len(guild.roles)}\n"
+        f"**Members**: {guild.member_count}\n"
+        f"**Owner**: {guild.owner.name}\n"
+        f"**Created At**: {guild.created_at}\n"
+        f"**Emoji Count**: {len(guild.emojis)}\n"
     )
 
     # Send the initial message with server details
