@@ -829,7 +829,7 @@ async def on_member_join(member):
     
     #read from the file
     with open("db/welcome_private.txt", "r") as file:
-        message_welcome = file.readlines().replace("{name}", member.mention)
+        message_welcome = file.read().replace("{name}", member.mention)
 
     # Send a private message to the user
     try:
