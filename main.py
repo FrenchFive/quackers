@@ -366,11 +366,12 @@ class DynamicQuestionView(nextcord.ui.View):
             answer_text = "\n".join(
                 f"**{question}**: {value}" for question, value in self.answers.items()
             )
+            emoji_list=[str(emoji) for emoji in self.guild.emojis],
             # Explicitly map answers to database fields
             qdb.add_or_update_server(
                 server_id=self.guild.id,
                 server_name=self.guild.name,
-                emoji_list=self.guild.emojis,
+                emoji_list=emoji_list,
                 vc_afk=self.answers.get("Select an AFK Voice Channel", None),
                 channel_welcome_id=self.answers.get("Select a Welcome Channel", None),
                 channel_info_id=self.answers.get("Select an Admin Info Channel", None),
