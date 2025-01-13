@@ -207,8 +207,8 @@ Enjoy using **Quackers**! 🦆
     - [ ] Add Quack Server custom emotes
     - [ ] Add more emotes/emojis
   - [x] Send a message to users when they join the server 
-  - [ ] Presentation
-    - [ ] Make it so not finishing /presentation doenst remove the role newbie
+  - [x] Presentation
+    - [x] Make it so not finishing /presentation doenst remove the role newbie
     - [x] Make a presentation using Discord Commands
     - [x] Making a quick questionnaire to answer by user that would generate a message for presentation 
     - [x] Use AI Gen to spice up the answers in Quackers style

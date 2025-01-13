@@ -246,6 +246,10 @@ class PresentationModal(nextcord.ui.Modal):
             ephemeral=True,
         )
 
+        #removing the role NEWBIE
+        await self.interaction.remove_roles(self.role, reason="Role removed after presentation completion.")
+        qlogs.info(f"Role '{self.newbies}' removed from {self.user}.")
+
         embed = nextcord.Embed(
             title=f"🎉 Welcome {self.user} to the Server! 🎉",
             description="Here's their introduction!",
@@ -265,9 +269,6 @@ class PresentationModal(nextcord.ui.Modal):
                     await target_channel.send(embed=embed, file=file)
             else:
                 print(f"Error: Channel {self.target_channel} not found.")
-            
-            await self.interaction.remove_roles(self.role, reason="Role removed after presentation completion.")
-            qlogs.info(f"Role '{self.newbies}' removed from {self.user}.")
 
 class DynamicQuestionDropdown(nextcord.ui.Select):
     def __init__(self, question, items):
