@@ -272,26 +272,6 @@ class PresentationModal(nextcord.ui.Modal):
 
 class DynamicQuestionDropdown(nextcord.ui.Select):
     def __init__(self, question, items):
-        options = [
-            nextcord.SelectOption(label=name, value=str(id_)) for id_, name in items.items()
-        ]
-        super().__init__(
-            placeholder=question["q"],
-            min_values=1,
-            max_values=1,
-            options=options,
-        )
-        self.question = question
-        self.selected_value = None
-
-    async def callback(self, interaction: Interaction):
-        # Store the selected value
-        self.selected_value = self.values[0]
-        await interaction.response.defer()  # Acknowledge the interaction
-
-
-class DynamicQuestionDropdown(nextcord.ui.Select):
-    def __init__(self, question, items):
         # Truncate items if there are too many
         max_option= 24
         if len(items) > max_option:
