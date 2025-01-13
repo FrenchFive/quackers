@@ -126,12 +126,12 @@ For additional support, open an issue in the [GitHub repository](https://github.
 
 #### 3. Configure the server to monitor
 
-Once the bot is launched and added to your discord channel, excecute the following /command in discord ```/admin_scan```
+Once the bot is launched and added to your discord channel, excecute the following /command in discord ```/admin-scan```
 
 Answer all questions asked to personnalize your experience
 
 ```
-Admin Role : The only role allowed to use "admin_..." /commands (except for "/admin_scan")
+Admin Role : The only role allowed to use "admin_..." /commands (except for "/admin-scan")
 Newbie Role : The role assigned to New Members - allowing them access to "/presentation"
 AFK Voice Channel : Voice Channel managed by discord - poeple going to this channel wont receive coins
 General Channel : The main text channel of the server
@@ -141,7 +141,7 @@ Admin Info Channel : Channel used to share sensitive information to admin
 ```
 
 For dev only - it is possible to access work-in-progress functions by modifying the `main.py`
-<br><sub>`/admin_scan function displays the ID of the current server`</sub>
+<br><sub>`/admin-scan function displays the ID of the current server`</sub>
 ```python
 # Server IDs
 serverid = qdb.get_all_server_ids()
@@ -151,7 +151,7 @@ It should match the server your [Server ID](https://support.discord.com/hc/en-us
 
 
 > [!NOTE]
-> It is necessary to RESTART the bot once the /admin_scan has been done.
+> It is necessary to RESTART the bot once the /admin-scan has been done.
 > This way the server will be added to the list of servers to use the commands.
 
 ---
@@ -176,6 +176,7 @@ Enjoy using **Quackers**! 🦆
 
 ### IN WORK : 
 - [ ] Making Admin Commands check for the roles in the db (except for admin scan if the server already is in the db)
+- [ ] Add a bot channel in the `/admin-scan`
 - [ ] **Petting System** :
   - [x] Create Images
   - [ ] Create a Database for all accessories
