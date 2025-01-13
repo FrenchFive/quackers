@@ -10,7 +10,7 @@ A discord bot in Python with a lot of functionalities.
   - `/duck` : Send a Duck Picture
   - `/info` : Send an image with information about a user
   - `/presentation` : User answer few questions about themselves, used to know new members
-  - Quackers repond to Mention and Replies with his personnality using :: **GPT4-TURBO** Model by OpenAI
+  - Quackers repond to Mention and Replies with his personnality using :: **GPT4-o** Model by OpenAI
 - 👨🏻‍💻 || **Admin Functions** <sub>[Allows Admins to change value for the bot]</sub>
   - `/admin-scan` : Easy and quick bot setup
   - `/admin-add` : Add QuackCoins for a specific User to the Quack Database
@@ -175,20 +175,34 @@ Enjoy using **Quackers**! 🦆
 ---
 
 ### IN WORK : 
-- [ ] Making Admin Commands check for the roles in the db
+- [ ] Making Admin Commands check for the roles in the db (except for admin scan if the server already is in the db)
 - [ ] **Petting System** :
-  - [ ] Testing the command to Approve for ALL
   - [x] Create Images
   - [ ] Create a Database for all accessories
     - [ ] Make a function to recreate the database when Quackers goes online based on the files in the folder
       - [ ] Make the ID unique and not change w/ time 
-      - [ ] How to transmit information like price and name => Attach a file ? with information into it ?
+        - [ ] Read the ID from the json file, else write it from the Database or UUID
+      - [ ] Have an info .json file for each image that contains all necessary info as name, price etc ...
   - [ ] Create a Database for Users and data about their pets
-  - [ ] Create functions to interact with the pet :: Get info about level and xp ... etc .. 
-  - [ ] Create a Training interaction : Make it gain level through training
-    - [ ] Passive XP gain like earning coins while using the Discord
-  - [ ] Create a Mission interaction 
+  - [ ] Interactions with PET
+    - [ ] `/pet` to buy one or to have info about it
+    - [ ] `/pet-train` to train your pet for 5 hours => earn more money
+    - [ ] `/pet-mission` to send the pet search money for 2 hours => RANDOM (or accessory)
+    - [ ] Make the pet have energy so it needs food to do more actions
+      - [ ] Has 3 energy : Training takes 3 : Mission takes 1
+      - [ ] Possibility to refill energy by feeding the pet => Cost money
   - [ ] Create functions to buy the pet and accessories [SHOP SYSTEM]
+    - [ ] `/pet-shop` Access the shop to buy Chest to get items
+      - [ ] Make it a Gatcha (random pull)
+      - [ ] Make it possible to sell items 
+    - [ ] `/pet-inventory` Sell items to get coins => not always worth it
+      - [ ] List all accessories the user possess
+        - [ ] Plus informations [ What position / Price / Rarity / Name ] 
+      - [ ] Add buttons to equip or sell or send 
+        - [ ] Equip / Unequip from the pet
+        - [ ] Sell to get coins 
+        - [ ] Send to another user
+  - [ ] Make a role "pet" and have it display all functions except /pet => user buy a pet if doesnt have one already
 - [ ] **Crypto System** ?
 - [ ] **Power on KAEDE** :: Kaede is a "Midjourney" like bot (that uses a lot of GPU and cannot afford to let it run all the time)
 - [ ] Programmable messages for ADMIN
@@ -208,6 +222,7 @@ Enjoy using **Quackers**! 🦆
     - [ ] Add more emotes/emojis
   - [x] Send a message to users when they join the server 
   - [x] Presentation
+    - [ ] Creating consistancy of the display (either bullet points or no bullet points at all)
     - [x] Make it so not finishing /presentation doenst remove the role newbie
     - [x] Make a presentation using Discord Commands
     - [x] Making a quick questionnaire to answer by user that would generate a message for presentation 
@@ -232,3 +247,8 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make progression exponential 
 - [ ] Have different languages mapped to Quackers 
   - [ ] Making the default language English
+- [ ] Make `/admin-scan` scan Emojis for the server
+  - [ ] Make Quackers use custom emojis from each server
+- [ ] Bank Vault 
+  - [ ] Make user be able to give their coins to the bank to gain interest over them 
+    - [ ] 4% / month Updating every day => 0.14% / day 
