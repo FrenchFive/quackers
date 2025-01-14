@@ -416,11 +416,9 @@ def voicestalled(name):
     CONNECTION.commit()
 
 def user_joined_time(members):
-    for i in range(len(members)):
-        name = members[i][0]
-        date = members[i][1]
-        CURSOR.execute("SELECT created FROM members WHERE name = ?",(name,))
-        data = CURSOR.fetchall()
-        if data[0][0] != date:
+    for name, date in members:
+        CURSOR.execute("SELECT created FROM members WHERE name = ?", (name,))
+        data = CURSOR.fetchone()
+        if data and data[0] != date:
             CURSOR.execute("UPDATE members SET created = ? WHERE name = ?", (date, name))
             CONNECTION.commit()
