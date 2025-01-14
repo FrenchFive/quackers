@@ -426,7 +426,7 @@ class AmountModal(nextcord.ui.Modal):
         update = update.replace("{name}", self.user_name.upper())
         update = update.replace("{coins}", str(coins))
         update = update.replace("{bank}", str(bank))
-        self.message.edit(content=update)
+        await self.message.edit(content=update)
 
         # Send confirmation to the user
         await interaction.response.send_message(response, ephemeral=True)
