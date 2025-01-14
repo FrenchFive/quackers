@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import nextcord
-from nextcord.ext import commands
+from nextcord.ext import commands, tasks
 from nextcord import Interaction, SlashOption
 from typing import Optional
 
@@ -466,12 +466,6 @@ class BankView(nextcord.ui.View):
         await interaction.response.send_modal(AmountModal(self.user_name, action=1, base_m=self.base_m, message=self.message))
 
 
-#QUACKER IS READY 
-@bot.event
-async def on_ready():
-    qlogs.info("QUACKERS IS ONLINE")
-
-
 # COMMANDS
 @bot.slash_command(name="daily", description="Receive daily QuackCoins.", guild_ids=serverid)
 async def daily(interaction: Interaction):
@@ -834,8 +828,25 @@ async def admin_scan(interaction: Interaction):
         view=view,
     )
 
+@tasks.loop(minutes=1)
+async def send_periodic_message():
+    # Get the channel by ID
+    channel = bot.get_channel(qdb.get_ch_test(testid[0]))
+    if channel:
+        await channel.send("This is a periodic message sent every 5 minutes.")
+
+@send_periodic_message.before_loop
+async def before_send_periodic_message():
+    await bot.wait_until_ready()  # Wait until the bot is ready
 
 # EVENTS
+#QUACKER IS READY 
+@bot.event
+async def on_ready():
+    qlogs.info("QUACKERS IS ONLINE")
+    if not send_periodic_message.is_running():
+        send_periodic_message.start()    
+
 @bot.event
 async def on_message(ctx):
     if ctx.guild is None or ctx.author == bot.user:
