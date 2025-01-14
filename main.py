@@ -611,7 +611,11 @@ async def bank(interaction: nextcord.Interaction):
     message = message.replace("{coins}", str(coins))
     message = message.replace("{bank}", str(bank))
 
-    await interaction.response.send_message(message, view=BankView(interaction.user.name, base_m, interaction.message))
+    # Send the initial message
+    sent_message = await interaction.response.send_message(message)
+    
+    view = BankView(interaction.user.name, base_m, sent_message)
+    await sent_message.edit(view=view)
 
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
