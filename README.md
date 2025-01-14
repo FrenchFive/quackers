@@ -222,6 +222,7 @@ Enjoy using **Quackers**! 🦆
     - [ ] Add more emotes/emojis
   - [x] Send a message to users when they join the server 
   - [x] Presentation
+    - [ ] Add 300 Coins to anyone presenting himself
     - [ ] Creating consistancy of the display (either bullet points or no bullet points at all)
     - [x] Make it so not finishing /presentation doenst remove the role newbie
     - [x] Make a presentation using Discord Commands

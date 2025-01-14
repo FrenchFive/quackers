@@ -514,6 +514,10 @@ async def bank(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user.name)
     
+    # Get the user's balance
+    coins, bank = qdb.bank(interaction.user.name)
+
+    await interaction.response.send_message(f"**QuackCoins**: {coins}\n**Bank**: {bank}")
 
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
