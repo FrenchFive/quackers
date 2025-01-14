@@ -872,7 +872,7 @@ async def on_message(ctx):
     #COIFFEUR
     pattern = re.compile(r"(?:^|\s)[qQ]+[uU]+[oO]+[iI]+[!? ]*$")
     feurlist = ["...feur","FEUR","FEUR !!!","feur","FEUUUUUR","coubeh!","kwak"]
-    if bool(pattern.search(ctx.content)) == True:
+    if bool(pattern.search(ctx.content)) == True and random.randint(0, 100) < 50:
         await ctx.channel.send(random.choice(feurlist))
 
     if not bot.user.mentioned_in(ctx):
