@@ -33,6 +33,7 @@ A discord bot in Python with a lot of functionalities.
 - 😴 || **PASSIVE Actions** <sub>[Users are Rewarded for using the Discord Channel]</sub>
   - Messages : Each message sent through Discord gives a Coin
   - Voice Channel : Connecting to a Voice Channel gives some coins | Each hour spent on the Voice Channel gives more coins to the user
+  - Welcome and Goodbye Messages : sends a Welcome Message // sends DM Message to new members
  
 ---
 
@@ -214,22 +215,6 @@ Enjoy using **Quackers**! 🦆
   - [x] Clean up what information is sent to OpenAi
   - [ ] Make it so short and long memory are dependant on the server and not global 
     - [ ] Transmit information about the server as server name and server context unique to each server 
-- [x] Welcome Messages
-  - [x] Generate a list of Welcome Messages with placeholder for the name 
-  - [x] Tag the newbie
-  - [x] Add Quackers emotes randomly (only positive emotes)
-    - [x] Add Quack Server custom emotes
-    - [x] Add more emotes/emojis
-  - [x] Send a message to users when they join the server 
-  - [x] Presentation
-    - [x] Add 300 Coins to anyone presenting himself
-    - [x] Creating consistancy of the display (either bullet points or no bullet points at all)
-    - [x] Make it so not finishing /presentation doenst remove the role newbie
-    - [x] Make a presentation using Discord Commands
-    - [x] Making a quick questionnaire to answer by user that would generate a message for presentation 
-    - [x] Use AI Gen to spice up the answers in Quackers style
-    - [x] Make a list of random questions and alternate to have each to be unique
-- [ ] Making a Discussion as logs on Github with the updates to keep track of the progress done
 - [ ] Make an UI for Admin to change some parameters of the BOT
 - [x] Making a database for server
   - [x] Making a SETUP function to easly register and Update the server info
