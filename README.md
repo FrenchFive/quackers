@@ -177,7 +177,6 @@ Enjoy using **Quackers**! 🦆
 
 ### IN WORK : 
 - [ ] Making Admin Commands check for the roles in the db (except for admin scan if the server already is in the db)
-- [x] Add a bot channel in the `/admin-scan`
 - [ ] **Petting System** :
   - [x] Create Images
   - [ ] Create a Database for all accessories
@@ -219,12 +218,12 @@ Enjoy using **Quackers**! 🦆
   - [x] Generate a list of Welcome Messages with placeholder for the name 
   - [x] Tag the newbie
   - [x] Add Quackers emotes randomly (only positive emotes)
-    - [ ] Add Quack Server custom emotes
-    - [ ] Add more emotes/emojis
+    - [x] Add Quack Server custom emotes
+    - [x] Add more emotes/emojis
   - [x] Send a message to users when they join the server 
   - [x] Presentation
-    - [ ] Add 300 Coins to anyone presenting himself
-    - [ ] Creating consistancy of the display (either bullet points or no bullet points at all)
+    - [x] Add 300 Coins to anyone presenting himself
+    - [x] Creating consistancy of the display (either bullet points or no bullet points at all)
     - [x] Make it so not finishing /presentation doenst remove the role newbie
     - [x] Make a presentation using Discord Commands
     - [x] Making a quick questionnaire to answer by user that would generate a message for presentation 
@@ -273,3 +272,6 @@ Enjoy using **Quackers**! 🦆
   - [ ] Switch to a dark Theme 
   - [ ] Make a moodboard of typos and styles 
     - [ ] Look into Frosted effects
+- [ ] Modifying the `/admin-scan`
+  - [ ] Add a function when doing `/scan` to correct the joiningdate on members 
+  - [x] Add a bot channel in the `/admin-scan`

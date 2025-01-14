@@ -123,7 +123,7 @@ def welcome(presentation):
     messages=[
         {"role": "system", "content": personality},
         {"role": "system", "content": emoji},
-        {"role": "system", "content": "User answered question about themselves, write from the given information a presentation for the user to the other member of the server."},
+        {"role": "system", "content": "User answered question about themselves, write from the given information a presentation for the user to the other member of the server. Use bullet points. Make it Discord formatted."},
         {"role": "system", "content": "Language : French"},
         {"role": "user", "content": presentation}
     ]

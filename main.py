@@ -247,6 +247,8 @@ class PresentationModal(nextcord.ui.Modal):
             ephemeral=True,
         )
 
+        qdb.add(self.user, 300)
+
         #removing the role NEWBIE
         await self.interaction.remove_roles(self.role, reason="Role removed after presentation completion.")
         qlogs.info(f"Role '{self.newbies}' removed from {self.user}.")
