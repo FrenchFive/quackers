@@ -416,13 +416,12 @@ class AmountModal(nextcord.ui.Modal):
         await interaction.response.send_message(response, ephemeral=True)
 
 class BankView(nextcord.ui.View):
-    def __init__(self, user_name, user_id):
+    def __init__(self, user_name):
         super().__init__(timeout=60)  # Buttons will time out after 60 seconds
         self.user_name = user_name
-        self.user_id = user_id  # Store the ID of the user who initiated the command
 
     async def ensure_correct_user(self, interaction: nextcord.Interaction) -> bool:
-        if interaction.user.id != self.user_id:
+        if interaction.user.name != self.user_name:
             await interaction.response.send_message(
                 "🚫 You cannot use this menu. It belongs to someone else!",
                 ephemeral=True
