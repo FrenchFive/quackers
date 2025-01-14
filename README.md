@@ -18,6 +18,7 @@ A discord bot in Python with a lot of functionalities.
   - `/admin-logs` : Display the latest logs from Quackers to troubleshoot some errors
 - 🪙 || **Coins** <sub>[Manage Coins earned on Discord]</sub>
   - `/coins` : Display how much coins the user has
+  - `/bank` : Allows the user to store coins to get interest
   - `/send` : Send coins from a User to another
   - `/daily` : Receive Daily Coins everyday (with a Streak function, the more you do it, the more you get)
   - `/leaderboard` : Display the Top 10 Users with the most coins
@@ -245,14 +246,30 @@ Enjoy using **Quackers**! 🦆
 - [ ] Making an EXP system (hidden)
   - [ ] Exp cannot be reduced, used to see how Active are users
   - [ ] Give them rank as they become more active
-  - [ ] Make progression exponential 
+  - [ ] Make progression exponentially hard
 - [ ] Have different languages mapped to Quackers 
   - [ ] Making the default language English
 - [ ] Remove `/admin-scan` scan Emojis for the server
   - [ ] Delete the column from the db
   - [ ] Make Quackers use custom emojis from each server
-- [ ] Bank Vault 
-  - [ ] `/bank` command displays the amount of coins in the bank // and the money to spend
-    - [ ] 2 Buttons : ADD (put money in the bank) // WITHDRAW (to get the money to spend) 
-  - [ ] Make user be able to give their coins to the bank to gain interest over them 
-    - [ ] 4% / month Updating every day => 0.14% / day 
+- [x] Bank Vault 
+  - [x] `/bank` command displays the amount of coins in the bank // and the money to spend
+    - [x] 2 Buttons : ADD (put money in the bank) // WITHDRAW (to get the money to spend) 
+  - [x] Make user be able to give their coins to the bank to gain interest over them 
+    - [x] 4% / month Updating every day => 0.14% / day 
+- [ ] Make Integration to Social Media 
+  - [ ] Make a Twitch Integration
+  - [ ] Make a Youtube Integration
+- [ ] Create Temporary Voice Channels ?? 
+- [ ] Create Statistics about the server
+  - [ ] Store Data
+    - [ ] Message amount 
+    - [ ] Voice amount
+    - [ ] Number of members
+  - [ ] Draw Curves
+- [ ] Help Function
+- [ ] Admin GiveAways 
+- [ ] Modify the INFO to make the image more beautiful 
+  - [ ] Switch to a dark Theme 
+  - [ ] Make a moodboard of typos and styles 
+    - [ ] Look into Frosted effects
