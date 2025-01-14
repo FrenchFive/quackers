@@ -387,6 +387,27 @@ class DynamicQuestionView(nextcord.ui.View):
                 view=None,  # Remove the view
             )
 
+class BankView(nextcord.ui.View):
+    def __init__(self, user_name):
+        super().__init__(timeout=60)  # Buttons will time out after 60 seconds
+        self.user_name = user_name
+
+    @nextcord.ui.button(label="Add", style=nextcord.ButtonStyle.green)
+    async def add_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        # Handle adding coins to the bank
+        await interaction.response.send_message(
+            f"{self.user_name}, how much would you like to add to the bank?",
+            ephemeral=True
+        )
+
+    @nextcord.ui.button(label="Withdraw", style=nextcord.ButtonStyle.red)
+    async def withdraw_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        # Handle withdrawing coins from the bank
+        await interaction.response.send_message(
+            f"{self.user_name}, how much would you like to withdraw from the bank?",
+            ephemeral=True
+        )
+
 #QUACKER IS READY 
 @bot.event
 async def on_ready():
@@ -517,20 +538,17 @@ async def bank(interaction: nextcord.Interaction):
     # Get the user's balance
     coins, bank = qdb.bank(interaction.user.name)
 
-    title = f"- 💷 THE QUACKERY TREASURY 💷 :: {interaction.user.name.upper()} -"
-    borders = "═" * len(title)
-
     message = f'''
-    ╔{borders}╗
-    ║{title}║
-    ╚{borders}╝
+    - 💷 THE QUACKERY TREASURY 💷 :: {interaction.user.name.upper()} -
+
     ------------------------------
-    💰 **QuackCoins**: {coins}
-    🏦 **BankCoins**: {bank}
-    ═══════════════════════════════
+    💰 **QuackCoins**: {coins} <:quackCoin:1124255606782578698>
+    🏦 **BankCoins**: {bank} <:quackCoin:1124255606782578698>
+
+    Current Interest Rate: 4% / month
     '''
 
-    await interaction.response.send_message(message)
+    await interaction.response.send_message(message, view=BankView(interaction.user.name))
 
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
