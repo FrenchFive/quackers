@@ -388,10 +388,12 @@ class DynamicQuestionView(nextcord.ui.View):
             )
 
 class AmountModal(nextcord.ui.Modal):
-    def __init__(self, user_name, action):
+    def __init__(self, user_name, action, base_m, message):
         super().__init__(title=f"AMOUNT to {['ADD', 'WITHDRAW'][action]}")
         self.user_name = user_name
         self.action = action
+        self.base_m = base_m
+        self.message = message
 
         # Number input field
         self.amount_input = nextcord.ui.TextInput(
@@ -417,14 +419,24 @@ class AmountModal(nextcord.ui.Modal):
             response = qdb.bank_deposit(self.user_name, int(amount))
         elif self.action == 1:  # Withdraw
             response = qdb.bank_withdraw(self.user_name, int(amount))
+        
+        coins, bank = qdb.bank(self.user_name)
+
+        update = str(self.base_m)
+        update = update.replace("{name}", self.user_name.upper())
+        update = update.replace("{coins}", str(coins))
+        update = update.replace("{bank}", str(bank))
+        self.message.edit(content=update)
 
         # Send confirmation to the user
         await interaction.response.send_message(response, ephemeral=True)
 
 class BankView(nextcord.ui.View):
-    def __init__(self, user_name):
+    def __init__(self, user_name, base_m, message):
         super().__init__(timeout=60)  # Buttons will time out after 60 seconds
         self.user_name = user_name
+        self.base_m = base_m
+        self.message = message
 
     async def ensure_correct_user(self, interaction: nextcord.Interaction) -> bool:
         if interaction.user.name != self.user_name:
@@ -442,7 +454,7 @@ class BankView(nextcord.ui.View):
             return
 
         # Show the modal for adding coins
-        await interaction.response.send_modal(AmountModal(self.user_name, action=0))
+        await interaction.response.send_modal(AmountModal(self.user_name, action=0, base_m=self.base_m, message=self.message))
 
     @nextcord.ui.button(label="Withdraw", style=nextcord.ButtonStyle.red)
     async def withdraw_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
@@ -451,7 +463,7 @@ class BankView(nextcord.ui.View):
             return
 
         # Show the modal for withdrawing coins
-        await interaction.response.send_modal(AmountModal(self.user_name, action=1))
+        await interaction.response.send_modal(AmountModal(self.user_name, action=1, base_m=self.base_m, message=self.message))
 
 
 #QUACKER IS READY 
@@ -584,8 +596,8 @@ async def bank(interaction: nextcord.Interaction):
     # Get the user's balance
     coins, bank = qdb.bank(interaction.user.name)
 
-    message = f'''
-    - 💷 THE QUACKERY TREASURY 💷 :: {interaction.user.name.upper()} -
+    message = '''
+    - 💷 THE QUACKERY TREASURY 💷 :: {name} -
 
     ------------------------------
     💰 **QuackCoins**: {coins} <:quackCoin:1124255606782578698>
@@ -594,7 +606,12 @@ async def bank(interaction: nextcord.Interaction):
     Current Interest Rate: 4% / month
     '''
 
-    await interaction.response.send_message(message, view=BankView(interaction.user.name))
+    base_m = message
+    message = message.replace("{name}", interaction.user.name.upper())
+    message = message.replace("{coins}", str(coins))
+    message = message.replace("{bank}", str(bank))
+
+    await interaction.response.send_message(message, view=BankView(interaction.user.name, base_m, interaction.message))
 
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)

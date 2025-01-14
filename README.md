@@ -248,7 +248,8 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make progression exponential 
 - [ ] Have different languages mapped to Quackers 
   - [ ] Making the default language English
-- [x] Make `/admin-scan` scan Emojis for the server
+- [ ] Remove `/admin-scan` scan Emojis for the server
+  - [ ] Delete the column from the db
   - [ ] Make Quackers use custom emojis from each server
 - [ ] Bank Vault 
   - [ ] `/bank` command displays the amount of coins in the bank // and the money to spend
