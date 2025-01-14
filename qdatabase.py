@@ -361,7 +361,7 @@ def info(name):
 
     coins = data[0][0]
     bank = data[0][1]
-    CURSOR.execute("SELECT COUNT(*) FROM members WHERE (coins + bank) > ?",(coins,))
+    CURSOR.execute("SELECT COUNT(*) FROM members WHERE (coins + bank) > ?",((coins+bank),))
     cdata = CURSOR.fetchall()
     rank = cdata[0][0] + 1
     return(data[0], rank)
