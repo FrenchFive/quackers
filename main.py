@@ -832,9 +832,13 @@ async def admin_scan(interaction: Interaction):
 #TASKS
 @tasks.loop(hours=24)
 async def bank_update():
-    channel = bot.get_channel(qdb.get_ch_test(testid[0]))
-    if channel:
-        await channel.send("BANK HAS BEEN UPDATED")
+    interest = 4/30
+    qdb.bank_update(interest)
+
+    for server in serverid:
+        channel = bot.get_channel(qdb.get_ch_test(server))
+        if channel:
+            await channel.send("BANK HAS BEEN UPDATED")
 
 @bank_update.before_loop
 async def before_send_daily_message():

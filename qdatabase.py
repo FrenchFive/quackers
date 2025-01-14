@@ -342,6 +342,19 @@ def bank_withdraw(name, amount):
         CONNECTION.commit()
         return(f"Vous avez retiré {amount} <:quackCoin:1124255606782578698> de votre compte en banque.")
 
+def bank_update(interest):
+    #Update the bank trust fund 
+    CURSOR.execute("SELECT name, bank FROM members")
+    data = CURSOR.fetchall()
+    for i in range(len(data)):
+        name = data[i][0]
+        bank = data[i][1]
+        if bank > 0:
+            bank += int(bank * (interest / 100))
+            CURSOR.execute("UPDATE members SET bank = ? WHERE name = ?", (bank, name))
+            CONNECTION.commit()
+            qlogs.info(f'-- QDB // Added {int(bank * (interest / 100))} to {name} bank account.')
+
 def info(name):
     CURSOR.execute("SELECT coins, mess, created, epvoicet, voiceh, luck FROM members WHERE name = ?", (name,))
     data = CURSOR.fetchall()
