@@ -406,11 +406,17 @@ class AmountModal(nextcord.ui.Modal):
         # Get the entered amount
         amount = self.amount_input.value
 
+        #convert amount to numbers
+        try:
+            amount = int(amount)
+        except:
+            amount = 0
+
         # Perform the action (Add or Withdraw)
         if self.action == 0:  # Add
-            response = qdb.bank_deposit(self.user_name, amount)
+            response = qdb.bank_deposit(self.user_name, int(amount))
         elif self.action == 1:  # Withdraw
-            response = qdb.bank_withdraw(self.user_name, amount)
+            response = qdb.bank_withdraw(self.user_name, int(amount))
 
         # Send confirmation to the user
         await interaction.response.send_message(response, ephemeral=True)
