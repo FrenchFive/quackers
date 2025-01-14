@@ -27,7 +27,7 @@ CURSOR.execute('''CREATE TABLE IF NOT EXISTS "members" (
     "epvoicet" INTEGER DEFAULT 0, 
     "voiceh" INTEGER DEFAULT 0, 
     "luck" INTEGER DEFAULT 0, 
-    "cryptoq" INTEGER DEFAULT 0, 
+    "bank" INTEGER DEFAULT 0, 
     PRIMARY KEY("id" AUTOINCREMENT)
 );''')
 
@@ -203,7 +203,7 @@ def user_in_db(name):
 
 def add_user(name):
     date = datetime.now().strftime('%Y-%m-%d %H:%M')
-    CURSOR.execute('INSERT INTO members (name, coins, daily, quackers, mess, created, streak, epvoicet, voiceh, luck, cryptoq) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0, 0, 0, 0))
+    CURSOR.execute('INSERT INTO members (name, coins, daily, quackers, mess, created, streak, epvoicet, voiceh, luck, bank) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0, 0, 0, 0))
     CONNECTION.commit()
     qlogs.info(f'--QDB // ADDED USER : {name}')
 

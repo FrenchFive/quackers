@@ -250,5 +250,7 @@ Enjoy using **Quackers**! 🦆
 - [x] Make `/admin-scan` scan Emojis for the server
   - [ ] Make Quackers use custom emojis from each server
 - [ ] Bank Vault 
+  - [ ] `/bank` command displays the amount of coins in the bank // and the money to spend
+    - [ ] 2 Buttons : ADD (put money in the bank) // WITHDRAW (to get the money to spend) 
   - [ ] Make user be able to give their coins to the bank to gain interest over them 
     - [ ] 4% / month Updating every day => 0.14% / day 

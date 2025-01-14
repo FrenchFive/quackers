@@ -509,6 +509,12 @@ async def introduce(interaction: nextcord.Interaction):
     channel_welcome = qdb.get_ch_welcome(guild.id)
     await interaction.response.send_modal(PresentationModal(target_channel=channel_welcome, user=interaction.user, imgpath=imgpath, questions=random_questions, role=role, newbies=role_newbies))  
 
+@bot.slash_command(name="bank", description="Interact with The Quackery Treasury", guild_ids=testid)
+async def bank(interaction: nextcord.Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user.name)
+    
+
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
 async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(required=False), roll: Optional[int] = SlashOption(required=False)):
