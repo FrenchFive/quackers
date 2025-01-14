@@ -125,7 +125,7 @@ class ButtonMessage(nextcord.ui.View):
     @nextcord.ui.button(label=f"BET : A", style=nextcord.ButtonStyle.green)
     async def beta(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if qdb.user_in_db(interaction.user.name) == 0:
-            qdb.add_user(interaction.user.name)
+            qdb.add_user(interaction.user)
         if qgames.bet_status(self.id) == "open" and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
             await interaction.response.send_modal(Betting(self.id, "A"))
             self.value = True
@@ -135,7 +135,7 @@ class ButtonMessage(nextcord.ui.View):
     @nextcord.ui.button(label="BET : B", style=nextcord.ButtonStyle.blurple)
     async def betb(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if qdb.user_in_db(interaction.user.name) == 0 and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
-            qdb.add_user(interaction.user.name)
+            qdb.add_user(interaction.user)
         if qgames.bet_status(self.id) == "open":
             await interaction.response.send_modal(Betting(self.id, "B"))
             self.value = True

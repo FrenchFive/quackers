@@ -201,11 +201,20 @@ def user_in_db(name):
     data = CURSOR.fetchall()
     return(data[0][0])
 
-def add_user(name):
-    date = datetime.now().strftime('%Y-%m-%d %H:%M')
+def add_user(member):
+    name = member.name
+    date = member.joined_at.strftime('%Y-%m-%d %H:%M')
     CURSOR.execute('INSERT INTO members (name, coins, daily, quackers, mess, created, streak, epvoicet, voiceh, luck, bank) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0, 0, 0, 0))
     CONNECTION.commit()
     qlogs.info(f'--QDB // ADDED USER : {name}')
+
+def user_joined_time(members):
+    for name, date in members:
+        CURSOR.execute("SELECT created FROM members WHERE name = ?", (name,))
+        data = CURSOR.fetchone()
+        if data and data[0] != date:
+            CURSOR.execute("UPDATE members SET created = ? WHERE name = ?", (date, name))
+            CONNECTION.commit()
 
 def qcheck(name, amount):
     CURSOR.execute("SELECT coins FROM members WHERE name = ?",(name,))
@@ -414,11 +423,3 @@ def voicestalled(name):
 
     CURSOR.execute("UPDATE members SET epvoicet = ? WHERE name = ?",(0, name))
     CONNECTION.commit()
-
-def user_joined_time(members):
-    for name, date in members:
-        CURSOR.execute("SELECT created FROM members WHERE name = ?", (name,))
-        data = CURSOR.fetchone()
-        if data and data[0] != date:
-            CURSOR.execute("UPDATE members SET created = ? WHERE name = ?", (date, name))
-            CONNECTION.commit()
