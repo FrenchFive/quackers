@@ -387,6 +387,34 @@ class DynamicQuestionView(nextcord.ui.View):
                 view=None,  # Remove the view
             )
 
+class AmountModal(nextcord.ui.Modal):
+    def __init__(self, user_name, action):
+        super().__init__(title=f"AMOUNT to {['ADD', 'WITHDRAW'][action]}")
+        self.user_name = user_name
+        self.action = action
+
+        # Number input field
+        self.amount_input = nextcord.ui.TextInput(
+            label="Enter the amount",
+            placeholder="Type a number...",
+            min_length=1,
+            required=True
+        )
+        self.add_item(self.amount_input)
+
+    async def callback(self, interaction: nextcord.Interaction):
+        # Get the entered amount
+        amount = self.amount_input.value
+
+        # Perform the action (Add or Withdraw)
+        if self.action == 0:  # Add
+            response = f"{self.user_name}, you've chosen to ADD {amount} coins to your bank!"
+        elif self.action == 1:  # Withdraw
+            response = f"{self.user_name}, you've chosen to WITHDRAW {amount} coins from your bank!"
+
+        # Send confirmation to the user
+        await interaction.response.send_message(response, ephemeral=True)
+
 class BankView(nextcord.ui.View):
     def __init__(self, user_name):
         super().__init__(timeout=60)  # Buttons will time out after 60 seconds
@@ -394,19 +422,13 @@ class BankView(nextcord.ui.View):
 
     @nextcord.ui.button(label="Add", style=nextcord.ButtonStyle.green)
     async def add_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        # Handle adding coins to the bank
-        await interaction.response.send_message(
-            f"{self.user_name}, how much would you like to add to the bank?",
-            ephemeral=True
-        )
+        # Show the modal for adding coins
+        await interaction.response.send_modal(AmountModal(self.user_name, action=0))
 
     @nextcord.ui.button(label="Withdraw", style=nextcord.ButtonStyle.red)
     async def withdraw_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        # Handle withdrawing coins from the bank
-        await interaction.response.send_message(
-            f"{self.user_name}, how much would you like to withdraw from the bank?",
-            ephemeral=True
-        )
+        # Show the modal for withdrawing coins
+        await interaction.response.send_modal(AmountModal(self.user_name, action=1))
 
 #QUACKER IS READY 
 @bot.event
