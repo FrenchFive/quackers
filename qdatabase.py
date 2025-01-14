@@ -356,17 +356,18 @@ def bank_update(interest):
             qlogs.info(f'-- QDB // Added {int(bank * (interest / 100))} to {name} bank account.')
 
 def info(name):
-    CURSOR.execute("SELECT coins, mess, created, epvoicet, voiceh, luck FROM members WHERE name = ?", (name,))
+    CURSOR.execute("SELECT coins, bank, mess, created, epvoicet, voiceh, luck FROM members WHERE name = ?", (name,))
     data = CURSOR.fetchall()
 
     coins = data[0][0]
-    CURSOR.execute("SELECT COUNT(*) FROM members WHERE coins > ?",(coins,))
+    bank = data[0][1]
+    CURSOR.execute("SELECT COUNT(*) FROM members WHERE (coins + bank) > ?",(coins,))
     cdata = CURSOR.fetchall()
     rank = cdata[0][0] + 1
     return(data[0], rank)
 
 def leaderboard():
-    CURSOR.execute("SELECT * FROM members ORDER BY coins DESC LIMIT 10")
+    CURSOR.execute("SELECT * FROM members ORDER BY (coins + bank) DESC LIMIT 10")
     data = CURSOR.fetchall()
     result = []
     emoji = ["🥇","🥈","🥉",""]

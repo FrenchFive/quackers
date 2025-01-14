@@ -25,12 +25,13 @@ def info(name, url, result, rank):
     name = name[:20].upper() #CUTTING THE NAME
 
     coins = result[0]
-    mess = result[1]
-    date = result[2]
+    bank = result[1]
+    mess = result[2]
+    date = result[3]
     date = date[:10]
-    voice = result[3]
-    voiceh = result[4]
-    luck = result[5]
+    voice = result[4]
+    voiceh = result[5]
+    luck = result[6]
 
     # Create a base image
     GLBDIM = (3800, 1000)
@@ -72,7 +73,7 @@ def info(name, url, result, rank):
     #BIG INFO
     draw = ImageDraw.Draw(base)
     font = ImageFont.truetype(SCHABO, size=180)  # You can specify your custom font
-    text = f"{coins} Quack Coins"
+    text = f"{coins+bank} Quack Coins"
     draw.text(((rest*2)+lildim + 15, rest*2 + 440), text, fill=(0, 0, 0, 255), font=font)
 
     #SMALLER INFO
