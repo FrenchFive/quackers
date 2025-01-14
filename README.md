@@ -258,5 +258,5 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make a moodboard of typos and styles 
     - [ ] Look into Frosted effects
 - [ ] Modifying the `/admin-scan`
-  - [ ] Add a function when doing `/scan` to correct the joiningdate on members 
+  - [ ] Add a function when doing `/scan` to correct the joining date on members 
   - [x] Add a bot channel in the `/admin-scan`
