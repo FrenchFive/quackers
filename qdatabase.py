@@ -310,6 +310,38 @@ def bank(name):
     bank = data[0][0]
     return coins, bank
 
+def bank_deposit(name, amount):
+    CURSOR.execute("SELECT coins FROM members WHERE name = ?", (name,))
+    data = CURSOR.fetchall()
+    coins = data[0][0]
+    CURSOR.execute("SELECT bank FROM members WHERE name = ?", (name,))
+    data = CURSOR.fetchall()
+    bank = data[0][0]
+    if coins < amount:
+        return(f"Vous n'avez pas assez de <:quackCoin:1124255606782578698> pour déposer {amount}.")
+    else:
+        coins -= amount
+        bank += amount
+        CURSOR.execute("UPDATE members SET coins = ?, bank = ? WHERE name = ?", (coins, bank, name))
+        CONNECTION.commit()
+        return(f"Vous avez déposé {amount} <:quackCoin:1124255606782578698> dans votre compte en banque.")
+
+def bank_withdraw(name, amount):
+    CURSOR.execute("SELECT coins FROM members WHERE name = ?", (name,))
+    data = CURSOR.fetchall()
+    coins = data[0][0]
+    CURSOR.execute("SELECT bank FROM members WHERE name = ?", (name,))
+    data = CURSOR.fetchall()
+    bank = data[0][0]
+    if bank < amount:
+        return(f"Vous n'avez pas assez de <:quackCoin:1124255606782578698> dans votre compte en banque pour retirer {amount}.")
+    else:
+        coins += amount
+        bank -= amount
+        CURSOR.execute("UPDATE members SET coins = ?, bank = ? WHERE name = ?", (coins, bank, name))
+        CONNECTION.commit()
+        return(f"Vous avez retiré {amount} <:quackCoin:1124255606782578698> de votre compte en banque.")
+
 def info(name):
     CURSOR.execute("SELECT coins, mess, created, epvoicet, voiceh, luck FROM members WHERE name = ?", (name,))
     data = CURSOR.fetchall()

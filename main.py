@@ -408,27 +408,46 @@ class AmountModal(nextcord.ui.Modal):
 
         # Perform the action (Add or Withdraw)
         if self.action == 0:  # Add
-            response = f"{self.user_name}, you've chosen to ADD {amount} coins to your bank!"
+            response = qdb.bank_deposit(self.user_name, amount)
         elif self.action == 1:  # Withdraw
-            response = f"{self.user_name}, you've chosen to WITHDRAW {amount} coins from your bank!"
+            response = qdb.bank_withdraw(self.user_name, amount)
 
         # Send confirmation to the user
         await interaction.response.send_message(response, ephemeral=True)
 
 class BankView(nextcord.ui.View):
-    def __init__(self, user_name):
+    def __init__(self, user_name, user_id):
         super().__init__(timeout=60)  # Buttons will time out after 60 seconds
         self.user_name = user_name
+        self.user_id = user_id  # Store the ID of the user who initiated the command
+
+    async def ensure_correct_user(self, interaction: nextcord.Interaction) -> bool:
+        if interaction.user.id != self.user_id:
+            await interaction.response.send_message(
+                "🚫 You cannot use this menu. It belongs to someone else!",
+                ephemeral=True
+            )
+            return False
+        return True
 
     @nextcord.ui.button(label="Add", style=nextcord.ButtonStyle.green)
     async def add_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        # Check if the user is the correct user
+        if not await self.ensure_correct_user(interaction):
+            return
+
         # Show the modal for adding coins
         await interaction.response.send_modal(AmountModal(self.user_name, action=0))
 
     @nextcord.ui.button(label="Withdraw", style=nextcord.ButtonStyle.red)
     async def withdraw_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        # Check if the user is the correct user
+        if not await self.ensure_correct_user(interaction):
+            return
+
         # Show the modal for withdrawing coins
         await interaction.response.send_modal(AmountModal(self.user_name, action=1))
+
 
 #QUACKER IS READY 
 @bot.event
