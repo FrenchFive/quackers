@@ -22,6 +22,7 @@ import requests
 
 import re
 
+import asyncio
 
 scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'txt'
@@ -828,24 +829,31 @@ async def admin_scan(interaction: Interaction):
         view=view,
     )
 
-@tasks.loop(minutes=1)
-async def send_periodic_message():
-    # Get the channel by ID
+#TASKS
+@tasks.loop(hours=24)
+async def bank_update():
     channel = bot.get_channel(qdb.get_ch_test(testid[0]))
     if channel:
-        await channel.send("This is a periodic message sent every 5 minutes.")
+        await channel.send("BANK HAS BEEN UPDATED")
 
-@send_periodic_message.before_loop
-async def before_send_periodic_message():
+@bank_update.before_loop
+async def before_send_daily_message():
     await bot.wait_until_ready()  # Wait until the bot is ready
+
+    # Calculate the time until the next midnight
+    now = datetime.now()
+    next_midnight = (now + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    wait_time = (next_midnight - now).total_seconds()
+
+    await asyncio.sleep(wait_time)  # Wait until the next midnight
 
 # EVENTS
 #QUACKER IS READY 
 @bot.event
 async def on_ready():
     qlogs.info("QUACKERS IS ONLINE")
-    if not send_periodic_message.is_running():
-        send_periodic_message.start()    
+    if not bank_update.is_running():
+        bank_update.start()  
 
 @bot.event
 async def on_message(ctx):
