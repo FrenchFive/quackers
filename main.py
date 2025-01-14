@@ -517,7 +517,20 @@ async def bank(interaction: nextcord.Interaction):
     # Get the user's balance
     coins, bank = qdb.bank(interaction.user.name)
 
-    await interaction.response.send_message(f"**QuackCoins**: {coins}\n**Bank**: {bank}")
+    title = f"- 💷 THE QUACKERY TREASURY 💷 :: {interaction.user.name.upper()} -"
+    borders = "═" * len(title)
+
+    message = f'''
+    ╔{borders}╗
+    ║{title}║
+    ╚{borders}╝
+    ------------------------------
+    💰 **QuackCoins**: {coins}
+    🏦 **BankCoins**: {bank}
+    ═══════════════════════════════
+    '''
+
+    await interaction.response.send_message(message)
 
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
