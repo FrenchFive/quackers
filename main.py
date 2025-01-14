@@ -914,7 +914,7 @@ async def on_voice_state_update(member, before, after):
     if before.channel is None and after.channel is not None:
         # User connected to a voice channel
         if qdb.user_in_db(member.name) == 0:
-            qdb.add_user(member.name)
+            qdb.add_user(member)
 
         qdb.voiceactive(member.name)
         qdb.add(member.name, 15)
@@ -923,14 +923,14 @@ async def on_voice_state_update(member, before, after):
     if before.channel is None and after.channel.name == qdb.get_vc_afk(guild.id):
         # USER CONNECTED TO AFK
         if qdb.user_in_db(member.name) == 0:
-            qdb.add_user(member.name)
+            qdb.add_user(member)
         qlogs.info(f"{member.name} is detected AFK")
         qdb.voicestalled(member.name)
 
     if before.channel is not None and after.channel is None:
         # User disconnects
         if qdb.user_in_db(member.name) == 0:
-            qdb.add_user(member.name)
+            qdb.add_user(member)
 
         qdb.voicestalled(member.name)
         qlogs.info(f"{member.name} is disconnected")
@@ -942,7 +942,7 @@ async def on_member_join(member):
     qlogs.info(f"{member.name} has joined the server")
     
     if qdb.user_in_db(member.name) == 0:
-        qdb.add_user(member.name)
+        qdb.add_user(member)
     
     guild = member.guild
 
