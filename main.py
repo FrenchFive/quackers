@@ -24,6 +24,8 @@ import re
 
 import asyncio
 
+qlogs.clear()
+
 scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'txt'
 FOLDER_PATH = os.path.join(scrpt_dir, folder_name)

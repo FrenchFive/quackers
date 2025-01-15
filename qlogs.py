@@ -21,3 +21,7 @@ def error(message):
     print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S")} :: {message}')
     logging.error(message)
     return(message)
+
+def clear():
+    with open(LOG_FILE, 'w'):
+        pass
