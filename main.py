@@ -861,7 +861,7 @@ async def before_send_daily_message():
 
     # Calculate the time until the next midnight
     now = datetime.now()
-    next_midnight = (now + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    next_midnight = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
     wait_time = (next_midnight - now).total_seconds()
 
     qlogs.info(f"Waiting for {wait_time} seconds until the next midnight...")
