@@ -524,9 +524,9 @@ async def info(interaction: Interaction, user: Optional[nextcord.Member] = Slash
 
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user)
-    
-    if qdb.user_in_db(user.name) == 0:
-        qdb.add_user(user)
+    if user:
+        if qdb.user_in_db(user.name) == 0:
+            qdb.add_user(user)
 
     await interaction.response.defer()
 
@@ -640,7 +640,7 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
     
     qdb.add(interaction.user.name, 5)
 
-    check = qdb.check(interaction.user.name, 1000)
+    check = qdb.qcheck(interaction.user.name, 1000)
     if check != 0:
         await interaction.followup.send("Not enough QuckCoins", ephemeral=True)
         return
