@@ -1,6 +1,7 @@
 import os
 from openai import OpenAI
 import requests
+import qlogs
 
 SCRPTDIR = os.path.dirname(os.path.abspath(__file__))
 IMGFOLDER = os.path.join(SCRPTDIR, "imgs")
@@ -55,6 +56,7 @@ else:
 def generation(messages):
     global client
 
+    qlogs.info(f"- Requesting generation from OpenAI")
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=messages
@@ -70,6 +72,7 @@ def img_generation(user, prompt):
 
     user = user[:1000]
 
+    qlogs.info(f"- Requesting Image generation from OpenAI")
     response = client.images.generate(
         model="dall-e-3",
         prompt=prompt,

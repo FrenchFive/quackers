@@ -646,7 +646,8 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
         return
     
     qdb.add(interaction.user.name, -1000)
-
+    
+    qlogs.info(f"{interaction.user.name} GENERATING IMAGE :: {prompt}")
     img_path = qopenai.imagine(interaction.user.name, prompt)
 
     message = f"**{prompt[:100]}** :: by {interaction.user.mention}"
