@@ -205,8 +205,9 @@ Enjoy using **Quackers**! 🦆
         - [ ] Sell to get coins 
         - [ ] Send to another user
   - [ ] Make a role "pet" and have it display all functions except /pet => user buy a pet if doesnt have one already
-- [ ] **Power on KAEDE** :: Kaede is a "Midjourney" like bot (that uses a lot of GPU and cannot afford to let it run all the time)
-  - [ ] Or use OpenAI generation to generate image
+- [ ] **IMAGE GEN** : `/imagine` Letting user generate AI images
+  - [ ] Buttons to regen
+  - [ ] Have info about prompt and user
 - [ ] Programmable messages for ADMIN
   - [ ] Making work programmed messages
   - [ ] Having an interface to see what is planned by admin 

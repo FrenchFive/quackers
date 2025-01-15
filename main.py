@@ -649,7 +649,9 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
 
     img_path = qopenai.imagine(interaction.user.name, prompt)
 
-    await interaction.followup.send(file=nextcord.File(img_path))
+    message = f"**{prompt[:100]}** :: by {interaction.user.mention}"
+
+    await interaction.followup.send(content=message ,file=nextcord.File(img_path))
 
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
