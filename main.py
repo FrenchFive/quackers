@@ -844,6 +844,8 @@ async def admin_scan(interaction: Interaction):
 #TASKS
 @tasks.loop(hours=24)
 async def bank_update():
+    qlogs.info("Updating BANK")
+    
     interest = 4/30
     qdb.bank_update(interest)
 
@@ -854,6 +856,7 @@ async def bank_update():
 
 @bank_update.before_loop
 async def before_send_daily_message():
+    qlogs.info("Wainting for BANK")
     await bot.wait_until_ready()  # Wait until the bot is ready
 
     # Calculate the time until the next midnight
@@ -861,6 +864,7 @@ async def before_send_daily_message():
     next_midnight = (now + datetime.timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
     wait_time = (next_midnight - now).total_seconds()
 
+    qlogs.info(f"Waiting for {wait_time} seconds until the next midnight...")
     await asyncio.sleep(wait_time)  # Wait until the next midnight
 
 # EVENTS

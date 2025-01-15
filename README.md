@@ -206,6 +206,7 @@ Enjoy using **Quackers**! 🦆
         - [ ] Send to another user
   - [ ] Make a role "pet" and have it display all functions except /pet => user buy a pet if doesnt have one already
 - [ ] **Power on KAEDE** :: Kaede is a "Midjourney" like bot (that uses a lot of GPU and cannot afford to let it run all the time)
+  - [ ] Or use OpenAI generation to generate image
 - [ ] Programmable messages for ADMIN
   - [ ] Making work programmed messages
   - [ ] Having an interface to see what is planned by admin 
@@ -237,6 +238,7 @@ Enjoy using **Quackers**! 🦆
   - [ ] Delete the column from the db
   - [ ] Make Quackers use custom emojis from each server
 - [x] Bank Vault 
+  - [ ] Add debug to bank 
   - [x] `/bank` command displays the amount of coins in the bank // and the money to spend
     - [x] 2 Buttons : ADD (put money in the bank) // WITHDRAW (to get the money to spend) 
   - [x] Make user be able to give their coins to the bank to gain interest over them 
