@@ -644,6 +644,8 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
     if check != 0:
         await interaction.followup.send("Not enough QuckCoins", ephemeral=True)
         return
+    
+    qdb.add(interaction.user.name, -1000)
 
     img_path = qopenai.imagine(interaction.user.name, prompt)
 
