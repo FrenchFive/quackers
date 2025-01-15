@@ -6,7 +6,7 @@ from typing import Optional
 
 from unidecode import unidecode
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import qdatabase as qdb
 import qgames
@@ -845,7 +845,7 @@ async def admin_scan(interaction: Interaction):
 @tasks.loop(hours=24)
 async def bank_update():
     qlogs.info("Updating BANK")
-    
+
     interest = 4/30
     qdb.bank_update(interest)
 
