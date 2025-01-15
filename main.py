@@ -645,7 +645,7 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
         await interaction.followup.send("Not enough QuckCoins", ephemeral=True)
         return
 
-    img_path = qopenai.img_generation(interaction.user.name, prompt)
+    img_path = qopenai.imagine(interaction.user.name, prompt)
 
     await interaction.followup.send(file=nextcord.File(img_path))
 
