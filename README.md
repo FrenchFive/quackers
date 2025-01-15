@@ -207,7 +207,10 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make a role "pet" and have it display all functions except /pet => user buy a pet if doesnt have one already
 - [ ] **IMAGE GEN** : `/imagine` Letting user generate AI images
   - [ ] Buttons to regen
-  - [ ] Have info about prompt and user
+  - [ ] Add info button
+  - [ ] Make 4 generations of lower res => possibility to highres
+  - [x] Have info about prompt and user
+  - [x] Generate images using OpenAI API
 - [ ] Programmable messages for ADMIN
   - [ ] Making work programmed messages
   - [ ] Having an interface to see what is planned by admin 
@@ -235,9 +238,6 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make progression exponentially hard
 - [ ] Have different languages mapped to Quackers 
   - [ ] Making the default language English
-- [ ] Remove `/admin-scan` scan Emojis for the server
-  - [ ] Delete the column from the db
-  - [ ] Make Quackers use custom emojis from each server
 - [x] Bank Vault 
   - [x] Add debug to bank 
   - [x] `/bank` command displays the amount of coins in the bank // and the money to spend
@@ -255,6 +255,7 @@ Enjoy using **Quackers**! 🦆
     - [ ] Number of members
   - [ ] Draw Curves
 - [ ] Help Function
+  - [ ] Create a Support Ticket to get help
 - [ ] Admin GiveAways 
 - [ ] Modify the INFO to make the image more beautiful 
   - [ ] Switch to a dark Theme 
@@ -264,4 +265,7 @@ Enjoy using **Quackers**! 🦆
   - [x] Add a function when doing `/scan` to correct the joining date on members 
   - [x] Make Adding new user automaticly have the right date
   - [x] Add a bot channel in the `/admin-scan`
+- [x] Remove `/admin-scan` scan Emojis for the server
+  - [x] Delete the column from the db
+  - [x] Make Quackers use custom emojis from each server
 - [ ] Use a better password env file system

@@ -118,7 +118,6 @@ class BetCreation(nextcord.ui.Modal):
         mess += f"B: **{b}**"
         await interaction.send(mess, view=view)
 
-
 class ButtonMessage(nextcord.ui.View):
     def __init__(self, id):
         super().__init__()
@@ -143,7 +142,6 @@ class ButtonMessage(nextcord.ui.View):
             self.value = True
         else:
             await interaction.response.send_message("THIS BET HAS BEEN CLOSED", ephemeral=True)
-
 
 class Betting(nextcord.ui.Modal):
     def __init__(self, id, option):
@@ -176,6 +174,7 @@ class Betting(nextcord.ui.Modal):
                 await interaction.send(f"Confirming Joining Bet : {self.option}, with : {amount} QuackCoins", ephemeral=True)
             else:
                 await interaction.send(f'{interaction.user.mention} do not have enough QuackCoins', ephemeral=True)
+
 
 class PresentationModal(nextcord.ui.Modal):
     def __init__(self, target_channel, user, imgpath, questions, role, newbies):
@@ -275,6 +274,7 @@ class PresentationModal(nextcord.ui.Modal):
             else:
                 print(f"Error: Channel {self.target_channel} not found.")
 
+
 class DynamicQuestionDropdown(nextcord.ui.Select):
     def __init__(self, question, items):
         # Truncate items if there are too many
@@ -301,7 +301,6 @@ class DynamicQuestionDropdown(nextcord.ui.Select):
         # Store the selected value
         self.selected_value = self.values[0]
         await interaction.response.defer()  # Acknowledge the interaction
-
 
 class DynamicQuestionView(nextcord.ui.View):
     def __init__(self, questions, guild, current_index=0, answers=None):
@@ -371,12 +370,11 @@ class DynamicQuestionView(nextcord.ui.View):
             answer_text = "\n".join(
                 f"**{question}**: {value}" for question, value in self.answers.items()
             )
-            emoji_list=[str(emoji) for emoji in self.guild.emojis],
+            
             # Explicitly map answers to database fields
             qdb.add_or_update_server(
                 server_id=self.guild.id,
                 server_name=self.guild.name,
-                emoji_list=emoji_list,
                 vc_afk=self.answers.get("Select an AFK Voice Channel", None),
                 channel_welcome_id=self.answers.get("Select a Welcome Channel", None),
                 channel_info_id=self.answers.get("Select an Admin Info Channel", None),
@@ -391,6 +389,7 @@ class DynamicQuestionView(nextcord.ui.View):
                 content=f"Here are your selections:\n\n{answer_text}",
                 view=None,  # Remove the view
             )
+
 
 class AmountModal(nextcord.ui.Modal):
     def __init__(self, user_name, action, base_m, message):
@@ -646,7 +645,7 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
         return
     
     qdb.add(interaction.user.name, -1000)
-    
+
     qlogs.info(f"{interaction.user.name} GENERATING IMAGE :: {prompt}")
     img_path = qopenai.imagine(interaction.user.name, prompt)
 
