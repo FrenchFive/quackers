@@ -16,3 +16,5 @@ imgs/final.png
 imgs/gen.png
 
 /venv
+
+.env

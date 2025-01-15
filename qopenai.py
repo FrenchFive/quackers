@@ -3,14 +3,13 @@ from openai import OpenAI
 import requests
 import qlogs
 
+from dotenv import load_dotenv
+load_dotenv()
+
 SCRPTDIR = os.path.dirname(os.path.abspath(__file__))
 IMGFOLDER = os.path.join(SCRPTDIR, "imgs")
 
-ENV = os.path.join(os.path.dirname(os.path.abspath(__file__)), "secret.env")
-with open(ENV, 'r') as env_file:
-    env_data = env_file.readlines()
-    KEY_OPENAI = env_data[0].strip()
-    KEY_DISCORD = env_data[1].strip()
+KEY_OPENAI = os.getenv("KEY_OPENAI")
 
 client = OpenAI(api_key=KEY_OPENAI)
 

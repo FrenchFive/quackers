@@ -24,17 +24,16 @@ import re
 
 import asyncio
 
+from dotenv import load_dotenv
+load_dotenv()
+
 qlogs.clear()
 
 scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'txt'
 FOLDER_PATH = os.path.join(scrpt_dir, folder_name)
 
-ENV = os.path.join(scrpt_dir, "secret.env")
-with open(ENV, 'r') as env_file:
-    env_data = env_file.readlines()
-    KEY_OPENAI = env_data[0].strip()
-    KEY_DISCORD = env_data[1].strip()
+KEY_DISCORD = os.getenv("KEY_DISCORD")
 
 LOGFILE = os.path.join(scrpt_dir, "qlogs.log")
 

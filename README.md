@@ -100,18 +100,20 @@ pip install -r requirements.txt
 
 ### RUNNING THE BOT:
 
-#### 1. Configure the `secret.env` File
-Quackers uses a file named `secret.env` to store all secret keys. This file should not be shared.
+#### 1. Configure the `.env` File
+Quackers uses a file named `.env` to store all secret keys. This file should not be shared.
 
-Example structure for `secret.env`:
+Example structure for `.env`:
 
 ```txt
-sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx (OPENAI Key)
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx (DISCORD Key)
+KEY_OPENAI=sk-proj-1234567890abcdefg
+KEY_DISCORD=1234567890abcdefg
 ```
 
 - Generate an **OpenAI API Key** [here](https://platform.openai.com/settings).
 - Get your **Discord Bot Token** by navigating to the [Discord Developer Portal](https://discord.com/developers/docs/intro) and enabling necessary bot permissions.
+
+A template of the file is available : `template.env`to help you create your `.env` file.
 
 ---
 
@@ -220,7 +222,6 @@ Enjoy using **Quackers**! 🦆
   - [x] Clean up what information is sent to OpenAi
   - [ ] Make it so short and long memory are dependant on the server and not global 
     - [ ] Transmit information about the server as server name and server context unique to each server 
-- [ ] Make an UI for Admin to change some parameters of the BOT
 - [x] Making a database for server
   - [x] Making a SETUP function to easly register and Update the server info
   - [ ] Having function display only the servers info and not global info (ex : Leaderboard of the server and not leaderboard of the bot)
@@ -261,11 +262,9 @@ Enjoy using **Quackers**! 🦆
   - [ ] Switch to a dark Theme 
   - [ ] Make a moodboard of typos and styles 
     - [ ] Look into Frosted effects
-- [x] Modifying the `/admin-scan`
-  - [x] Add a function when doing `/scan` to correct the joining date on members 
-  - [x] Make Adding new user automaticly have the right date
-  - [x] Add a bot channel in the `/admin-scan`
-- [x] Remove `/admin-scan` scan Emojis for the server
-  - [x] Delete the column from the db
-  - [x] Make Quackers use custom emojis from each server
 - [ ] Use a better password env file system
+- [ ] Have a WEB Interface for ADMINs to modify stuff 
+  - [ ] Allows ADMINS to connect to discord 
+  - [ ] Select a server (in which Quackers is in)
+  - [ ] Have parameters for Everything
+  - [ ] Save to the Database
