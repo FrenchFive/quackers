@@ -1,5 +1,9 @@
 import os
 from openai import OpenAI
+import requests
+
+SCRPTDIR = os.path.dirname(os.path.abspath(__file__))
+IMGFOLDER = os.path.join(SCRPTDIR, "imgs")
 
 ENV = os.path.join(os.path.dirname(os.path.abspath(__file__)), "secret.env")
 with open(ENV, 'r') as env_file:
@@ -60,6 +64,21 @@ def generation(messages):
     response_content = response_content[:1000]
 
     return response_content
+
+def img_generation(user, prompt):
+    global client
+
+    user = user[:1000]
+
+    response = client.images.generate(
+        model="dall-e-3",
+        prompt=prompt,
+        n=1,
+        size="1024x1024",
+        user = user,
+    )
+
+    return response.choices[0].output.url
 
 def generate_response(prompt, user):
     global personality, emoji, memory, interactions
@@ -131,3 +150,13 @@ def welcome(presentation):
     response_content = generation(messages)
 
     return response_content
+
+def imagine(user, prompt):
+    url = img_generation(user, prompt)
+
+    img_data = requests.get(url).content
+    img_path = os.path.join(IMGFOLDER, "gen.png")
+    with open(img_path, 'wb') as handler:
+        handler.write(img_data)
+
+    return img_path

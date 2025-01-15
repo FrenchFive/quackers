@@ -238,7 +238,7 @@ Enjoy using **Quackers**! 🦆
   - [ ] Delete the column from the db
   - [ ] Make Quackers use custom emojis from each server
 - [x] Bank Vault 
-  - [ ] Add debug to bank 
+  - [x] Add debug to bank 
   - [x] `/bank` command displays the amount of coins in the bank // and the money to spend
     - [x] 2 Buttons : ADD (put money in the bank) // WITHDRAW (to get the money to spend) 
   - [x] Make user be able to give their coins to the bank to gain interest over them 
@@ -263,3 +263,4 @@ Enjoy using **Quackers**! 🦆
   - [x] Add a function when doing `/scan` to correct the joining date on members 
   - [x] Make Adding new user automaticly have the right date
   - [x] Add a bot channel in the `/admin-scan`
+- [ ] Use a better password env file system

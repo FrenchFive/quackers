@@ -555,8 +555,14 @@ async def leaderboard(interaction: Interaction):
 
 @bot.slash_command(name="duck", description="Send a cute pic", guild_ids=serverid)
 async def duck(interaction: Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+    
     response = requests.get("https://random-d.uk/api/v2/random").json()
     url = response["url"]
+    
+    qdb.add(interaction.user.name, 5)
+    
     await interaction.response.send_message(url)
 
 
@@ -598,6 +604,8 @@ async def bank(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user)
     
+    qdb.add(interaction.user.name, 5)
+
     # Get the user's balance
     coins, bank = qdb.bank(interaction.user.name)
 
@@ -621,6 +629,24 @@ async def bank(interaction: nextcord.Interaction):
     
     view = BankView(interaction.user.name, base_m, sent_message)
     await sent_message.edit(view=view)
+
+@bot.slash_command(name="imagine", description="Cost : 1000.Qc - Image generation using AI", guild_ids=testid)
+async def imagine(interaction: nextcord.Interaction, prompt: str):
+    await interaction.response.defer()  # Defer the response
+
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+    
+    qdb.add(interaction.user.name, 5)
+
+    check = qdb.check(interaction.user.name, 1000)
+    if check != 0:
+        await interaction.followup.send("Not enough QuckCoins", ephemeral=True)
+        return
+
+    img = qopenai.img_generation(interaction.user.name, prompt)
+
+    await interaction.followup.send(file=nextcord.File(img))
 
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
