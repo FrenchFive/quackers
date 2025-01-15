@@ -155,7 +155,7 @@ def imagine(user, prompt):
     url = img_generation(user, prompt)
 
     img_data = requests.get(url).content
-    img_path = os.path.join(IMGFOLDER, "gen.png")
+    img_path = os.path.join(IMGFOLDER, f"gen.png")
     with open(img_path, 'wb') as handler:
         handler.write(img_data)
 
