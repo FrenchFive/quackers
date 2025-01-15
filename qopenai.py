@@ -78,7 +78,7 @@ def img_generation(user, prompt):
         user = user,
     )
 
-    return response.choices[0].output.url
+    return response.data[0].url
 
 def generate_response(prompt, user):
     global personality, emoji, memory, interactions
