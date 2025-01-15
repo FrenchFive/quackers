@@ -499,12 +499,13 @@ async def send(interaction: Interaction, amount: int, user: nextcord.Member):
 
 @bot.slash_command(name="coins", description="Gives you your QuackCoins balance.", guild_ids=serverid)
 async def coins(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
+    
     name = user.name if user else interaction.user.name
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user)
-    
-    if qdb.user_in_db(user.name) == 0:
-        qdb.add_user(user)
+    if user:
+        if qdb.user_in_db(user.name) == 0:
+            qdb.add_user(user)
 
     result = qdb.coins(name)
     qdb.add(interaction.user.name, 5)
