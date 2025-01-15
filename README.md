@@ -250,6 +250,8 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make a Youtube Integration
 - [ ] Create Temporary Voice Channels ?? 
 - [ ] Create Statistics about the server
+  - [ ] Display data 
+    - [ ] [MATPLOTLIB](https://matplotlib.org/stable/plot_types/index.html)
   - [ ] Store Data
     - [ ] Message amount 
     - [ ] Voice amount
