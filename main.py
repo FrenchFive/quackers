@@ -856,8 +856,8 @@ async def bank_update():
 
 @bank_update.before_loop
 async def before_send_daily_message():
-    qlogs.info("Wainting for BANK")
     await bot.wait_until_ready()  # Wait until the bot is ready
+    qlogs.info("Waiting for BANK")
 
     # Calculate the time until the next midnight
     now = datetime.now()
