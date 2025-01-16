@@ -911,7 +911,7 @@ async def before_send_daily_message():
     qlogs.info(f"Waiting for {wait_time} seconds until the next midnight...")
     await asyncio.sleep(wait_time)  # Wait until the next midnight
 
-@tasks.loop(days=7)
+@tasks.loop(hours=7*24)
 async def weekly_update():
     qlogs.info("WEEKLY UPDATE")
     type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats()
