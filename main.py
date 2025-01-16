@@ -914,58 +914,61 @@ async def before_send_daily_message():
 @tasks.loop(hours=7*24)
 async def weekly_update():
     qlogs.info("WEEKLY UPDATE")
-    type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats()
 
-    message = ["**📊 Server Activity Statistics**"]
-
-    # Add total messages and unique users
-    message.append(f"\n**Total Unique Users:** `{unique_names_count}`")
-
-    # Add type totals
-    message.append("\n\n**Activity Summary:**")
-    for activity, count in type_totals:
-        message.append(f"- **{activity}:** `{count}` entries")
-
-    # Add detailed stats for each type
-    message.append("\n\n**Detailed Statistics by Type:**")
-    for activity, min_amount, max_amount, min_author, max_author in type_min_max:
-        if activity == "MESS":
-            message.append(
-                f"- **Messages:**\n   - Shortest message by `{min_author}`: `{min_amount}` characters\n   - Longest message by `{max_author}`: `{max_amount}` characters"
-            )
-        elif activity == "VC_HOURS":
-            message.append(
-                f"- **Voice Channel Time:**\n   - Longest session by `{max_author}`: `{max_amount}` hours\n   - Shortest session by `{min_author}`: `{min_amount}` hours"
-            )
-        elif activity == "GAME":
-            message.append(
-                f"- **Game Interactions:**\n   - Biggest gamble by `{max_author}`: `{max_amount}` <:quackCoins:1124255606782578698>\n   - Lowest gamble by `{min_author}`: `{min_amount}` <:quackCoins:1124255606782578698>"
-            )
-
-    # Add most active users by type
-    message.append("\n\n**Most Active Users by Type:**")
-    if "MESS" in type_most_entries:
-        message.append(f"- **Most Messages Sent:** `{type_most_entries['MESS']}`")
-    if "VC_CON" in type_most_entries:
-        message.append(f"- **Most Voice Channel Connections:** `{type_most_entries['VC_CON']}`")
-    if "GAME" in type_most_entries:
-        message.append(f"- **Most Games Played:** `{type_most_entries['GAME']}`")
-    if "COMMAND" in type_most_entries:
-        message.append(f"- **Most Commands used:** `{type_most_entries['COMMAND']}`")
-
-    # Add new member stats
-    if "ARR" in dict(type_totals):
-        message.append(f"\n**New Members This Week:** `{dict(type_totals)['ARR']}`")
-
-    # Combine all parts into a single string
-    mess = "\n".join(message)
-    mess = mess[:1000] #Cutting too long message
-
-    # Send the weekly update to the admin channel
     for server in testid:
+
+        type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats(server, 1)
+
+        message = ["**📊 Server Activity Statistics**"]
+
+        # Add total messages and unique users
+        message.append(f"\n**Total Unique Users:** `{unique_names_count}`")
+
+        # Add type totals
+        message.append("\n\n**Activity Summary:**")
+        for activity, count in type_totals:
+            message.append(f"- **{activity}:** `{count}` entries")
+
+        # Add detailed stats for each type
+        message.append("\n\n**Detailed Statistics by Type:**")
+        for activity, min_amount, max_amount, min_author, max_author in type_min_max:
+            if activity == "MESS":
+                message.append(
+                    f"- **Messages:**\n   - Shortest message by `{min_author}`: `{min_amount}` characters\n   - Longest message by `{max_author}`: `{max_amount}` characters"
+                )
+            elif activity == "VC_HOURS":
+                message.append(
+                    f"- **Voice Channel Time:**\n   - Longest session by `{max_author}`: `{max_amount}` hours\n   - Shortest session by `{min_author}`: `{min_amount}` hours"
+                )
+            elif activity == "GAME":
+                message.append(
+                    f"- **Game Interactions:**\n   - Biggest gamble by `{max_author}`: `{max_amount}` <:quackCoins:1124255606782578698>\n   - Lowest gamble by `{min_author}`: `{min_amount}` <:quackCoins:1124255606782578698>"
+                )
+
+        # Add most active users by type
+        message.append("\n\n**Most Active Users by Type:**")
+        if "MESS" in type_most_entries:
+            message.append(f"- **Most Messages Sent:** `{type_most_entries['MESS']}`")
+        if "VC_CON" in type_most_entries:
+            message.append(f"- **Most Voice Channel Connections:** `{type_most_entries['VC_CON']}`")
+        if "GAME" in type_most_entries:
+            message.append(f"- **Most Games Played:** `{type_most_entries['GAME']}`")
+        if "COMMAND" in type_most_entries:
+            message.append(f"- **Most Commands used:** `{type_most_entries['COMMAND']}`")
+
+        # Add new member stats
+        if "ARR" in dict(type_totals):
+            message.append(f"\n**New Members This Week:** `{dict(type_totals)['ARR']}`")
+
+        # Combine all parts into a single string
+        mess = "\n".join(message)
+        mess = mess[:1000] #Cutting too long message
+
         channel = bot.get_channel(qdb.get_ch_info(server))
         if channel:
             await channel.send(mess)
+            
+        # qdb.clear_stats(guild=serverid) #CLEAR STATS
 
 
 @weekly_update.before_loop

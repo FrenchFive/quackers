@@ -496,3 +496,7 @@ def get_stats(guild, interval):
     '''
 
     return type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries
+
+def clear_stats(guild):
+    STATS_CURSOR.execute(f"DROP TABLE '{guild}'")
+    STATS_CONNECTION.commit()
