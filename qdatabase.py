@@ -205,6 +205,9 @@ def user_in_db(name):
     return(data[0][0])
 
 def add_user(member):
+    if member.bot:
+        return  # Skip adding bots
+    
     name = member.name
     date = member.joined_at.strftime('%Y-%m-%d %H:%M')
     CURSOR.execute('INSERT INTO members (name, coins, daily, quackers, mess, created, streak, epvoicet, voiceh, luck, bank) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0, 0, 0, 0))
@@ -218,6 +221,12 @@ def user_joined_time(members):
         if data and data[0] != date:
             CURSOR.execute("UPDATE members SET created = ? WHERE name = ?", (date, name))
             CONNECTION.commit()
+
+def del_bot(member):
+    name = member.name
+    CURSOR.execute("DELETE FROM members WHERE name = ?", (name,))
+    CONNECTION.commit()
+    qlogs.info(f'--QDB // DELETED USER : {name}')
 
 def qcheck(name, amount):
     CURSOR.execute("SELECT coins FROM members WHERE name = ?",(name,))
