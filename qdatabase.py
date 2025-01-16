@@ -430,7 +430,7 @@ def voicestalled(name):
     return hours
 
 #STATS
-def add_stat(guild, name, type, amount):
+def add_stat(guild, user, type, amount):
     epoch_time = int(time.time())
     # check if a table exists with the id of the guild as tables name
     STATS_CURSOR.execute(f"CREATE TABLE IF NOT EXISTS '{guild}' (id INTEGER PRIMARY KEY AUTOINCREMENT, time INT, name TEXT, type TEXT, amount INTEGER)")

@@ -1120,7 +1120,7 @@ async def on_member_remove(member):
     if channel:
         await channel.send(f"{member.name} a quitte le serveur de la team QUACK!")
     
-    qdb.add_stat(guild=guild.id, author=member.name, activity="DEP", amount=1)
+    qdb.add_stat(guild=guild.id, user=member.name, activity="DEP", amount=1)
 
 
 bot.run(KEY_DISCORD)
