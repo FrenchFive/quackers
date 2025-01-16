@@ -968,7 +968,7 @@ async def weekly_update():
         if channel:
             await channel.send(mess)
             
-        # qdb.clear_stats(guild=serverid) #CLEAR STATS
+        # qdb.clear_stats(guild=server) #CLEAR STATS
 
 
 @weekly_update.before_loop
