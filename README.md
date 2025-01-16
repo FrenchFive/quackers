@@ -253,6 +253,10 @@ Enjoy using **Quackers**! 🦆
   - [ ] Display data 
     - [ ] [MATPLOTLIB](https://matplotlib.org/stable/plot_types/index.html)
   - [ ] Store Data
+    - [ ] Have a Database table/server
+      - [ ] id INTEGER PRIMARY KEY AUTOINCREMENT
+      - [ ] user TEXT
+      - [ ] type TEXT ["MESS", "COMMAND", "VC_CON"]
     - [ ] Message amount 
     - [ ] Voice amount
     - [ ] Number of members

@@ -615,7 +615,7 @@ async def bank(interaction: nextcord.Interaction):
     💰 **QuackCoins**: {coins} <:quackCoin:1124255606782578698>
     🏦 **BankCoins**: {bank} <:quackCoin:1124255606782578698>
 
-    Current Interest Rate: 4% / month
+    Current Interest Rate: 30% / month
     '''
 
     base_m = message
@@ -876,9 +876,9 @@ async def admin_scan(interaction: Interaction):
 #TASKS
 @tasks.loop(hours=24)
 async def bank_update():
-    qlogs.info("Updating BANK")
 
-    interest = 4/30
+    interest = 1
+    qlogs.info(f"Updating BANK : {str(interest)[:5]} %")
     qdb.bank_update(interest)
 
     for server in serverid:

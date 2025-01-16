@@ -8,12 +8,17 @@ import random
 
 scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'db/quackers.db'
+stat_name = 'db/stats.db'
 database_path = os.path.join(scrpt_dir, folder_name)
+stats_path = os.path.join(scrpt_dir, stat_name)
 
 import qlogs
 
 CONNECTION = sqlite3.connect(database_path)
 CURSOR = CONNECTION.cursor()
+
+STATS_CONNECTION = sqlite3.connect(stats_path)
+STATS_CURSOR = STATS_CONNECTION.cursor()
 
 CURSOR.execute('''CREATE TABLE IF NOT EXISTS "members" (
     "id" INTEGER UNIQUE, 
