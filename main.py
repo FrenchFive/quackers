@@ -1000,7 +1000,7 @@ async def on_message(ctx):
         qdb.add_user(ctx.author)
 
     qdb.add_mess(ctx.author.name)
-    qdb.add_stat(guild=ctx.guild.id, user=ctx.author.name, activity="MESS", amount=len(ctx.content))
+    qdb.add_stat(guild=ctx.guild.id, user=ctx.author.name, type="MESS", amount=len(ctx.content))
 
     #COIFFEUR
     pattern = re.compile(r"(?:^|\s)[qQ]+[uU]+[oO]+[iI]+[!? ]*$")
@@ -1041,7 +1041,7 @@ async def on_voice_state_update(member, before, after):
         qdb.add(member.name, 15)
         qlogs.info(f"{member.name} is connected to a Voice Channel")
 
-        qdb.add_stat(guild=guild.id, user=member.name, activity="VC_CON", amount=1)
+        qdb.add_stat(guild=guild.id, user=member.name, type="VC_CON", amount=1)
 
     if before.channel is None and after.channel.name == qdb.get_vc_afk(guild.id):
         # USER CONNECTED TO AFK
@@ -1058,7 +1058,7 @@ async def on_voice_state_update(member, before, after):
         hours = qdb.voicestalled(member.name)
         qlogs.info(f"{member.name} is disconnected")
 
-        qdb.add_stat(guild=guild.id, user=member.name, activity="VC_HOUR", amount=hours)
+        qdb.add_stat(guild=guild.id, user=member.name, type="VC_HOUR", amount=hours)
 
 #WELCOME and GOODBYE
 @bot.event
@@ -1106,7 +1106,7 @@ async def on_member_join(member):
     except Exception as e:
         qlogs.error(f"Failed to send a welcome message to {member.name}: {e}")
     
-    qdb.add_stat(guild=guild.id, user=member.name, activity="ARR", amount=1)
+    qdb.add_stat(guild=guild.id, user=member.name, type="ARR", amount=1)
 
 
 @bot.event
@@ -1120,7 +1120,7 @@ async def on_member_remove(member):
     if channel:
         await channel.send(f"{member.name} a quitte le serveur de la team QUACK!")
     
-    qdb.add_stat(guild=guild.id, user=member.name, activity="DEP", amount=1)
+    qdb.add_stat(guild=guild.id, user=member.name, type="DEP", amount=1)
 
 
 bot.run(KEY_DISCORD)
