@@ -426,3 +426,73 @@ def voicestalled(name):
 
     CURSOR.execute("UPDATE members SET epvoicet = ? WHERE name = ?",(0, name))
     CONNECTION.commit()
+
+    return hours
+
+#STATS
+def add_stat(guild, name, type, amount):
+    epoch_time = int(time.time())
+    # check if a table exists with the id of the guild as tables name
+    STATS_CURSOR.execute(f"CREATE TABLE IF NOT EXISTS '{guild}' (id INTEGER PRIMARY KEY AUTOINCREMENT, time INT, name TEXT, type TEXT, amount INTEGER)")
+    STATS_CONNECTION.commit()
+
+    # insert the data into the table
+    STATS_CURSOR.execute(f"INSERT INTO '{guild}' (time, name, type, amount) VALUES (?, ?, ?, ?)", (epoch_time, name, type, amount))
+    STATS_CONNECTION.commit()
+
+def get_stats(guild, interval):
+    # Total of each different unique type
+    STATS_CURSOR.execute(f"SELECT type, COUNT(*) as count FROM '{guild}' GROUP BY type")
+    type_totals = STATS_CURSOR.fetchall()
+
+    # Min and max for each different unique type
+    STATS_CURSOR.execute(f"""
+        SELECT type, MIN(amount) as min_amount, MAX(amount) as max_amount,
+               (SELECT name FROM '{guild}' WHERE type = t.type ORDER BY amount ASC LIMIT 1) as min_author,
+               (SELECT name FROM '{guild}' WHERE type = t.type ORDER BY amount DESC LIMIT 1) as max_author
+        FROM '{guild}' t
+        GROUP BY type
+    """)
+    type_min_max = STATS_CURSOR.fetchall()
+
+    # Number of unique names in the entire database
+    STATS_CURSOR.execute(f"SELECT COUNT(DISTINCT name) FROM '{guild}'")
+    unique_names_count = STATS_CURSOR.fetchone()[0]
+
+    # Total entries for each interval of time
+    STATS_CURSOR.execute(f"SELECT MIN(time) FROM '{guild}'")
+    start_time = STATS_CURSOR.fetchone()[0]
+    interval_seconds = interval * 86400  # Convert days to seconds
+
+    interval_totals = []
+    current_time = start_time
+
+    while True:
+        STATS_CURSOR.execute(f"""
+            SELECT COUNT(*) FROM '{guild}'
+            WHERE time >= ? AND time < ?
+        """, (current_time, current_time + interval_seconds))
+        count = STATS_CURSOR.fetchone()[0]
+        if count == 0:
+            break
+        interval_totals.append(count)
+        current_time += interval_seconds
+
+    # Name who has the most entries for each type
+    STATS_CURSOR.execute(f"SELECT type, name, COUNT(*) as count FROM '{guild}' GROUP BY type, name ORDER BY type, count DESC")
+    type_most_entries = {}
+    for row in STATS_CURSOR.fetchall():
+        type, name, count = row
+        if type not in type_most_entries:
+            type_most_entries[type] = name
+
+    '''
+    return {
+        "type_totals": type_totals,
+        "type_min_max": type_min_max,
+        "unique_names_count": unique_names_count,
+        "interval_totals": interval_totals
+    }
+    '''
+
+    return type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries

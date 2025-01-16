@@ -477,6 +477,7 @@ async def daily(interaction: Interaction):
 
     result = qdb.daily(interaction.user.name)
     qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(result)
 
@@ -491,6 +492,7 @@ async def send(interaction: Interaction, amount: int, user: nextcord.Member):
 
     result = qdb.send(interaction.user.name, user.name, amount)
     qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(result)
 
@@ -507,6 +509,7 @@ async def coins(interaction: Interaction, user: Optional[nextcord.Member] = Slas
 
     result = qdb.coins(name)
     qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(result)
 
@@ -530,6 +533,7 @@ async def info(interaction: Interaction, user: Optional[nextcord.Member] = Slash
 
     result, rank = qdb.info(name)
     qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     path = qdraw.info(name, url, result, rank)
 
@@ -548,6 +552,7 @@ async def leaderboard(interaction: Interaction):
     message = intro + result
 
     qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(message)
 
@@ -561,6 +566,7 @@ async def duck(interaction: Interaction):
     url = response["url"]
     
     qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
     
     await interaction.response.send_message(url)
 
@@ -604,6 +610,7 @@ async def bank(interaction: nextcord.Interaction):
         qdb.add_user(interaction.user)
     
     qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     # Get the user's balance
     coins, bank = qdb.bank(interaction.user.name)
@@ -637,6 +644,7 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
         qdb.add_user(interaction.user)
     
     qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     check = qdb.qcheck(interaction.user.name, 1000)
     if check != 0:
@@ -686,6 +694,7 @@ async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(requi
 
         qdb.add(name, amount)
         qdb.add(interaction.user.name, random.randint(0, 5))
+        qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=amount)
     else:
         response = "Not enough QuackCoins"
 
@@ -721,6 +730,7 @@ async def rps(
         bet *= mult
         qdb.add(name, bet)
         qdb.add(interaction.user.name, random.randint(0, 5))
+        qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=bet)
     else:
         result = "Not enough QuackCoins available."
     await interaction.response.send_message(result)
@@ -731,6 +741,7 @@ async def eightball(interaction: Interaction, question: str):
     result = qgames.hball(interaction.user.name)
     message = f'> {interaction.user.name.capitalize()} asked : " *{question}* " \n {result}'
     qdb.add(interaction.user.name, random.randint(0, 5))
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
     await interaction.response.send_message(message)
 
 
@@ -742,6 +753,7 @@ async def bet_create(interaction: nextcord.Interaction):
 
     if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_modal(BetCreation())
+        qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
     else:
         await interaction.response.send_message('You already have a Bet going on. || send results of your bet before creating another one "/bet-result"', ephemeral=True)
 
@@ -899,13 +911,85 @@ async def before_send_daily_message():
     qlogs.info(f"Waiting for {wait_time} seconds until the next midnight...")
     await asyncio.sleep(wait_time)  # Wait until the next midnight
 
+@tasks.loop(days=7)
+async def weekly_update():
+    qlogs.info("WEEKLY UPDATE")
+    type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats()
+
+    message = ["**📊 Server Activity Statistics**"]
+
+    # Add total messages and unique users
+    message.append(f"\n**Total Unique Users:** `{unique_names_count}`")
+
+    # Add type totals
+    message.append("\n\n**Activity Summary:**")
+    for activity, count in type_totals:
+        message.append(f"- **{activity}:** `{count}` entries")
+
+    # Add detailed stats for each type
+    message.append("\n\n**Detailed Statistics by Type:**")
+    for activity, min_amount, max_amount, min_author, max_author in type_min_max:
+        if activity == "MESS":
+            message.append(
+                f"- **Messages:**\n   - Shortest message by `{min_author}`: `{min_amount}` characters\n   - Longest message by `{max_author}`: `{max_amount}` characters"
+            )
+        elif activity == "VC_HOURS":
+            message.append(
+                f"- **Voice Channel Time:**\n   - Longest session by `{max_author}`: `{max_amount}` hours\n   - Shortest session by `{min_author}`: `{min_amount}` hours"
+            )
+        elif activity == "GAME":
+            message.append(
+                f"- **Game Interactions:**\n   - Biggest gamble by `{max_author}`: `{max_amount}` <:quackCoins:1124255606782578698>\n   - Lowest gamble by `{min_author}`: `{min_amount}` <:quackCoins:1124255606782578698>"
+            )
+
+    # Add most active users by type
+    message.append("\n\n**Most Active Users by Type:**")
+    if "MESS" in type_most_entries:
+        message.append(f"- **Most Messages Sent:** `{type_most_entries['MESS']}`")
+    if "VC_CON" in type_most_entries:
+        message.append(f"- **Most Voice Channel Connections:** `{type_most_entries['VC_CON']}`")
+    if "GAME" in type_most_entries:
+        message.append(f"- **Most Games Played:** `{type_most_entries['GAME']}`")
+    if "COMMAND" in type_most_entries:
+        message.append(f"- **Most Commands used:** `{type_most_entries['COMMAND']}`")
+
+    # Add new member stats
+    if "ARR" in dict(type_totals):
+        message.append(f"\n**New Members This Week:** `{dict(type_totals)['ARR']}`")
+
+    # Combine all parts into a single string
+    mess = "\n".join(message)
+    mess = mess[:1000] #Cutting too long message
+
+    # Send the weekly update to the admin channel
+    for server in testid:
+        channel = bot.get_channel(qdb.get_ch_info(server))
+        if channel:
+            await channel.send(mess)
+
+
+@weekly_update.before_loop
+async def before_weekly_update():
+    await bot.wait_until_ready()
+
+    # Calculate the time until the next sunday at midnight
+    now = datetime.now()
+    next_sunday = (now + timedelta(days=(6 - now.weekday()))).replace(hour=0, minute=0, second=0, microsecond=0)
+    wait_time = (next_sunday - now).total_seconds()
+
+    qlogs.info(f"Waiting for {wait_time} seconds until the next Sunday...")
+    await asyncio.sleep(wait_time)
+
 # EVENTS
 #QUACKER IS READY 
 @bot.event
 async def on_ready():
     qlogs.info("QUACKERS IS ONLINE")
+
     if not bank_update.is_running():
-        bank_update.start()  
+        bank_update.start()
+    if not weekly_update.is_running():
+        weekly_update.start()
 
 @bot.event
 async def on_message(ctx):
@@ -916,6 +1000,7 @@ async def on_message(ctx):
         qdb.add_user(ctx.author)
 
     qdb.add_mess(ctx.author.name)
+    qdb.add_stat(guild=ctx.guild.id, author=ctx.author.name, activity="MESS", amount=len(ctx.content))
 
     #COIFFEUR
     pattern = re.compile(r"(?:^|\s)[qQ]+[uU]+[oO]+[iI]+[!? ]*$")
@@ -956,6 +1041,8 @@ async def on_voice_state_update(member, before, after):
         qdb.add(member.name, 15)
         qlogs.info(f"{member.name} is connected to a Voice Channel")
 
+        qdb.add_stat(guild=guild.id, author=member.name, activity="VC_CON", amount=1)
+
     if before.channel is None and after.channel.name == qdb.get_vc_afk(guild.id):
         # USER CONNECTED TO AFK
         if qdb.user_in_db(member.name) == 0:
@@ -968,8 +1055,10 @@ async def on_voice_state_update(member, before, after):
         if qdb.user_in_db(member.name) == 0:
             qdb.add_user(member)
 
-        qdb.voicestalled(member.name)
+        hours = qdb.voicestalled(member.name)
         qlogs.info(f"{member.name} is disconnected")
+
+        qdb.add_stat(guild=guild.id, author=member.name, activity="VC_HOUR", amount=hours)
 
 #WELCOME and GOODBYE
 @bot.event
@@ -1016,6 +1105,8 @@ async def on_member_join(member):
         qlogs.info(f"- Sent a welcome message to {member.name}")
     except Exception as e:
         qlogs.error(f"Failed to send a welcome message to {member.name}: {e}")
+    
+    qdb.add_stat(guild=guild.id, author=member.name, activity="ARR", amount=1)
 
 
 @bot.event
@@ -1028,6 +1119,8 @@ async def on_member_remove(member):
     channel = bot.get_channel(qdb.get_ch_info(guild.id))
     if channel:
         await channel.send(f"{member.name} a quitte le serveur de la team QUACK!")
+    
+    qdb.add_stat(guild=guild.id, author=member.name, activity="DEP", amount=1)
 
 
 bot.run(KEY_DISCORD)

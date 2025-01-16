@@ -250,16 +250,15 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make a Youtube Integration
 - [ ] Create Temporary Voice Channels ?? 
 - [ ] Create Statistics about the server
+  - [ ] Make a task - every week 
+    - [ ] Send the stat to the Admin channel every week 
   - [ ] Display data 
     - [ ] [MATPLOTLIB](https://matplotlib.org/stable/plot_types/index.html)
   - [ ] Store Data
     - [ ] Have a Database table/server
       - [ ] id INTEGER PRIMARY KEY AUTOINCREMENT
       - [ ] user TEXT
-      - [ ] type TEXT ["MESS", "COMMAND", "VC_CON"]
-    - [ ] Message amount 
-    - [ ] Voice amount
-    - [ ] Number of members
+      - [ ] type TEXT ["MESS", "COMMAND", "VC_CON", "VC_HOURS", "GAME", "ARR", "DEP"]
   - [ ] Draw Curves
 - [ ] Help Function
   - [ ] Create a Support Ticket to get help
