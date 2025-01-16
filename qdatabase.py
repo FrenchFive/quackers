@@ -437,7 +437,7 @@ def add_stat(guild, user, type, amount):
     STATS_CONNECTION.commit()
 
     # insert the data into the table
-    STATS_CURSOR.execute(f"INSERT INTO '{guild}' (time, name, type, amount) VALUES (?, ?, ?, ?)", (epoch_time, name, type, amount))
+    STATS_CURSOR.execute(f"INSERT INTO '{guild}' (time, name, type, amount) VALUES (?, ?, ?, ?)", (epoch_time, user, type, amount))
     STATS_CONNECTION.commit()
 
 def get_stats(guild, interval):
