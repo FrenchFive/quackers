@@ -55,7 +55,469 @@ questions = [
     {"q": "Select a Bot Channel", "type": "text", "format": "id"},
 ]
 
-# MODAL DISCORD
+# COMMANDS
+@bot.slash_command(name="daily", description="Receive daily QuackCoins.", guild_ids=serverid)
+async def daily(interaction: Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+
+    result = qdb.daily(interaction.user.name)
+    qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+
+    await interaction.response.send_message(result)
+
+
+@bot.slash_command(name="send", description="Send QuackCoins to someone.", guild_ids=serverid)
+async def send(interaction: Interaction, amount: int, user: nextcord.Member):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+
+    if qdb.user_in_db(user.name) == 0:
+        qdb.add_user(user)
+
+    result = qdb.send(interaction.user.name, user.name, amount)
+    qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+
+    await interaction.response.send_message(result)
+
+
+@bot.slash_command(name="coins", description="Gives you your QuackCoins balance.", guild_ids=serverid)
+async def coins(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
+    
+    name = user.name if user else interaction.user.name
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+    if user:
+        if qdb.user_in_db(user.name) == 0:
+            qdb.add_user(user)
+
+    result = qdb.coins(name)
+    qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+
+    await interaction.response.send_message(result)
+
+
+@bot.slash_command(name="info", description="Get an Image of your Quack Profile", guild_ids=serverid)
+async def info(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
+    if user is None:
+        name = interaction.user.name
+        url = interaction.user.display_avatar.url
+    else:
+        name = user.name
+        url = user.display_avatar.url
+
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+    if user:
+        if qdb.user_in_db(user.name) == 0:
+            qdb.add_user(user)
+
+    await interaction.response.defer()
+
+    result, rank = qdb.info(name)
+    qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+
+    path = qdraw.info(name, url, result, rank)
+
+    imgfile = nextcord.File(path)
+    await interaction.followup.send(file=imgfile)
+
+
+@bot.slash_command(name="leaderboard", description="Display the Top.10 of the server", guild_ids=serverid)
+async def leaderboard(interaction: Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+
+    intro = "HERE IS A LEADERBOARD OF THE CURRENT STATE OF THE QUACK COINS // \n"
+    results = qdb.leaderboard()
+    result = '\n'.join(results)
+    message = intro + result
+
+    qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+
+    await interaction.response.send_message(message)
+
+
+@bot.slash_command(name="duck", description="Send a cute pic", guild_ids=serverid)
+async def duck(interaction: Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+    
+    response = requests.get("https://random-d.uk/api/v2/random").json()
+    url = response["url"]
+    
+    qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+    
+    await interaction.response.send_message(url)
+
+
+class PresentationModal(nextcord.ui.Modal):
+    def __init__(self, target_channel, user, imgpath, questions, role, newbies):
+        super().__init__(
+            title="PRESENTATIONS",
+            timeout=None,
+        )
+
+        self.interaction = user
+        self.role = role
+        self.newbies = newbies
+        self.target_channel = target_channel  # Save the target channel ID
+        self.user = user.name
+        self.img = imgpath
+        self.questions = questions
+
+        # Questions
+        self.pronouns = nextcord.ui.TextInput(
+            label="Pronouns",
+            placeholder="He/Him, She/Her, They/Them, ...",
+            required=True,
+        )
+        self.add_item(self.pronouns)
+
+        self.question1 = nextcord.ui.TextInput(
+            label=self.questions[0][0],
+            placeholder=self.questions[0][1],
+            required=False,
+        )
+        self.add_item(self.question1)
+
+        self.introduced_by = nextcord.ui.TextInput(
+            label="Who introduced you to the server?",
+            placeholder="Mention the user @username",
+            required=True,
+        )
+        self.add_item(self.introduced_by)
+
+        self.question2 = nextcord.ui.TextInput(
+            label=self.questions[1][0],
+            placeholder=self.questions[1][1],
+            required=True,
+        )
+        self.add_item(self.question2)
+
+        self.question3 = nextcord.ui.TextInput(
+            label=self.questions[2][0],
+            placeholder=self.questions[2][1],
+            required=False,
+        )
+        self.add_item(self.question3)
+
+    async def callback(self, interaction: nextcord.Interaction):
+        # Dynamically generate a summary of the user's responses
+        responses = [f"**Submitted By**: {self.user}"]
+
+        if self.pronouns.value:
+            responses.append(f"**Pronouns**: {self.pronouns.value}")
+        if self.question1.value:
+            responses.append(f"**{self.questions[0][0]}**: {self.question1.value}")
+        if self.introduced_by.value:
+            responses.append(f"**Introduced By**: {self.introduced_by.value}")
+        if self.question2.value:
+            responses.append(f"**{self.questions[1][0]}**: {self.question2.value}")
+        if self.question3.value:
+            responses.append(f"**{self.questions[2][0]}**: {self.question3.value}")
+         
+        # Send a thank-you message to the user
+        await interaction.response.send_message(
+            "Thank you for introducing yourself! Your responses have been recorded.",
+            ephemeral=True,
+        )
+
+        qdb.add(self.user, 300)
+
+        #removing the role NEWBIE
+        await self.interaction.remove_roles(self.role, reason="Role removed after presentation completion.")
+        qlogs.info(f"Role '{self.newbies}' removed from {self.user}.")
+
+        embed = nextcord.Embed(
+            title=f"🎉 Welcome {self.user} to the Server! 🎉",
+            description="Here's their introduction!",
+            color=nextcord.Color.random(),
+        )
+
+        # Send the combined message to the target channel
+        if responses:
+            response_message = "\n".join(responses)
+            gen_pres = qopenai.welcome(response_message)
+            embed.add_field(name="Presentation", value=gen_pres, inline=False)
+            target_channel = interaction.guild.get_channel(self.target_channel)
+            if target_channel:
+                with open(self.img, 'rb') as img_file:
+                    file = nextcord.File(img_file, filename="thumbnail.png")
+                    embed.set_thumbnail(url=f"attachment://thumbnail.png")
+                    await target_channel.send(embed=embed, file=file)
+            else:
+                print(f"Error: Channel {self.target_channel} not found.")
+
+@bot.slash_command(name="presentation", description="Introduce yourself to the server!", guild_ids=serverid)
+async def introduce(interaction: nextcord.Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+    
+    guild = interaction.guild
+    role_newbies = qdb.get_role_newbie(guild.id)
+    role = next((role for role in guild.roles if role.name == role_newbies), None)
+    if role is None:
+        await interaction.response.send_message(
+            "Required role not found in the server.",
+            ephemeral=True,
+        )
+        return
+
+    user_roles = interaction.user.roles
+    has_required_role = any(role.name == role_newbies for role in user_roles)
+    if not has_required_role:
+        await interaction.response.send_message(
+            "You do not have the required role to use this command.",
+            ephemeral=True,
+        )
+        return
+
+    url = interaction.user.display_avatar.url
+    imgpath = qdraw.avatar_download(url)
+
+    #get 3 random questions from introduction
+    with open(f"{scrpt_dir}/txt/presentation.txt", "r") as file:
+        questions = file.readlines()
+    introduction = []
+    for question in questions:
+        tmp = [item.strip() for item in question.split("//")]
+        introduction.append((tmp[0],tmp[1]))
+    random_questions = random.sample(introduction, 3)
+
+    channel_welcome = qdb.get_ch_welcome(guild.id)
+    await interaction.response.send_modal(PresentationModal(target_channel=channel_welcome, user=interaction.user, imgpath=imgpath, questions=random_questions, role=role, newbies=role_newbies))  
+
+
+class AmountModal(nextcord.ui.Modal):
+    def __init__(self, user_name, action, base_m, message):
+        super().__init__(title=f"AMOUNT to {['ADD', 'WITHDRAW'][action]}")
+        self.user_name = user_name
+        self.action = action
+        self.base_m = base_m
+        self.message = message
+
+        # Number input field
+        self.amount_input = nextcord.ui.TextInput(
+            label="Enter the amount",
+            placeholder="Type a number...",
+            min_length=1,
+            required=True
+        )
+        self.add_item(self.amount_input)
+
+    async def callback(self, interaction: nextcord.Interaction):
+        # Get the entered amount
+        amount = self.amount_input.value
+
+        #convert amount to numbers
+        try:
+            amount = int(amount)
+        except:
+            amount = 0
+
+        # Perform the action (Add or Withdraw)
+        if self.action == 0:  # Add
+            response = qdb.bank_deposit(self.user_name, int(amount))
+        elif self.action == 1:  # Withdraw
+            response = qdb.bank_withdraw(self.user_name, int(amount))
+        
+        coins, bank = qdb.bank(self.user_name)
+
+        update = str(self.base_m)
+        update = update.replace("{name}", self.user_name.upper())
+        update = update.replace("{coins}", str(coins))
+        update = update.replace("{bank}", str(bank))
+        await self.message.edit(content=update)
+
+        # Send confirmation to the user
+        await interaction.response.send_message(response, ephemeral=True)
+
+class BankView(nextcord.ui.View):
+    def __init__(self, user_name, base_m, message):
+        super().__init__(timeout=60)  # Buttons will time out after 60 seconds
+        self.user_name = user_name
+        self.base_m = base_m
+        self.message = message
+
+    async def ensure_correct_user(self, interaction: nextcord.Interaction) -> bool:
+        if interaction.user.name != self.user_name:
+            await interaction.response.send_message(
+                "🚫 You cannot use this menu. It belongs to someone else!",
+                ephemeral=True
+            )
+            return False
+        return True
+
+    @nextcord.ui.button(label="Add", style=nextcord.ButtonStyle.green)
+    async def add_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        # Check if the user is the correct user
+        if not await self.ensure_correct_user(interaction):
+            return
+
+        # Show the modal for adding coins
+        await interaction.response.send_modal(AmountModal(self.user_name, action=0, base_m=self.base_m, message=self.message))
+
+    @nextcord.ui.button(label="Withdraw", style=nextcord.ButtonStyle.red)
+    async def withdraw_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        # Check if the user is the correct user
+        if not await self.ensure_correct_user(interaction):
+            return
+
+        # Show the modal for withdrawing coins
+        await interaction.response.send_modal(AmountModal(self.user_name, action=1, base_m=self.base_m, message=self.message))
+
+@bot.slash_command(name="bank", description="Interact with The Quackery Treasury", guild_ids=testid)
+async def bank(interaction: nextcord.Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+    
+    qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+
+    # Get the user's balance
+    coins, bank = qdb.bank(interaction.user.name)
+
+    message = '''
+    - 💷 THE QUACKERY TREASURY 💷 :: {name} -
+
+    ------------------------------
+    💰 **QuackCoins**: {coins} <:quackCoin:1124255606782578698>
+    🏦 **BankCoins**: {bank} <:quackCoin:1124255606782578698>
+
+    Current Interest Rate: 30% / month
+    '''
+
+    base_m = message
+    message = message.replace("{name}", interaction.user.name.upper())
+    message = message.replace("{coins}", str(coins))
+    message = message.replace("{bank}", str(bank))
+
+    # Send the initial message
+    sent_message = await interaction.response.send_message(message)
+    
+    view = BankView(interaction.user.name, base_m, sent_message)
+    await sent_message.edit(view=view)
+
+
+@bot.slash_command(name="imagine", description="Cost : 1000.Qc - Image generation using AI", guild_ids=testid)
+async def imagine(interaction: nextcord.Interaction, prompt: str):
+    await interaction.response.defer()  # Defer the response
+
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+    
+    qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+
+    check = qdb.qcheck(interaction.user.name, 1000)
+    if check != 0:
+        await interaction.followup.send("Not enough QuackCoins", ephemeral=True)
+        return
+    
+    qdb.add(interaction.user.name, -1000)
+
+    qlogs.info(f"{interaction.user.name} GENERATING IMAGE :: {prompt}")
+    img_path = qopenai.imagine(interaction.user.name, prompt)
+
+    message = f"**{prompt[:100]}** :: by {interaction.user.mention}"
+
+    await interaction.followup.send(content=message ,file=nextcord.File(img_path))
+
+
+
+# qgames
+@bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
+async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(required=False), roll: Optional[int] = SlashOption(required=False)):
+    bet = bet if bet else 100
+    roll = roll if roll else 3
+    amount = bet
+    name = interaction.user.name
+
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+
+    if amount > 100:
+        amount = 100
+    if amount <= 0:
+        amount = 1
+
+    if roll > 10:
+        roll = 10
+
+    # CHECK MONEY
+    money_check = qdb.qcheck(name, amount)
+
+    if money_check == 0:
+        intro = f"{name.upper()} vs QUACKERS \n {amount} QuackCoins on the table for {roll} rounds !!!\n" + ' \n'
+        response, result = qgames.dices(roll, amount, name)
+        response = intro + response
+
+        if result == 0:
+            amount *= -1
+        elif result == 2:
+            amount = 0
+
+        qdb.add(name, amount)
+        qdb.add(interaction.user.name, random.randint(0, 5))
+        qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=amount)
+    else:
+        response = "Not enough QuackCoins"
+
+    await interaction.response.send_message(response)
+
+
+@bot.slash_command(name="rps", description="Gamble QuackCoins against Quackers by playing Rock Paper Scissors ...", guild_ids=serverid)
+async def rps(
+    interaction: Interaction,
+    bet: int,
+    element: int = SlashOption(
+        name="picker",
+        description="Pick something :",
+        choices={"scissors": 0, "paper": 1, "rock": 2, "lizard": 3, "spock": 4},
+    ),
+):
+    name = interaction.user.name
+
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+
+    if bet > 100:
+        bet = 100
+    if bet <= 0:
+        bet = 1
+
+    # CHECK MONEY
+    money_check = qdb.qcheck(name, bet)
+
+    if money_check == 0:
+        result, mult = qgames.rps(element, bet, name)
+
+        bet *= mult
+        qdb.add(name, bet)
+        qdb.add(interaction.user.name, random.randint(0, 5))
+        qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=bet)
+    else:
+        result = "Not enough QuackCoins available."
+    await interaction.response.send_message(result)
+
+
+@bot.slash_command(name="8ball", description="Quackers gives answers to any questions. [YES or NO questions]", guild_ids=serverid)
+async def eightball(interaction: Interaction, question: str):
+    result = qgames.hball(interaction.user.name)
+    message = f'> {interaction.user.name.capitalize()} asked : " *{question}* " \n {result}'
+    qdb.add(interaction.user.name, random.randint(0, 5))
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+    await interaction.response.send_message(message)
+
+
+
 class BetCreation(nextcord.ui.Modal):
     def __init__(self):
         super().__init__(
@@ -156,104 +618,104 @@ class Betting(nextcord.ui.Modal):
             else:
                 await interaction.send(f'{interaction.user.mention} do not have enough QuackCoins', ephemeral=True)
 
+@bot.slash_command(name="bet-create", description="Create a BET", guild_ids=serverid)
+async def bet_create(interaction: nextcord.Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
 
-class PresentationModal(nextcord.ui.Modal):
-    def __init__(self, target_channel, user, imgpath, questions, role, newbies):
-        super().__init__(
-            title="PRESENTATIONS",
-            timeout=None,
-        )
+    if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
+        await interaction.response.send_modal(BetCreation())
+        qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+    else:
+        await interaction.response.send_message('You already have a Bet going on. || send results of your bet before creating another one "/bet-result"', ephemeral=True)
 
-        self.interaction = user
-        self.role = role
-        self.newbies = newbies
-        self.target_channel = target_channel  # Save the target channel ID
-        self.user = user.name
-        self.img = imgpath
-        self.questions = questions
 
-        # Questions
-        self.pronouns = nextcord.ui.TextInput(
-            label="Pronouns",
-            placeholder="He/Him, She/Her, They/Them, ...",
-            required=True,
-        )
-        self.add_item(self.pronouns)
+@bot.slash_command(name="bet-close", description="Close a BET, users won't be able to bet on it.", guild_ids=serverid)
+async def bet_close(interaction: nextcord.Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
 
-        self.question1 = nextcord.ui.TextInput(
-            label=self.questions[0][0],
-            placeholder=self.questions[0][1],
-            required=False,
-        )
-        self.add_item(self.question1)
+    if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
+        await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
+    else:
+        totala, totalb, totalbetter, totalbettera, totalbetterb, highest = qgames.bet_close(interaction.user.name)
+        # GET INFO FROM THE BET
+        await interaction.response.send_message('Status Updated', ephemeral=True)
+        mess = "BET CLOSED !!! \n \n"
+        mess += f"{totalbetter} Users entered the bet. \n"
+        mess += f"A : **{totala}** QuackCoins by {totalbettera} user(s) \n"
+        mess += f"B : **{totalb}** QuackCoins by {totalbetterb} user(s) \n"
+        mess += f"The highest bet was by : {highest}"
+        await interaction.send(mess)
 
-        self.introduced_by = nextcord.ui.TextInput(
-            label="Who introduced you to the server?",
-            placeholder="Mention the user @username",
-            required=True,
-        )
-        self.add_item(self.introduced_by)
 
-        self.question2 = nextcord.ui.TextInput(
-            label=self.questions[1][0],
-            placeholder=self.questions[1][1],
-            required=True,
-        )
-        self.add_item(self.question2)
+@bot.slash_command(name="bet-result", description="Sends the money", guild_ids=serverid)
+async def bet_result(
+    interaction: Interaction,
+    option: int = SlashOption(
+        name="winner",
+        description="Pick the winning option :",
+        choices={"A": 0, "B": 1},
+    ),
+):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
 
-        self.question3 = nextcord.ui.TextInput(
-            label=self.questions[2][0],
-            placeholder=self.questions[2][1],
-            required=False,
-        )
-        self.add_item(self.question3)
+    if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
+        await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
+    else:
+        option = "A" if option == 0 else "B"
+        qgames.bet_result(interaction.user.name, option)
+        await interaction.response.send_message('MONEY SENT !!!')
 
-    async def callback(self, interaction: nextcord.Interaction):
-        # Dynamically generate a summary of the user's responses
-        responses = [f"**Submitted By**: {self.user}"]
 
-        if self.pronouns.value:
-            responses.append(f"**Pronouns**: {self.pronouns.value}")
-        if self.question1.value:
-            responses.append(f"**{self.questions[0][0]}**: {self.question1.value}")
-        if self.introduced_by.value:
-            responses.append(f"**Introduced By**: {self.introduced_by.value}")
-        if self.question2.value:
-            responses.append(f"**{self.questions[1][0]}**: {self.question2.value}")
-        if self.question3.value:
-            responses.append(f"**{self.questions[2][0]}**: {self.question3.value}")
-         
-        # Send a thank-you message to the user
-        await interaction.response.send_message(
-            "Thank you for introducing yourself! Your responses have been recorded.",
-            ephemeral=True,
-        )
+# ADMIN
+@bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids=serverid)
+async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member):
+    name = interaction.user.name
+    user_name = user.name
 
-        qdb.add(self.user, 300)
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
 
-        #removing the role NEWBIE
-        await self.interaction.remove_roles(self.role, reason="Role removed after presentation completion.")
-        qlogs.info(f"Role '{self.newbies}' removed from {self.user}.")
+    if qdb.user_in_db(user.name) == 0:
+        qdb.add_user(user)
 
-        embed = nextcord.Embed(
-            title=f"🎉 Welcome {self.user} to the Server! 🎉",
-            description="Here's their introduction!",
-            color=nextcord.Color.random(),
-        )
+    qdb.add(user_name, amount)
+    result = qlogs.admin(f"[ADMIN : {name}] ADDED {amount} <:quackCoin:1124255606782578698> to {user_name.upper()}")
 
-        # Send the combined message to the target channel
-        if responses:
-            response_message = "\n".join(responses)
-            gen_pres = qopenai.welcome(response_message)
-            embed.add_field(name="Presentation", value=gen_pres, inline=False)
-            target_channel = interaction.guild.get_channel(self.target_channel)
-            if target_channel:
-                with open(self.img, 'rb') as img_file:
-                    file = nextcord.File(img_file, filename="thumbnail.png")
-                    embed.set_thumbnail(url=f"attachment://thumbnail.png")
-                    await target_channel.send(embed=embed, file=file)
-            else:
-                print(f"Error: Channel {self.target_channel} not found.")
+    await interaction.response.send_message(result)
+
+
+@bot.slash_command(name="admin-remove", description="[ADMIN] remove QuackCoins from a User", guild_ids=serverid)
+async def admin_remove(interaction: Interaction, amount: int, user: nextcord.Member):
+    name = interaction.user.name
+    user_name = user.name
+
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+    
+    if qdb.user_in_db(user.name) == 0:
+        qdb.add_user(user)
+
+    qdb.add(user_name, (amount * -1))
+    result = qlogs.admin(f"[ADMIN : {name}] REMOVED {amount} <:quackCoin:1124255606782578698> from {user_name.upper()}")
+
+    await interaction.response.send_message(result)
+
+
+@bot.slash_command(name="admin-logs", description="[ADMIN] Retrieve last 5 lines from LOGS", guild_ids=serverid)
+async def admin_logs(interaction: Interaction):
+    try:
+        # Read the last 5 lines from qlogs.log
+        with open(LOGFILE, "r") as log_file:
+            lines = log_file.readlines()[-5:]  # Get the last 5 lines
+
+        # Send the lines as a code block
+        formatted_lines = "".join(lines)
+        await interaction.response.send_message(f"```\n{formatted_lines}\n```")
+    except FileNotFoundError:
+        await interaction.response.send_message("Error: qlogs.log file not found.")
 
 
 class DynamicQuestionDropdown(nextcord.ui.Select):
@@ -370,468 +832,6 @@ class DynamicQuestionView(nextcord.ui.View):
                 content=f"Here are your selections:\n\n{answer_text}",
                 view=None,  # Remove the view
             )
-
-
-class AmountModal(nextcord.ui.Modal):
-    def __init__(self, user_name, action, base_m, message):
-        super().__init__(title=f"AMOUNT to {['ADD', 'WITHDRAW'][action]}")
-        self.user_name = user_name
-        self.action = action
-        self.base_m = base_m
-        self.message = message
-
-        # Number input field
-        self.amount_input = nextcord.ui.TextInput(
-            label="Enter the amount",
-            placeholder="Type a number...",
-            min_length=1,
-            required=True
-        )
-        self.add_item(self.amount_input)
-
-    async def callback(self, interaction: nextcord.Interaction):
-        # Get the entered amount
-        amount = self.amount_input.value
-
-        #convert amount to numbers
-        try:
-            amount = int(amount)
-        except:
-            amount = 0
-
-        # Perform the action (Add or Withdraw)
-        if self.action == 0:  # Add
-            response = qdb.bank_deposit(self.user_name, int(amount))
-        elif self.action == 1:  # Withdraw
-            response = qdb.bank_withdraw(self.user_name, int(amount))
-        
-        coins, bank = qdb.bank(self.user_name)
-
-        update = str(self.base_m)
-        update = update.replace("{name}", self.user_name.upper())
-        update = update.replace("{coins}", str(coins))
-        update = update.replace("{bank}", str(bank))
-        await self.message.edit(content=update)
-
-        # Send confirmation to the user
-        await interaction.response.send_message(response, ephemeral=True)
-
-class BankView(nextcord.ui.View):
-    def __init__(self, user_name, base_m, message):
-        super().__init__(timeout=60)  # Buttons will time out after 60 seconds
-        self.user_name = user_name
-        self.base_m = base_m
-        self.message = message
-
-    async def ensure_correct_user(self, interaction: nextcord.Interaction) -> bool:
-        if interaction.user.name != self.user_name:
-            await interaction.response.send_message(
-                "🚫 You cannot use this menu. It belongs to someone else!",
-                ephemeral=True
-            )
-            return False
-        return True
-
-    @nextcord.ui.button(label="Add", style=nextcord.ButtonStyle.green)
-    async def add_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        # Check if the user is the correct user
-        if not await self.ensure_correct_user(interaction):
-            return
-
-        # Show the modal for adding coins
-        await interaction.response.send_modal(AmountModal(self.user_name, action=0, base_m=self.base_m, message=self.message))
-
-    @nextcord.ui.button(label="Withdraw", style=nextcord.ButtonStyle.red)
-    async def withdraw_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        # Check if the user is the correct user
-        if not await self.ensure_correct_user(interaction):
-            return
-
-        # Show the modal for withdrawing coins
-        await interaction.response.send_modal(AmountModal(self.user_name, action=1, base_m=self.base_m, message=self.message))
-
-
-# COMMANDS
-@bot.slash_command(name="daily", description="Receive daily QuackCoins.", guild_ids=serverid)
-async def daily(interaction: Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-
-    result = qdb.daily(interaction.user.name)
-    qdb.add(interaction.user.name, 5)
-    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-
-    await interaction.response.send_message(result)
-
-
-@bot.slash_command(name="send", description="Send QuackCoins to someone.", guild_ids=serverid)
-async def send(interaction: Interaction, amount: int, user: nextcord.Member):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-
-    if qdb.user_in_db(user.name) == 0:
-        qdb.add_user(user)
-
-    result = qdb.send(interaction.user.name, user.name, amount)
-    qdb.add(interaction.user.name, 5)
-    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-
-    await interaction.response.send_message(result)
-
-
-@bot.slash_command(name="coins", description="Gives you your QuackCoins balance.", guild_ids=serverid)
-async def coins(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
-    
-    name = user.name if user else interaction.user.name
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-    if user:
-        if qdb.user_in_db(user.name) == 0:
-            qdb.add_user(user)
-
-    result = qdb.coins(name)
-    qdb.add(interaction.user.name, 5)
-    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-
-    await interaction.response.send_message(result)
-
-
-@bot.slash_command(name="info", description="Get an Image of your Quack Profile", guild_ids=serverid)
-async def info(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
-    if user is None:
-        name = interaction.user.name
-        url = interaction.user.display_avatar.url
-    else:
-        name = user.name
-        url = user.display_avatar.url
-
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-    if user:
-        if qdb.user_in_db(user.name) == 0:
-            qdb.add_user(user)
-
-    await interaction.response.defer()
-
-    result, rank = qdb.info(name)
-    qdb.add(interaction.user.name, 5)
-    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-
-    path = qdraw.info(name, url, result, rank)
-
-    imgfile = nextcord.File(path)
-    await interaction.followup.send(file=imgfile)
-
-
-@bot.slash_command(name="leaderboard", description="Display the Top.10 of the server", guild_ids=serverid)
-async def leaderboard(interaction: Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-
-    intro = "HERE IS A LEADERBOARD OF THE CURRENT STATE OF THE QUACK COINS // \n"
-    results = qdb.leaderboard()
-    result = '\n'.join(results)
-    message = intro + result
-
-    qdb.add(interaction.user.name, 5)
-    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-
-    await interaction.response.send_message(message)
-
-
-@bot.slash_command(name="duck", description="Send a cute pic", guild_ids=serverid)
-async def duck(interaction: Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-    
-    response = requests.get("https://random-d.uk/api/v2/random").json()
-    url = response["url"]
-    
-    qdb.add(interaction.user.name, 5)
-    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-    
-    await interaction.response.send_message(url)
-
-
-@bot.slash_command(name="presentation", description="Introduce yourself to the server!", guild_ids=serverid)
-async def introduce(interaction: nextcord.Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-    
-    guild = interaction.guild
-    role_newbies = qdb.get_role_newbie(guild.id)
-    role = next((role for role in guild.roles if role.name == role_newbies), None)
-    if role is None:
-        await interaction.response.send_message(
-            "Required role not found in the server.",
-            ephemeral=True,
-        )
-        return
-
-    user_roles = interaction.user.roles
-    has_required_role = any(role.name == role_newbies for role in user_roles)
-    if not has_required_role:
-        await interaction.response.send_message(
-            "You do not have the required role to use this command.",
-            ephemeral=True,
-        )
-        return
-
-    url = interaction.user.display_avatar.url
-    imgpath = qdraw.avatar_download(url)
-
-    #get 3 random questions from introduction
-    with open(f"{scrpt_dir}/txt/presentation.txt", "r") as file:
-        questions = file.readlines()
-    introduction = []
-    for question in questions:
-        tmp = [item.strip() for item in question.split("//")]
-        introduction.append((tmp[0],tmp[1]))
-    random_questions = random.sample(introduction, 3)
-
-    channel_welcome = qdb.get_ch_welcome(guild.id)
-    await interaction.response.send_modal(PresentationModal(target_channel=channel_welcome, user=interaction.user, imgpath=imgpath, questions=random_questions, role=role, newbies=role_newbies))  
-
-@bot.slash_command(name="bank", description="Interact with The Quackery Treasury", guild_ids=testid)
-async def bank(interaction: nextcord.Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-    
-    qdb.add(interaction.user.name, 5)
-    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-
-    # Get the user's balance
-    coins, bank = qdb.bank(interaction.user.name)
-
-    message = '''
-    - 💷 THE QUACKERY TREASURY 💷 :: {name} -
-
-    ------------------------------
-    💰 **QuackCoins**: {coins} <:quackCoin:1124255606782578698>
-    🏦 **BankCoins**: {bank} <:quackCoin:1124255606782578698>
-
-    Current Interest Rate: 30% / month
-    '''
-
-    base_m = message
-    message = message.replace("{name}", interaction.user.name.upper())
-    message = message.replace("{coins}", str(coins))
-    message = message.replace("{bank}", str(bank))
-
-    # Send the initial message
-    sent_message = await interaction.response.send_message(message)
-    
-    view = BankView(interaction.user.name, base_m, sent_message)
-    await sent_message.edit(view=view)
-
-@bot.slash_command(name="imagine", description="Cost : 1000.Qc - Image generation using AI", guild_ids=testid)
-async def imagine(interaction: nextcord.Interaction, prompt: str):
-    await interaction.response.defer()  # Defer the response
-
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-    
-    qdb.add(interaction.user.name, 5)
-    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-
-    check = qdb.qcheck(interaction.user.name, 1000)
-    if check != 0:
-        await interaction.followup.send("Not enough QuackCoins", ephemeral=True)
-        return
-    
-    qdb.add(interaction.user.name, -1000)
-
-    qlogs.info(f"{interaction.user.name} GENERATING IMAGE :: {prompt}")
-    img_path = qopenai.imagine(interaction.user.name, prompt)
-
-    message = f"**{prompt[:100]}** :: by {interaction.user.mention}"
-
-    await interaction.followup.send(content=message ,file=nextcord.File(img_path))
-
-# qgames
-@bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
-async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(required=False), roll: Optional[int] = SlashOption(required=False)):
-    bet = bet if bet else 100
-    roll = roll if roll else 3
-    amount = bet
-    name = interaction.user.name
-
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-
-    if amount > 100:
-        amount = 100
-    if amount <= 0:
-        amount = 1
-
-    if roll > 10:
-        roll = 10
-
-    # CHECK MONEY
-    money_check = qdb.qcheck(name, amount)
-
-    if money_check == 0:
-        intro = f"{name.upper()} vs QUACKERS \n {amount} QuackCoins on the table for {roll} rounds !!!\n" + ' \n'
-        response, result = qgames.dices(roll, amount, name)
-        response = intro + response
-
-        if result == 0:
-            amount *= -1
-        elif result == 2:
-            amount = 0
-
-        qdb.add(name, amount)
-        qdb.add(interaction.user.name, random.randint(0, 5))
-        qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=amount)
-    else:
-        response = "Not enough QuackCoins"
-
-    await interaction.response.send_message(response)
-
-
-@bot.slash_command(name="rps", description="Gamble QuackCoins against Quackers by playing Rock Paper Scissors ...", guild_ids=serverid)
-async def rps(
-    interaction: Interaction,
-    bet: int,
-    element: int = SlashOption(
-        name="picker",
-        description="Pick something :",
-        choices={"scissors": 0, "paper": 1, "rock": 2, "lizard": 3, "spock": 4},
-    ),
-):
-    name = interaction.user.name
-
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-
-    if bet > 100:
-        bet = 100
-    if bet <= 0:
-        bet = 1
-
-    # CHECK MONEY
-    money_check = qdb.qcheck(name, bet)
-
-    if money_check == 0:
-        result, mult = qgames.rps(element, bet, name)
-
-        bet *= mult
-        qdb.add(name, bet)
-        qdb.add(interaction.user.name, random.randint(0, 5))
-        qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=bet)
-    else:
-        result = "Not enough QuackCoins available."
-    await interaction.response.send_message(result)
-
-
-@bot.slash_command(name="8ball", description="Quackers gives answers to any questions. [YES or NO questions]", guild_ids=serverid)
-async def eightball(interaction: Interaction, question: str):
-    result = qgames.hball(interaction.user.name)
-    message = f'> {interaction.user.name.capitalize()} asked : " *{question}* " \n {result}'
-    qdb.add(interaction.user.name, random.randint(0, 5))
-    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-    await interaction.response.send_message(message)
-
-
-# BETTING SYSTEM
-@bot.slash_command(name="bet-create", description="Create a BET", guild_ids=serverid)
-async def bet_create(interaction: nextcord.Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-
-    if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
-        await interaction.response.send_modal(BetCreation())
-        qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-    else:
-        await interaction.response.send_message('You already have a Bet going on. || send results of your bet before creating another one "/bet-result"', ephemeral=True)
-
-
-@bot.slash_command(name="bet-close", description="Close a BET, users won't be able to bet on it.", guild_ids=serverid)
-async def bet_close(interaction: nextcord.Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-
-    if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
-        await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
-    else:
-        totala, totalb, totalbetter, totalbettera, totalbetterb, highest = qgames.bet_close(interaction.user.name)
-        # GET INFO FROM THE BET
-        await interaction.response.send_message('Status Updated', ephemeral=True)
-        mess = "BET CLOSED !!! \n \n"
-        mess += f"{totalbetter} Users entered the bet. \n"
-        mess += f"A : **{totala}** QuackCoins by {totalbettera} user(s) \n"
-        mess += f"B : **{totalb}** QuackCoins by {totalbetterb} user(s) \n"
-        mess += f"The highest bet was by : {highest}"
-        await interaction.send(mess)
-
-
-@bot.slash_command(name="bet-result", description="Sends the money", guild_ids=serverid)
-async def bet_result(
-    interaction: Interaction,
-    option: int = SlashOption(
-        name="winner",
-        description="Pick the winning option :",
-        choices={"A": 0, "B": 1},
-    ),
-):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-
-    if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
-        await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
-    else:
-        option = "A" if option == 0 else "B"
-        qgames.bet_result(interaction.user.name, option)
-        await interaction.response.send_message('MONEY SENT !!!')
-
-
-# ADMIN
-@bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids=serverid)
-async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member):
-    name = interaction.user.name
-    user_name = user.name
-
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-
-    if qdb.user_in_db(user.name) == 0:
-        qdb.add_user(user)
-
-    qdb.add(user_name, amount)
-    result = qlogs.admin(f"[ADMIN : {name}] ADDED {amount} <:quackCoin:1124255606782578698> to {user_name.upper()}")
-
-    await interaction.response.send_message(result)
-
-
-@bot.slash_command(name="admin-remove", description="[ADMIN] remove QuackCoins from a User", guild_ids=serverid)
-async def admin_remove(interaction: Interaction, amount: int, user: nextcord.Member):
-    name = interaction.user.name
-    user_name = user.name
-
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-    
-    if qdb.user_in_db(user.name) == 0:
-        qdb.add_user(user)
-
-    qdb.add(user_name, (amount * -1))
-    result = qlogs.admin(f"[ADMIN : {name}] REMOVED {amount} <:quackCoin:1124255606782578698> from {user_name.upper()}")
-
-    await interaction.response.send_message(result)
-
-
-@bot.slash_command(name="admin-logs", description="[ADMIN] Retrieve last 5 lines from LOGS", guild_ids=serverid)
-async def admin_logs(interaction: Interaction):
-    try:
-        # Read the last 5 lines from qlogs.log
-        with open(LOGFILE, "r") as log_file:
-            lines = log_file.readlines()[-5:]  # Get the last 5 lines
-
-        # Send the lines as a code block
-        formatted_lines = "".join(lines)
-        await interaction.response.send_message(f"```\n{formatted_lines}\n```")
-    except FileNotFoundError:
-        await interaction.response.send_message("Error: qlogs.log file not found.")
 
 @bot.slash_command(name="admin-scan", description="[ADMIN] scans the server and retrieves details about channels and roles.") #NO GUILD SPECIFIED SO ANY SERVER CAN BE ADDED
 async def admin_scan(interaction: Interaction):
