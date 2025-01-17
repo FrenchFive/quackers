@@ -431,7 +431,6 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
     await interaction.followup.send(content=message ,file=nextcord.File(img_path))
 
 
-
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
 async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(required=False), roll: Optional[int] = SlashOption(required=False)):
@@ -516,7 +515,7 @@ async def eightball(interaction: Interaction, question: str):
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
     await interaction.response.send_message(message)
 
-
+# BETTING SYSTEM
 
 class BetCreation(nextcord.ui.Modal):
     def __init__(self):
