@@ -55,24 +55,6 @@ questions = [
     {"q": "Select a Bot Channel", "type": "text", "format": "id"},
 ]
 
-introduction = [
-    ("Favorite Color","Purple, Blue, Green ..."),
-    ("Favorite Animal","Cats, Dogs, Land Sharks, Ducks, ..."),
-    ("What would be your superpower?","Flying, Invisibility, Teleportation, ..."),
-    ("Favorite food","Pizza, Sushi, Tacos, ..."),
-    ("Favorite song","Billie Jean, Bohemian Rhapsody, ..."),
-    ("Favorite movie","Star Wars, The Godfather, ..."),
-    ("Favorite book","Harry Potter, The Lord of the Rings, ..."),
-    ("Favorite video game","Zelda, Mario, ..."),
-    ("Favorite TV show","Friends, Game of Thrones, ..."),
-    ("Favorite sport","Soccer, Basketball, ..."),
-    ("Favorite hobby","Painting, Reading, ..."),
-    ("Favorite place","Paris, Tokyo, ..."),
-    ("Favorite app","Spotify, TikTok, ..."),
-    ("Favorite fictional character","Harry Potter, Batman, ..."),
-]
-
-
 # MODAL DISCORD
 class BetCreation(nextcord.ui.Modal):
     def __init__(self):
@@ -599,6 +581,12 @@ async def introduce(interaction: nextcord.Interaction):
     imgpath = qdraw.avatar_download(url)
 
     #get 3 random questions from introduction
+    with open(f"{scrpt_dir}/txt/presentation.txt", "r") as file:
+        questions = file.readlines()
+    introduction = []
+    for question in questions:
+        tmp = [item.strip() for item in question.split("//")]
+        introduction.append((tmp[0],tmp[1]))
     random_questions = random.sample(introduction, 3)
 
     channel_welcome = qdb.get_ch_welcome(guild.id)
