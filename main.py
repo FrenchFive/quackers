@@ -873,8 +873,11 @@ async def admin_scan(interaction: Interaction):
     #make a tuple of members name and their joining date 
     membersjoin = [(member.name, member.joined_at.strftime("%Y-%m-%d %H:%M")) for member in guild.members]
     qdb.user_joined_time(membersjoin)
+
+    #deleting bot from the db
     for member in guild.members:
-        qdb.del_bot(member)
+        if member.bot:
+            qdb.del_bot(member)
 
     # Send the initial message with server details
     await interaction.response.send_message(response_message)
