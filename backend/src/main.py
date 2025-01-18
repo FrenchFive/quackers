@@ -13,6 +13,7 @@ import qgames
 import qdraw
 import qopenai
 import qlogs
+from consts import DATA_DIR, ROOT_DIR
 
 import os
 import random
@@ -29,13 +30,11 @@ load_dotenv()
 
 qlogs.clear()
 
-scrpt_dir = os.path.dirname(os.path.abspath(__file__))
-folder_name = 'txt'
-FOLDER_PATH = os.path.join(scrpt_dir, folder_name)
+TXT_PATH = os.path.join(DATA_DIR, 'txt')
 
 KEY_DISCORD = os.getenv("KEY_DISCORD")
 
-LOGFILE = os.path.join(scrpt_dir, "qlogs.log")
+LOGFILE = os.path.join(ROOT_DIR, "qlogs.log")
 
 bot = commands.Bot(command_prefix='!', intents=nextcord.Intents.all())
 
@@ -283,7 +282,7 @@ async def introduce(interaction: nextcord.Interaction):
     imgpath = qdraw.avatar_download(url)
 
     #get 3 random questions from introduction
-    with open(f"{scrpt_dir}/txt/presentation.txt", "r") as file:
+    with open(os.path.join(TXT_PATH, "presentation.txt"), "r") as file:
         questions = file.readlines()
     introduction = []
     for question in questions:
@@ -1068,7 +1067,7 @@ async def on_member_join(member):
     
     guild = member.guild
 
-    with open("db/welcome.txt", "r") as file:
+    with open(os.path.join(TXT_PATH, "welcome.txt"), "r") as file:
         welcome_message = file.readlines()
     random_welcome = random.choice(welcome_message).replace("{name}", member.mention)
 
@@ -1093,7 +1092,7 @@ async def on_member_join(member):
         print(f"Role '{role_newbies}' not found in the server.")
     
     #read from the file
-    with open("db/welcome_private.txt", "r") as file:
+    with open(os.path.join(TXT_PATH, "welcome_private.txt"), "r", encoding='utf-8') as file:
         message_welcome = file.read().replace("{name}", member.name)
 
     # Send a private message to the user

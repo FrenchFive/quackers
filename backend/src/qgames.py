@@ -6,12 +6,12 @@ from sqlite3 import Error
 import time
 from datetime import datetime, timedelta
 
+from consts import DATA_DIR, ROOT_DIR
 import qlogs
 import qdatabase as qdb
 
-scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'db/qbet.db'
-database_path = os.path.join(scrpt_dir, folder_name)
+database_path = os.path.join(ROOT_DIR, folder_name)
 
 CONNECTION = sqlite3.connect(database_path)
 CURSOR = CONNECTION.cursor()
@@ -81,7 +81,7 @@ def rps(user, bet, name):
 
 def hball(name):
     listwords = []
-    with open('db/hball.txt', encoding='utf-8') as f:
+    with open(os.path.join(DATA_DIR, 'txt/hball.txt'), encoding='utf-8') as f:
         for line in f:
             listwords.append(line.strip())
     result = random.choice(listwords).replace("{user}", name)

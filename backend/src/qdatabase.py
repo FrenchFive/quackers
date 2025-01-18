@@ -7,18 +7,16 @@ import time
 import random
 import shutil
 
-scrpt_dir = os.path.dirname(os.path.abspath(__file__))
-folder_name = 'db/quackers.db'
-stat_name = 'db/stats.db'
-database_path = os.path.join(scrpt_dir, folder_name)
-stats_path = os.path.join(scrpt_dir, stat_name)
-
+from consts import ROOT_DIR
 import qlogs
 
-CONNECTION = sqlite3.connect(database_path)
+DB_PATH = os.path.join(ROOT_DIR, 'db/quackers.db')
+STATS_PATH = os.path.join(ROOT_DIR, 'db/stats.db')
+
+CONNECTION = sqlite3.connect(DB_PATH)
 CURSOR = CONNECTION.cursor()
 
-STATS_CONNECTION = sqlite3.connect(stats_path)
+STATS_CONNECTION = sqlite3.connect(STATS_PATH)
 STATS_CURSOR = STATS_CONNECTION.cursor()
 
 CURSOR.execute('''CREATE TABLE IF NOT EXISTS "members" (
@@ -147,8 +145,8 @@ def luck(name, amount):
     CONNECTION.commit()
 
 def export():
-    global scrpt_dir
-    export_path = os.path.join(scrpt_dir, "txt/database.json")
+    global ROOT_DIR
+    export_path = os.path.join(ROOT_DIR, "txt/database.json")
 
     CURSOR.execute('SELECT * FROM members')
     data = CURSOR.fetchall()
@@ -164,8 +162,8 @@ def export():
         json.dump(json_data, json_file, indent=4)
 
 def export_to_jsonl():
-    global scrpt_dir
-    export_path = os.path.join(scrpt_dir, "txt", "training_data.jsonl")
+    global ROOT_DIR
+    export_path = os.path.join(ROOT_DIR, "txt", "training_data.jsonl")
 
     CURSOR.execute('SELECT * FROM members')
     data = CURSOR.fetchall()
@@ -413,6 +411,7 @@ def voicestalled(name):
     CURSOR.execute("SELECT epvoicet FROM members WHERE name = ?",(name,))
     data = CURSOR.fetchall()
     past = data[0][0]
+    hours = 0
 
     if past != 0 and past < timenow:
         secelapsed = timenow - past
@@ -512,14 +511,14 @@ def clear_stats(guild):
     STATS_CONNECTION.commit()
 
 def backup_db():
-    global scrpt_dir, database_path
-    bckup_path = os.path.join(scrpt_dir, "db/backup/")
-    bckup_file = os.path.join(scrpt_dir, "bckup_quackers.db")
+    global ROOT_DIR, DB_PATH
+    bckup_path = os.path.join(ROOT_DIR, "db/backup/")
+    bckup_file = os.path.join(ROOT_DIR, "bckup_quackers.db")
 
     os.makedirs(bckup_path, exist_ok=True)
 
     try:
-        shutil.copy(database_path, bckup_file)
+        shutil.copy(DB_PATH, bckup_file)
         qlogs.info(f"BACKUP OF THE DATABASE")
     except:
         pass

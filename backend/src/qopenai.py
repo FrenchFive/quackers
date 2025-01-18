@@ -2,38 +2,36 @@ import os
 from openai import OpenAI
 import requests
 import qlogs
+from consts import DATA_DIR, IMG_DIR
 
 from dotenv import load_dotenv
 load_dotenv()
-
-SCRPTDIR = os.path.dirname(os.path.abspath(__file__))
-IMGFOLDER = os.path.join(SCRPTDIR, "imgs")
 
 KEY_OPENAI = os.getenv("KEY_OPENAI")
 
 client = OpenAI(api_key=KEY_OPENAI)
 
 # Read personality from file
-docu = "txt/base-knowledge.txt"
-if os.path.isfile(docu):
-    personality = "BASE KNOWLEDGE : " + open(docu, "r").read()
+BASE_KNOW_PATH = os.path.join(DATA_DIR, "txt/base-knowledge.txt")
+if os.path.isfile(BASE_KNOW_PATH):
+    personality = "BASE KNOWLEDGE : " + open(BASE_KNOW_PATH, "r").read()
 else:
     personality = "BASE KNOWLEDGE : None"
     #create the file
-    with open(docu, "w") as doc:
+    with open(BASE_KNOW_PATH, "w") as doc:
         doc.write("")
 
 # Read emoji from file
-docu = "txt/emoji.txt"
-if os.path.isfile(docu):
-    emoji = open(docu, "r").read()
+BASE_KNOW_PATH = os.path.join(DATA_DIR, "txt/emoji.txt")
+if os.path.isfile(BASE_KNOW_PATH):
+    emoji = open(BASE_KNOW_PATH, "r").read()
 else:
     emoji = ""
-    with open(docu, "w") as doc:
+    with open(BASE_KNOW_PATH, "w") as doc:
         doc.write("")
 
 # Read memory from file
-memory_file_path = "txt/memory.txt"
+memory_file_path = os.path.join(DATA_DIR, "txt/memory.txt")
 if os.path.isfile(memory_file_path):
     memory = open(memory_file_path, "r").read()
 else:
@@ -43,9 +41,10 @@ else:
         doc.write("")
 
 # Read interactions from file
-interactions_file_path = "txt/interactions.txt"
+interactions_file_path = os.path.join(DATA_DIR, "txt/interactions.txt")
 if os.path.isfile(interactions_file_path):
-    interactions = open(interactions_file_path, "r").readlines()
+    with open(interactions_file_path, mode="r", encoding="utf-8") as doc:
+        interactions = doc.readlines()
 else:
     #create the file
     with open(memory_file_path, "w") as doc:
@@ -113,7 +112,7 @@ def interaction_update(prompt, response_content):
     if len(interactions) > 20:
         interactions = interactions[-20:]
     
-    with open(interactions_file_path, "w") as interactions_file:
+    with open(interactions_file_path, mode="w", encoding='utf-8') as interactions_file:
         interactions_file.writelines(interactions)
 
 def update_memory_summary():
@@ -157,7 +156,7 @@ def imagine(user, prompt):
     url = img_generation(user, prompt)
 
     img_data = requests.get(url).content
-    img_path = os.path.join(IMGFOLDER, f"gen.png")
+    img_path = os.path.join(IMG_DIR, f"tmp_gen.png")
     with open(img_path, 'wb') as handler:
         handler.write(img_data)
 

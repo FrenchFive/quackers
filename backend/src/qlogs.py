@@ -3,8 +3,10 @@ from datetime import datetime
 
 import logging
 
-scrpt_dir = os.path.dirname(os.path.abspath(__file__))
-LOG_FILE = os.path.join(scrpt_dir, "qlogs.log")
+from consts import ROOT_DIR
+
+LOG_FILE = os.path.join(ROOT_DIR, "qlogs.log")
+
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s' ,filename=LOG_FILE, encoding='utf-8', level=logging.INFO)
 
 def info(message):

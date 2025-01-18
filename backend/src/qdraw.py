@@ -1,22 +1,15 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 import requests
+from consts import FONT_DIR, IMG_DIR
 
-SCRPTDIR = os.path.dirname(os.path.abspath(__file__))
-IMGFOLDER = os.path.join(SCRPTDIR, "imgs")
-
-# Check if the image folder exists, if not, create it
-if not os.path.exists(IMGFOLDER):
-    os.makedirs(IMGFOLDER)
-
-WOSKER = os.path.join(IMGFOLDER, 'fonts/thunder.ttf')
-SCHABO = os.path.join(IMGFOLDER, 'fonts/schabo.otf')
-
+WOSKER = os.path.join(FONT_DIR, 'thunder.ttf')
+SCHABO = os.path.join(FONT_DIR, 'schabo.otf')
 
 def avatar_download(url):
     #DOWNLOAD USER AVATAR
     img_data = requests.get(url).content
-    tmpavatar = os.path.join(IMGFOLDER, "tmpuser.jpg")
+    tmpavatar = os.path.join(IMG_DIR, "tmp_user.jpg")
     with open(tmpavatar, 'wb') as handler:
         handler.write(img_data)
     return tmpavatar
@@ -53,7 +46,7 @@ def info(name, url, result, rank):
         radius = 90
         tmpcenter = (300,300)
         draw.ellipse((radius, radius, tmpcenter[0]-radius, tmpcenter[1]-radius), fill=0)
-    mask.save(os.path.join(IMGFOLDER, "tmp.png"))
+    mask.save(os.path.join(IMG_DIR, "tmp.png"))
     rest = int((GLBDIM[1] - dim[1])/2)
     base.paste(avatar, (rest, rest), mask)
     #GREEN CIRCLE IF CONNECTED TO A VOICE CHANNEL
@@ -95,6 +88,6 @@ def info(name, url, result, rank):
     draw.text((GLBDIM[0]-700,GLBDIM[1]-340), text, fill=(0, 0, 0, 255), font=font)
 
     #FINALLY SAVE
-    final = os.path.join(IMGFOLDER, "final.png")
+    final = os.path.join(IMG_DIR, "final.png")
     base.save(final)
     return(final)
