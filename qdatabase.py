@@ -5,6 +5,7 @@ from sqlite3 import Error
 import json
 import time
 import random
+import shutil
 
 scrpt_dir = os.path.dirname(os.path.abspath(__file__))
 folder_name = 'db/quackers.db'
@@ -509,3 +510,16 @@ def get_stats(guild, interval):
 def clear_stats(guild):
     STATS_CURSOR.execute(f"DROP TABLE '{guild}'")
     STATS_CONNECTION.commit()
+
+def backup_db():
+    global scrpt_dir, database_path
+    bckup_path = os.path.join(scrpt_dir, "db/backup/")
+    bckup_file = os.path.join(scrpt_dir, "bckup_quackers.db")
+
+    os.makedirs(bckup_path, exist_ok=True)
+
+    try:
+        shutil.copy(database_path, bckup_file)
+        qlogs.info(f"BACKUP OF THE DATABASE")
+    except:
+        pass

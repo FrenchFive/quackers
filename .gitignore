@@ -5,6 +5,7 @@ qlogs.log
 /db/quackers.db
 /db/quserpet.db
 /db/stats.db
+/db/backup
 
 /txt/memory.txt
 /txt/interactions.txt

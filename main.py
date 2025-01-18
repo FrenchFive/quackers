@@ -879,8 +879,8 @@ async def admin_scan(interaction: Interaction):
 
 #TASKS
 @tasks.loop(hours=24)
-async def bank_update():
-
+async def daily_update():
+    
     interest = 1
     qlogs.info(f"Updating BANK : {str(interest)[:5]} %")
     qdb.bank_update(interest)
@@ -889,9 +889,11 @@ async def bank_update():
         channel = bot.get_channel(qdb.get_ch_test(server))
         if channel:
             await channel.send("BANK HAS BEEN UPDATED")
+    
+    qdb.backup_db()
 
-@bank_update.before_loop
-async def before_send_daily_message():
+@daily_update.before_loop
+async def before_daily_update():
     await bot.wait_until_ready()  # Wait until the bot is ready
     qlogs.info("Waiting for BANK")
 
@@ -981,8 +983,8 @@ async def before_weekly_update():
 async def on_ready():
     qlogs.info("QUACKERS IS ONLINE")
 
-    if not bank_update.is_running():
-        bank_update.start()
+    if not daily_update.is_running():
+        daily_update.start()
     if not weekly_update.is_running():
         weekly_update.start()
 
