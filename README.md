@@ -78,18 +78,18 @@ Create a virtual environment to isolate dependencies:
 > It allows the use of librairies in a specific configuration, meaning not breaking other code on other projects.
 
 ```bash
-python3 -m venv venv
+python3 -m venv .venv
 ```
 
 Activate the virtual environment:
 
 - **Windows**:
   ```bash
-  venv\Scripts\activate
+  .venv\Scripts\activate
   ```
 - **Mac/Linux**:
   ```bash
-  source venv/bin/activate
+  source .venv/bin/activate
   ```
 
 #### 3. Install Dependencies
@@ -124,7 +124,7 @@ A template of the file is available : `template.env`to help you create your `.en
 Run the bot script:
 
 ```bash
-python bot.py
+python backend/src/main.py
 ```
 
 For additional support, open an issue in the [GitHub repository](https://github.com/FrenchFive/quackers/issues).
