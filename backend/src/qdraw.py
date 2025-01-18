@@ -88,6 +88,6 @@ def info(name, url, result, rank):
     draw.text((GLBDIM[0]-700,GLBDIM[1]-340), text, fill=(0, 0, 0, 255), font=font)
 
     #FINALLY SAVE
-    final = os.path.join(IMG_DIR, "final.png")
+    final = os.path.join(IMG_DIR, "tmp_final.png")
     base.save(final)
     return(final)
