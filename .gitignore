@@ -362,3 +362,6 @@ pip-selfcheck.json
 # Ignore temp pictures
 *tmp*
 *.db
+
+backend/src/txt/interactions.txt
+backend/src/txt/memory.txt
