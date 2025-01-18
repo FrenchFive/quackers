@@ -1119,4 +1119,9 @@ async def on_member_remove(member):
     qdb.add_stat(guild=guild.id, user=member.name, type="DEP", amount=1)
 
 
-bot.run(KEY_DISCORD)
+if __name__ == "__main__":
+    if KEY_DISCORD == None:
+        print("Error: There is currently no 'KEY_DISCORD' environment variable. Please create a .env with the required values.")
+        exit(1)
+    bot.run(KEY_DISCORD)
+    exit(0)

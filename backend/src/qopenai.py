@@ -9,6 +9,9 @@ load_dotenv()
 
 KEY_OPENAI = os.getenv("KEY_OPENAI")
 
+if KEY_OPENAI == None:
+    print("Error: There is currently no 'KEY_OPENAI' environment variable. Please create a .env with the required values.")
+    exit(1)
 client = OpenAI(api_key=KEY_OPENAI)
 
 # Read personality from file
