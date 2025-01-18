@@ -360,4 +360,4 @@ pip-selfcheck.json
 
 ## Custom Ignore
 # Ignore temp pictures
-imgs/*tmp*
+*tmp*
