@@ -213,7 +213,6 @@ Enjoy using **Quackers**! 🦆
 - [ ] **IMAGE GEN** : `/imagine` Letting user generate AI images
   - [ ] Buttons to regen
   - [ ] Add info button
-  - [ ] Make 4 generations of lower res => possibility to highres
   - [x] Have info about prompt and user
   - [x] Generate images using OpenAI API
 - [ ] Programmable messages for ADMIN
@@ -236,6 +235,10 @@ Enjoy using **Quackers**! 🦆
   - [ ] Badge for the one here for a long time
   - [ ] Badge for Activity (Experience based)
   - [ ] Badge for boost
+- [ ] Modify the INFO to make the image more beautiful 
+  - [ ] Switch to a dark Theme 
+  - [ ] Make a moodboard of typos and styles 
+    - [ ] Look into Frosted effects
 - [ ] Making an EXP system (hidden)
   - [ ] Exp cannot be reduced, used to see how Active are users
   - [ ] Give them rank as they become more active
@@ -251,6 +254,7 @@ Enjoy using **Quackers**! 🦆
 - [ ] Make Integration to Social Media 
   - [ ] Make a Twitch Integration
   - [ ] Make a Youtube Integration
+  - [ ] Make it cost Quackcoins each message
 - [ ] Create Temporary Voice Channels ?? 
 - [ ] Create Statistics about the server
   - [ ] Make a task - every week 
@@ -262,17 +266,15 @@ Enjoy using **Quackers**! 🦆
       - [ ] id INTEGER PRIMARY KEY AUTOINCREMENT
       - [ ] user TEXT
       - [ ] type TEXT ["MESS", "COMMAND", "VC_CON", "VC_HOURS", "GAME", "ARR", "DEP"]
+      - [ ] How many messages sent
   - [ ] Draw Curves
 - [ ] Help Function
   - [ ] Create a Support Ticket to get help
 - [ ] Admin GiveAways 
-- [ ] Modify the INFO to make the image more beautiful 
-  - [ ] Switch to a dark Theme 
-  - [ ] Make a moodboard of typos and styles 
-    - [ ] Look into Frosted effects
 - [ ] Use a better password env file system
 - [ ] Have a WEB Interface for ADMINs to modify stuff 
   - [ ] Allows ADMINS to connect to discord 
   - [ ] Select a server (in which Quackers is in)
   - [ ] Have parameters for Everything
   - [ ] Save to the Database
+- [ ] Create a DataBase backup every now and then ... 
