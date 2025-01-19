@@ -372,7 +372,7 @@ class BankView(nextcord.ui.View):
         # Show the modal for withdrawing coins
         await interaction.response.send_modal(AmountModal(self.user_name, action=1, base_m=self.base_m, message=self.message))
 
-@bot.slash_command(name="bank", description="Interact with The Quackery Treasury", guild_ids=testid)
+@bot.slash_command(name="bank", description="Interact with The Quackery Treasury", guild_ids=serverid)
 async def bank(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user)
