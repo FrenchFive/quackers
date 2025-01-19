@@ -28,7 +28,7 @@ def info(name, url, result, rank):
 
     # Create a base image
     GLBDIM = (3800, 1000)
-    base = Image.new('RGBA', GLBDIM, (24, 25, 28, 255))
+    base = Image.new('RGBA', GLBDIM, (40, 43, 48, 255))
 
     #DOWNLOAD USER AVATAR
     tmpavatar = avatar_download(url)
@@ -67,25 +67,25 @@ def info(name, url, result, rank):
     draw = ImageDraw.Draw(base)
     font = ImageFont.truetype(SCHABO, size=180)  # You can specify your custom font
     text = f"{coins+bank} Quack Coins"
-    draw.text(((rest*2)+lildim + 15, rest*2 + 440), text, fill=(66, 69, 73, 255), font=font)
+    draw.text(((rest*2)+lildim + 15, rest*2 + 440), text, fill=(104, 113, 125, 255), font=font)
 
     #SMALLER INFO
     draw = ImageDraw.Draw(base)
     font = ImageFont.truetype(SCHABO, size=120)  # You can specify your custom font
     text = f"MESSAGES : {mess} // VC HOURS : {voiceh} // LUCK : {luck}"
-    draw.text(((rest*2)+lildim + 15, rest*2 + 610), text, fill=(66, 69, 73, 255), font=font)
+    draw.text(((rest*2)+lildim + 15, rest*2 + 610), text, fill=(104, 113, 125, 255), font=font)
 
     #MEMBER SINCE
     draw = ImageDraw.Draw(base)
     font = ImageFont.truetype(SCHABO, size=120)
     text = f"MEMBER SINCE : {date}"
-    draw.text(((rest*2)+lildim + 15, rest*2 + 725), text, fill=(66, 69, 73, 255), font=font)
+    draw.text(((rest*2)+lildim + 15, rest*2 + 725), text, fill=(104, 113, 125, 255), font=font)
 
     #RANK
     draw = ImageDraw.Draw(base)
     font = ImageFont.truetype(SCHABO, size=400)  # You can specify your custom font
     text = f"#{str(rank).zfill(3)}"
-    draw.text((GLBDIM[0]-700,GLBDIM[1]-340), text, fill=(114, 137, 218, 255), font=font)
+    draw.text((GLBDIM[0]-700,GLBDIM[1]-340), text, fill=(255, 255, 255, 255), font=font)
 
     #FINALLY SAVE
     final = os.path.join(IMG_DIR, "tmp_final.png")
