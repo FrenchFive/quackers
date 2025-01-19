@@ -363,5 +363,5 @@ pip-selfcheck.json
 *tmp*
 *.db
 
-backend/src/txt/interactions.txt
-backend/src/txt/memory.txt
+backend/data/txt/interactions.txt
+backend/data/txt/memory.txt
