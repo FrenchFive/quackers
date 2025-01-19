@@ -908,7 +908,7 @@ async def before_daily_update():
 async def weekly_update():
     qlogs.info("WEEKLY UPDATE")
 
-    for server in testid:
+    for server in serverid:
 
         type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats(server, 1)
 
@@ -916,6 +916,24 @@ async def weekly_update():
 
         # Add total messages and unique users
         message.append(f"\n**Total Unique Users:** `{unique_names_count}`")
+
+        # TOTALS
+        if "ARR" in dict(type_totals):
+            message.append(f"\n**New Members This Week:** `{dict(type_totals)['ARR'] - dict(type_totals)['DEP']}`")
+        if "MESS" in dict(type_totals):
+            message.append(f"\n**Message Quantity This Week:** `{dict(type_totals)['MESS']}`")
+        if "VC_CON" in dict(type_totals):
+            message.append(f"\n**Voice Connection Quantity This Week:** `{dict(type_totals)['VC_CON']}`")
+        if "COMMAND" in dict(type_totals) or "GAME" in dict(type_totals):
+            try:
+                cmd = dict(type_totals)['COMMAND']
+            except:
+                cmd = 0
+            try:
+                game = dict(type_totals)['GAME']
+            except:
+                game = 0
+            message.append(f"\n**Commands Quantity This Week:** `{cmd + game}`")
 
         # Add type totals
         message.append("\n\n**Activity Summary:**")
@@ -947,11 +965,7 @@ async def weekly_update():
         if "GAME" in type_most_entries:
             message.append(f"- **Most Games Played:** `{type_most_entries['GAME']}`")
         if "COMMAND" in type_most_entries:
-            message.append(f"- **Most Commands used:** `{type_most_entries['COMMAND']}`")
-
-        # Add new member stats
-        if "ARR" in dict(type_totals):
-            message.append(f"\n**New Members This Week:** `{dict(type_totals)['ARR']}`")
+            message.append(f"- **Most Commands used:** `{type_most_entries['COMMAND']}`")  
 
         # Combine all parts into a single string
         mess = "\n".join(message)
@@ -970,7 +984,7 @@ async def before_weekly_update():
 
     # Calculate the time until the next sunday at midnight
     now = datetime.now()
-    next_sunday = (now + timedelta(days=(6 - now.weekday()))).replace(hour=0, minute=0, second=0, microsecond=0)
+    next_sunday = (now + timedelta(days=(7 - now.weekday()))).replace(hour=0, minute=0, second=0, microsecond=0)
     wait_time = (next_sunday - now).total_seconds()
 
     qlogs.info(f"Waiting for {wait_time} seconds until the next Sunday...")

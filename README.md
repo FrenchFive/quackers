@@ -257,15 +257,15 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make it cost Quackcoins each message
 - [ ] Create Temporary Voice Channels ?? 
 - [ ] Create Statistics about the server
-  - [ ] Make a task - every week 
-    - [ ] Send the stat to the Admin channel every week 
+  - [x] Make a task - every week 
+    - [x] Send the stat to the Admin channel every week 
   - [ ] Display data 
     - [ ] [MATPLOTLIB](https://matplotlib.org/stable/plot_types/index.html)
-  - [ ] Store Data
-    - [ ] Have a Database table/server
-      - [ ] id INTEGER PRIMARY KEY AUTOINCREMENT
-      - [ ] user TEXT
-      - [ ] type TEXT ["MESS", "COMMAND", "VC_CON", "VC_HOURS", "GAME", "ARR", "DEP"]
+  - [x] Store Data
+    - [x] Have a Database table/server
+      - [x] id INTEGER PRIMARY KEY AUTOINCREMENT
+      - [x] user TEXT
+      - [x] type TEXT ["MESS", "COMMAND", "VC_CON", "VC_HOURS", "GAME", "ARR", "DEP"]
       - [ ] How many messages sent
   - [ ] Draw Curves
 - [ ] Help Function
