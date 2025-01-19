@@ -260,7 +260,7 @@ Enjoy using **Quackers**! 🦆
       - [x] id INTEGER PRIMARY KEY AUTOINCREMENT
       - [x] user TEXT
       - [x] type TEXT ["MESS", "COMMAND", "VC_CON", "VC_HOURS", "GAME", "ARR", "DEP"]
-      - [ ] How many messages sent
+      - [x] How many messages sent
   - [ ] Draw Curves
 - [ ] Help Function
   - [ ] Create a Support Ticket to get help
