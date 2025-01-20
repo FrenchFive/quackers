@@ -1,6 +1,8 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 import requests
+import plotly.express as px
+
 from consts import FONT_DIR, IMG_DIR
 
 WOSKER = os.path.join(FONT_DIR, 'thunder.ttf')
@@ -91,3 +93,29 @@ def info(name, url, result, rank):
     final = os.path.join(IMG_DIR, "tmp_final.png")
     base.save(final)
     return(final)
+
+def stat(activity):
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    # Create the bar chart with custom color
+    fig = px.bar(
+        x=days,
+        y=activity,
+        color_discrete_sequence=["#7289da"],  # bars color
+        title="Weekly Activity Evolution",
+        labels={"x": "Days", "y": "Activity"}
+    )
+
+    # Update layout colors
+    fig.update_layout(
+        paper_bgcolor="#282b30",   # overall background
+        plot_bgcolor="#282b30",    # plotting area background
+        font=dict(color="white")   # text color (axes, title, etc.)
+    )
+
+    # If you want data labels on the bars themselves:
+    # fig.update_traces(text=activity, textposition='outside')
+
+    path = f"{IMG_DIR}/tmp_weekly_activity.png"
+    fig.write_image(path)
+
+    return path

@@ -155,6 +155,26 @@ async def duck(interaction: Interaction):
     
     await interaction.response.send_message(url)
 
+@bot.slash_command(name="stat", description="Send the stat image", guild_ids=testid)
+async def stat(interaction: Interaction):
+    if qdb.user_in_db(interaction.user.name) == 0:
+        qdb.add_user(interaction.user)
+    
+    server = interaction.guild
+
+    await interaction.response.defer()
+
+    type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats(server)
+    qdb.info(type_totals)
+    activity = [50,20,70,110,0,20,300]
+    path = qdraw.stat(activity)
+
+    qdb.add(interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+    
+    imgfile = nextcord.File(path)
+    await interaction.followup.send(file=imgfile)
+
 
 class PresentationModal(nextcord.ui.Modal):
     def __init__(self, target_channel, user, imgpath, questions, role, newbies):
