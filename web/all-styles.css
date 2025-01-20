@@ -149,12 +149,12 @@ img.user-avatar:hover {
 
 @font-face {
     font-family: Quackers1;
-    src: url(schabo.otf);
+    src: url(data/fonts/schabo.otf);
 }
 
 @font-face {
     font-family: Quackers2;
-    src: url(thunder.ttf);
+    src: url(data/fonts/thunder.ttf);
 }
 
 /* Section d'informations */
