@@ -38,9 +38,10 @@ LOGFILE = os.path.join(ROOT_DIR, "qlogs.log")
 
 bot = commands.Bot(command_prefix='!', intents=nextcord.Intents.all())
 
-# Server IDs
+# Server IDs - May change
 serverid = qdb.get_all_server_ids()
 testid = [1159282148042350642]
+
 
 #SERVER QUESTIONS
 questions = [
