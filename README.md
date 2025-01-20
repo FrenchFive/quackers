@@ -182,6 +182,8 @@ Enjoy using **Quackers**! 🦆
 ---
 
 ### IN WORK : 
+For Active Development check the Dev Project 
+
 - [ ] Making Admin Commands check for the roles in the db (except for admin scan if the server already is in the db)
 - [ ] **Petting System** :
   - [x] Create Images
@@ -210,11 +212,6 @@ Enjoy using **Quackers**! 🦆
         - [ ] Sell to get coins 
         - [ ] Send to another user
   - [ ] Make a role "pet" and have it display all functions except /pet => user buy a pet if doesnt have one already
-- [ ] **IMAGE GEN** : `/imagine` Letting user generate AI images
-  - [ ] Buttons to regen
-  - [ ] Add info button
-  - [x] Have info about prompt and user
-  - [x] Generate images using OpenAI API
 - [ ] Programmable messages for ADMIN
   - [ ] Making work programmed messages
   - [ ] Having an interface to see what is planned by admin 
@@ -250,26 +247,13 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make a Youtube Integration
   - [ ] Make it cost Quackcoins each message
 - [ ] Create Temporary Voice Channels ?? 
-- [ ] Create Statistics about the server
-  - [x] Make a task - every week 
-    - [x] Send the stat to the Admin channel every week 
-  - [ ] Display data 
-    - [ ] [MATPLOTLIB](https://matplotlib.org/stable/plot_types/index.html)
-  - [x] Store Data
-    - [x] Have a Database table/server
-      - [x] id INTEGER PRIMARY KEY AUTOINCREMENT
-      - [x] user TEXT
-      - [x] type TEXT ["MESS", "COMMAND", "VC_CON", "VC_HOURS", "GAME", "ARR", "DEP"]
-      - [x] How many messages sent
-  - [ ] Draw Curves
 - [ ] Help Function
   - [ ] Create a Support Ticket to get help
 - [ ] Admin GiveAways 
-- [ ] Use a better password env file system
+- [x] Use a better password env file system
 - [ ] Have a WEB Interface for ADMINs to modify stuff 
   - [ ] Allows ADMINS to connect to discord 
   - [ ] Select a server (in which Quackers is in)
   - [ ] Have parameters for Everything
   - [ ] Save to the Database
 - [ ] Create a DataBase backup every now and then ... 
-- [ ] Correct AFK Detection
