@@ -227,15 +227,16 @@ For Active Development check the Dev Project
   - [ ] Making a database / server using their id
 - [ ] Find a way for Admin to see the DB for troubleshooting
 - [ ] Add badges to INFO 
-  - [ ] Admin Badge
-  - [ ] Badge for newbies
-  - [ ] Badge for the one here for a long time
-  - [ ] Badge for Activity (Experience based)
-  - [ ] Badge for boost
-- [ ] Modify the INFO to make the image more beautiful 
-  - [ ] Switch to a dark Theme 
-  - [ ] Make a moodboard of typos and styles 
-    - [ ] Look into Frosted effects
+  - [ ] Add Images to Quackers
+    - [ ] Generate images via Google Icons
+  - [ ] Badge Ideas
+    - [ ] Admin Badge
+    - [ ] Badge for newbies
+    - [ ] Badge for the one here for a long time
+    - [ ] Badge for Activity (Experience based or Stat based)
+    - [ ] Badge for boost
+- [x] Modify the INFO to make the image more beautiful 
+  - [x] Switch to a dark Theme
 - [ ] Making an EXP system (hidden)
   - [ ] Exp cannot be reduced, used to see how Active are users
   - [ ] Give them rank as they become more active
