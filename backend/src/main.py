@@ -164,8 +164,8 @@ async def stat(interaction: Interaction):
 
     server = interaction.guild.id
     type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats(server)
-    qlogs.info(type_totals)
-    activity = [50,20,70,110,0,20,300]
+    qlogs.info(interval_totals)
+    activity = [120,60,20,110,1,12,5]
     path = qdraw.stat(activity)
 
     qdb.add(interaction.user.name, 5)
