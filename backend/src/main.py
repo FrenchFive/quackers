@@ -155,26 +155,6 @@ async def duck(interaction: Interaction):
     
     await interaction.response.send_message(url)
 
-@bot.slash_command(name="stat", description="Send the stat image", guild_ids=testid)
-async def stat(interaction: Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
-    
-    await interaction.response.defer()
-
-    server = interaction.guild.id
-    type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats(server)
-    qlogs.info(interval_totals)
-    activity = [120,60,20,110,1,12,5]
-    path = qdraw.stat(activity)
-
-    qdb.add(interaction.user.name, 5)
-    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-    
-    imgfile = nextcord.File(path)
-    await interaction.followup.send(file=imgfile)
-
-
 class PresentationModal(nextcord.ui.Modal):
     def __init__(self, target_channel, user, imgpath, questions, role, newbies):
         super().__init__(
@@ -931,6 +911,9 @@ async def weekly_update():
 
         type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats(server)
 
+        path = qdraw.stat(interval_totals)
+        imgfile = nextcord.File(path)
+
         message = ["**📊 Server Activity Statistics**"]
 
         # Add total messages and unique users
@@ -992,7 +975,7 @@ async def weekly_update():
 
         channel = bot.get_channel(qdb.get_ch_info(server))
         if channel:
-            await channel.send(mess)
+            await channel.send(mess, file=imgfile)
             
         qdb.clear_stats(guild=server) #CLEAR STATS
 
