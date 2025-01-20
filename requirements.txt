@@ -7,3 +7,4 @@ pillow==11.0.0
 python-dotenv==1.0.1
 ploty==5.24.1
 kaleido==0.2.1
+pandas==2.2.3

@@ -160,10 +160,9 @@ async def stat(interaction: Interaction):
     if qdb.user_in_db(interaction.user.name) == 0:
         qdb.add_user(interaction.user)
     
-    server = interaction.guild
-
     await interaction.response.defer()
 
+    server = interaction.guild.id
     type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats(server)
     qdb.info(type_totals)
     activity = [50,20,70,110,0,20,300]
