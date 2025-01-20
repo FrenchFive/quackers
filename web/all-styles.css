@@ -1,0 +1,183 @@
+/* General Body Styling */
+body {
+    background-color: rgb(24, 25, 28);
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    background-color: #23272a;
+    min-height: 100vh;
+}
+
+.sidebar .nav-link {
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.sidebar .nav-link:hover {
+    color: #7289da;
+}
+
+/* Card Styling */
+.card {
+    background-color: #2c2f33;
+    border: none;
+    color: #ffffff;
+}
+
+/* Form Input and Select Styling */
+.form-select,
+.form-control {
+    background-color: #23272a;
+    color: #ffffff;
+    border: 1px solid #444;
+}
+
+
+
+.form-select:focus,
+.form-control:focus {
+    background-color: #23272a;
+    color: #ffffff;
+    border: 1px solid #7289da;
+    box-shadow: none;
+}
+
+/* Button Styling */
+.button {
+    background-color: #7289da;
+    border: none;
+    color: white;
+}
+
+.button:hover {
+    background-color: #5a6fb2;
+}
+
+/* Explanation text Headboard */
+.explanation-text {
+    font-size: 15px;    /* Smaller font size */
+    color: grey;        /* Grey color */
+}
+
+/* Empêche le retour à la ligne dans les liens de la sidebar */
+.no-wrap {
+    white-space: nowrap;  /* Empêche le texte de revenir à la ligne */
+}
+
+
+/* Griser card*/
+.cardimg {
+    filter: grayscale(50%); /* Grise toute la carte par défaut */
+    transition: filter 0.3s ease; /* Transition fluide */
+}
+
+.cardimg:hover {
+    filter: grayscale(0%); /* Enlève le grisage au survol */
+}
+
+/* Navbar Styling */
+.navbar {
+    height: 50px;  /* Fixe la hauteur de la navbar */
+    padding: 0.25rem 1rem;
+    background-color: #23272a !important;
+}
+
+/* Réduire la taille de la marque */
+.navbar-brand {
+    font-size: 1.1rem;
+    color: #ffffff;
+}
+
+/* Réduire la taille des boutons */
+.navbar .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem; /* Plus petit */
+}
+
+.navbar-brand:hover {
+    color: #5a6fb2; /* Exemple de couleur (tomato) */
+    transition: color 0.3s ease; /* Ajouter une transition douce */
+}
+
+/* Bouton Outline personnalisé */
+.btn-outline-custom {
+    color: grey; /* Couleur du texte */
+    border-color: grey; /* Couleur de la bordure */
+    background-color: transparent; /* Fond transparent */
+}
+
+/* Changer la couleur du texte, bordure et fond au survol */
+.btn-outline-custom:hover {
+    color: white; /* Couleur du texte au survol */
+    background-color: grey; /* Fond au survol */
+    border-color: grey; /* Bordure au survol */
+    transition: all 0.3s ease; /* Transition douce */
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem; /* Plus petit */
+}
+
+/* Appliquer un style à l'image */
+img.user-avatar {
+    width: 30px; /* Largeur de l'image */
+    height: 30px; /* Hauteur de l'image (égale à la largeur pour rendre l'image ronde) */
+    object-fit: cover; /* L'image couvre tout le cercle sans déformation */
+    border-radius: 50%; /* Assure que l'image est ronde */
+    display: block; /* Supprimer les marges internes des images inline */
+    transition: transform 0.3s ease; /* Transition douce au survol */
+}
+
+/* Effet de survol sur l'image */
+img.user-avatar:hover {
+    transform: scale(1.1); /* Agrandir légèrement l'image au survol */
+}
+
+
+/* Style pour centrer le texte avec Grid */
+.centered-text {
+    display: grid;
+    place-items: center; /* Centre horizontalement et verticalement */
+    height: 100vh; /* Prend toute la hauteur de la fenêtre */
+    text-align: center; /* Centre le texte à l'intérieur de l'élément */
+}
+
+.centered-text h1 {
+    font-size: 20rem; /* Taille du texte */
+}
+
+@font-face {
+    font-family: Quackers1;
+    src: url(schabo.otf);
+}
+
+@font-face {
+    font-family: Quackers2;
+    src: url(thunder.ttf);
+}
+
+/* Section d'informations */
+.info-section {
+    background-color: rgb(24, 25, 28); /* Couleur de fond claire pour la section */
+    padding: 40px 20px; /* Ajout de padding autour des informations */
+    margin-top: 50px; /* Un peu d'espace au-dessus de la section */
+    text-align: center; /* Centrer le texte */
+}
+
+.info-section h2 {
+    font-size: 2rem; /* Taille du titre */
+    font-weight: bold; /* Gras pour le titre */
+    margin-bottom: 20px; /* Espace sous le titre */
+}
+
+.info-section p {
+    font-size: 1rem; /* Taille du texte */
+    line-height: 1.5; /* Espacement entre les lignes pour la lisibilité */
+}
+
+/* Espacement supplémentaire lorsque tu scrolles */
+body {
+    font-family: Arial, sans-serif;
+    padding-bottom: 50px; /* Ajoute un peu d'espace sous la page */
+}
