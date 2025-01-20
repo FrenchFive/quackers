@@ -440,7 +440,7 @@ def voicestalled(name):
 
 #STATS
 def add_stat(guild, user, type, amount):
-    weekday_number = datetime.datetime.now().weekday()
+    weekday_number = datetime.now().weekday()
     # check if a table exists with the id of the guild as tables name
     STATS_CURSOR.execute(f"CREATE TABLE IF NOT EXISTS '{guild}' (id INTEGER PRIMARY KEY AUTOINCREMENT, time INT, name TEXT, type TEXT, amount INTEGER)")
     STATS_CONNECTION.commit()
