@@ -272,3 +272,4 @@ Enjoy using **Quackers**! 🦆
   - [ ] Have parameters for Everything
   - [ ] Save to the Database
 - [ ] Create a DataBase backup every now and then ... 
+- [ ] Correct AFK Detection

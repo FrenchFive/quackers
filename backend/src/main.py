@@ -910,7 +910,7 @@ async def weekly_update():
 
     for server in serverid:
 
-        type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats(server, 1)
+        type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats(server)
 
         message = ["**📊 Server Activity Statistics**"]
 
@@ -945,15 +945,15 @@ async def weekly_update():
         for activity, min_amount, max_amount, min_author, max_author in type_min_max:
             if activity == "MESS":
                 message.append(
-                    f"- **Messages:**\n   - Shortest message by `{min_author}`: `{min_amount}` characters\n   - Longest message by `{max_author}`: `{max_amount}` characters"
+                    f"- **Messages:**\n   - Longest message by `{max_author}`: `{max_amount}` characters"
                 )
             elif activity == "VC_HOURS":
                 message.append(
-                    f"- **Voice Channel Time:**\n   - Longest session by `{max_author}`: `{max_amount}` hours\n   - Shortest session by `{min_author}`: `{min_amount}` hours"
+                    f"- **Voice Channel Time:**\n   - Longest session by `{max_author}`: `{max_amount}` hours"
                 )
             elif activity == "GAME":
                 message.append(
-                    f"- **Game Interactions:**\n   - Biggest gamble by `{max_author}`: `{max_amount}` <:quackCoins:1124255606782578698>\n   - Lowest gamble by `{min_author}`: `{min_amount}` <:quackCoins:1124255606782578698>"
+                    f"- **Game Interactions:**\n   - Biggest gamble by `{max_author}`: `{max_amount}` <:quackCoins:1124255606782578698>"
                 )
 
         # Add most active users by type

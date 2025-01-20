@@ -440,16 +440,16 @@ def voicestalled(name):
 
 #STATS
 def add_stat(guild, user, type, amount):
-    epoch_time = int(time.time())
+    weekday_number = datetime.datetime.now().weekday()
     # check if a table exists with the id of the guild as tables name
     STATS_CURSOR.execute(f"CREATE TABLE IF NOT EXISTS '{guild}' (id INTEGER PRIMARY KEY AUTOINCREMENT, time INT, name TEXT, type TEXT, amount INTEGER)")
     STATS_CONNECTION.commit()
 
     # insert the data into the table
-    STATS_CURSOR.execute(f"INSERT INTO '{guild}' (time, name, type, amount) VALUES (?, ?, ?, ?)", (epoch_time, user, type, amount))
+    STATS_CURSOR.execute(f"INSERT INTO '{guild}' (time, name, type, amount) VALUES (?, ?, ?, ?)", (weekday_number, user, type, amount))
     STATS_CONNECTION.commit()
 
-def get_stats(guild, interval):
+def get_stats(guild):
     # Total of each different unique type
     STATS_CURSOR.execute(f"SELECT type, COUNT(*) as count FROM '{guild}' GROUP BY type")
     type_totals = STATS_CURSOR.fetchall()
@@ -468,24 +468,14 @@ def get_stats(guild, interval):
     STATS_CURSOR.execute(f"SELECT COUNT(DISTINCT name) FROM '{guild}'")
     unique_names_count = STATS_CURSOR.fetchone()[0]
 
-    # Total entries for each interval of time
-    STATS_CURSOR.execute(f"SELECT MIN(time) FROM '{guild}'")
-    start_time = STATS_CURSOR.fetchone()[0]
-    interval_seconds = interval * 86400  # Convert days to seconds
+    # Total for each day
+    interval_totals = [0] * 7  # Initialize a list with 7 zeros, one for each day of the week
+    STATS_CURSOR.execute(f"SELECT time, COUNT(*) as count FROM '{guild}' GROUP BY time")
+    for row in STATS_CURSOR.fetchall():
+        day_of_week, count = row
+        interval_totals[day_of_week] = count
+    
 
-    interval_totals = []
-    current_time = start_time
-
-    while True:
-        STATS_CURSOR.execute(f"""
-            SELECT COUNT(*) FROM '{guild}'
-            WHERE time >= ? AND time < ?
-        """, (current_time, current_time + interval_seconds))
-        count = STATS_CURSOR.fetchone()[0]
-        if count == 0:
-            break
-        interval_totals.append(count)
-        current_time += interval_seconds
 
     # Name who has the most entries for each type
     STATS_CURSOR.execute(f"SELECT type, name, COUNT(*) as count FROM '{guild}' GROUP BY type, name ORDER BY type, count DESC")
@@ -511,14 +501,10 @@ def clear_stats(guild):
     STATS_CONNECTION.commit()
 
 def backup_db():
-    global ROOT_DIR, DB_PATH
     bckup_path = os.path.join(ROOT_DIR, "db/backup/")
     bckup_file = os.path.join(ROOT_DIR, "bckup_quackers.db")
 
     os.makedirs(bckup_path, exist_ok=True)
 
-    try:
-        shutil.copy(DB_PATH, bckup_file)
-        qlogs.info(f"BACKUP OF THE DATABASE")
-    except:
-        pass
+    shutil.copy(DB_PATH, bckup_file)
+    qlogs.info(f"BACKUP OF THE DATABASE")
