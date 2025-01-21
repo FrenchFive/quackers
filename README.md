@@ -258,3 +258,11 @@ For Active Development check the Dev Project
   - [ ] Have parameters for Everything
   - [ ] Save to the Database
 - [ ] Create a DataBase backup every now and then ... 
+- [ ] Get rid of DANGEROUS and Not Important Function (implemented to fix small issues that are not that important)
+  - [ ] Get rid of del_bot 
+  - [ ] user_joined_time in qdatabase
+- [ ] Make functions use the add function to add coins instead of adding them by themselves
+  - [ ] Search for more functions 
+  - [ ] add_quackers
+  - [ ] add_message
+- [ ] Rename the ADD Button into DEPOSIT in the Bank System

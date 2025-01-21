@@ -123,6 +123,36 @@ def get_emoji_list(guild_id):
     return json.loads(result[0]) if result else None
 
 #MEMBERS
+def user_in_db(guild, name):
+    CURSOR.execute(f"SELECT COUNT(*) FROM '{guild}' WHERE name = ?",(name,))
+    data = CURSOR.fetchall()
+    return(data[0][0])
+
+def add_user(guild, member):
+    if member.bot:
+        return  # Skip adding bots
+    
+    name = member.name
+    date = member.joined_at.strftime('%Y-%m-%d %H:%M')
+    CURSOR.execute(f'INSERT INTO "{guild}" (name, coins, daily, quackers, mess, created, streak, epvoicet, voiceh, luck, bank) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0, 0, 0, 0))
+    CONNECTION.commit()
+    qlogs.info(f'--QDB // ADDED USER : {name} :: to {guild}')
+
+def coins(guild, name):
+    CURSOR.execute(f"SELECT coins FROM '{guild}' WHERE name = ?", (name,))
+    data = CURSOR.fetchall()
+    return(f'{name.capitalize()} possède {data[0][0]} <:quackCoin:1124255606782578698>.')
+
+def qcheck(guild, name, amount):
+    CURSOR.execute(f"SELECT coins FROM '{guild}' WHERE name = ?",(name,))
+    data = CURSOR.fetchall()
+    coins = data[0][0]
+
+    if coins >= amount:
+        return(0)
+    else:
+        return(1)
+
 def add(guild, name, amount):
     CURSOR.execute(f"SELECT coins FROM '{guild}' WHERE name = ?",(name,))
     rows = CURSOR.fetchall()
@@ -145,47 +175,22 @@ def luck(guild, name, amount):
     CURSOR.execute(f"UPDATE '{guild}' SET luck = ? WHERE name = ?", (luck, name))
     CONNECTION.commit()          
 
-def user_in_db(guild, name):
-    CURSOR.execute(f"SELECT COUNT(*) FROM '{guild}' WHERE name = ?",(name,))
-    data = CURSOR.fetchall()
-    return(data[0][0])
-
-def add_user(guild, member):
-    if member.bot:
-        return  # Skip adding bots
-    
-    name = member.name
-    date = member.joined_at.strftime('%Y-%m-%d %H:%M')
-    CURSOR.execute(f'INSERT INTO "{guild}" (name, coins, daily, quackers, mess, created, streak, epvoicet, voiceh, luck, bank) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0, 0, 0, 0))
-    CONNECTION.commit()
-    qlogs.info(f'--QDB // ADDED USER : {name} :: to {guild}')
-
-def user_joined_time(members):
+def user_joined_time(guild, members):
     for name, date in members:
-        CURSOR.execute("SELECT created FROM members WHERE name = ?", (name,))
+        CURSOR.execute(f"SELECT created FROM '{guild}' WHERE name = ?", (name,))
         data = CURSOR.fetchone()
         if data and data[0] != date:
-            CURSOR.execute("UPDATE members SET created = ? WHERE name = ?", (date, name))
+            CURSOR.execute(f"UPDATE '{guild}' SET created = ? WHERE name = ?", (date, name))
             CONNECTION.commit()
 
-def del_bot(member):
+def del_bot(guild, member):
     name = member.name
-    CURSOR.execute("DELETE FROM members WHERE name = ?", (name,))
+    CURSOR.execute(f"DELETE FROM '{guild}' WHERE name = ?", (name,))
     CONNECTION.commit()
     qlogs.info(f'--QDB // DELETED USER : {name}')
 
-def qcheck(name, amount):
-    CURSOR.execute("SELECT coins FROM members WHERE name = ?",(name,))
-    data = CURSOR.fetchall()
-    coins = data[0][0]
-
-    if coins >= amount:
-        return(0)
-    else:
-        return(1)
-
-def add_mess(name):
-    CURSOR.execute("SELECT coins, mess FROM members WHERE name = ?",(name,))
+def add_mess(guild, name):
+    CURSOR.execute(f"SELECT coins, mess FROM '{guild}' WHERE name = ?",(name,))
     rows = CURSOR.fetchall()
     data = rows[0]
     coins = data[0]
@@ -194,11 +199,11 @@ def add_mess(name):
     coins += 1
     mess += 1
 
-    CURSOR.execute("UPDATE members SET coins = ?, mess = ? WHERE name = ?", (coins, mess, name))
+    CURSOR.execute(f"UPDATE '{guild}' SET coins = ?, mess = ? WHERE name = ?", (coins, mess, name))
     CONNECTION.commit()
 
-def add_quackers(name):
-    CURSOR.execute("SELECT coins, quackers FROM members WHERE name = ?",(name,))
+def add_quackers(guild, name):
+    CURSOR.execute(f"SELECT coins, quackers FROM '{guild}' WHERE name = ?",(name,))
     rows = CURSOR.fetchall()
     data = rows[0]
     coins = data[0]
@@ -207,7 +212,7 @@ def add_quackers(name):
     coins += 9  #9 + 1coin from message => 10
     quackers += 1
 
-    CURSOR.execute("UPDATE members SET coins = ?, quackers = ? WHERE name = ?", (coins, quackers, name))
+    CURSOR.execute(f"UPDATE '{guild}' SET coins = ?, quackers = ? WHERE name = ?", (coins, quackers, name))
     CONNECTION.commit()
 
 def daily(guild, name):
@@ -263,49 +268,40 @@ def send(guild, fname, dname, amount):
     qlogs.info(f'--QDB // SENT : {amount} // FROM : {fname} / TO : {dname} - GUILD :: {guild}')
     return(f"{fname.capitalize()} sent {amount} <:quackCoin:1124255606782578698> to {dname.capitalize()}")
 
-def coins(guild, name):
+def bank(guild, name):
     CURSOR.execute(f"SELECT coins FROM '{guild}' WHERE name = ?", (name,))
     data = CURSOR.fetchall()
-    return(f'{name.capitalize()} possède {data[0][0]} <:quackCoin:1124255606782578698>.')
-
-def bank(name):
-    CURSOR.execute("SELECT coins FROM members WHERE name = ?", (name,))
-    data = CURSOR.fetchall()
     coins = data[0][0]
-    CURSOR.execute("SELECT bank FROM members WHERE name = ?", (name,))
+    CURSOR.execute(f"SELECT bank FROM '{guild}' WHERE name = ?", (name,))
     data = CURSOR.fetchall()
     bank = data[0][0]
     return coins, bank
 
-def bank_deposit(name, amount):
-    CURSOR.execute("SELECT coins FROM members WHERE name = ?", (name,))
+def bank_deposit(guild, name, amount):
+    CURSOR.execute(f"SELECT coins, bank FROM '{guild}' WHERE name = ?", (name,))
     data = CURSOR.fetchall()
     coins = data[0][0]
-    CURSOR.execute("SELECT bank FROM members WHERE name = ?", (name,))
-    data = CURSOR.fetchall()
-    bank = data[0][0]
+    bank = data[0][1]
     if coins < amount:
         return(f"Vous n'avez pas assez de <:quackCoin:1124255606782578698> pour déposer {amount}.")
     else:
         coins -= amount
         bank += amount
-        CURSOR.execute("UPDATE members SET coins = ?, bank = ? WHERE name = ?", (coins, bank, name))
+        CURSOR.execute(f"UPDATE '{guild}' SET coins = ?, bank = ? WHERE name = ?", (coins, bank, name))
         CONNECTION.commit()
         return(f"Vous avez déposé {amount} <:quackCoin:1124255606782578698> dans votre compte en banque.")
 
-def bank_withdraw(name, amount):
-    CURSOR.execute("SELECT coins FROM members WHERE name = ?", (name,))
+def bank_withdraw(guild, name, amount):
+    CURSOR.execute(f"SELECT coins, bank FROM '{guild}' WHERE name = ?", (name,))
     data = CURSOR.fetchall()
     coins = data[0][0]
-    CURSOR.execute("SELECT bank FROM members WHERE name = ?", (name,))
-    data = CURSOR.fetchall()
-    bank = data[0][0]
+    bank = data[0][1]
     if bank < amount:
         return(f"Vous n'avez pas assez de <:quackCoin:1124255606782578698> dans votre compte en banque pour retirer {amount}.")
     else:
         coins += amount
         bank -= amount
-        CURSOR.execute("UPDATE members SET coins = ?, bank = ? WHERE name = ?", (coins, bank, name))
+        CURSOR.execute(f"UPDATE '{guild}' SET coins = ?, bank = ? WHERE name = ?", (coins, bank, name))
         CONNECTION.commit()
         return(f"Vous avez retiré {amount} <:quackCoin:1124255606782578698> de votre compte en banque.")
 
