@@ -410,6 +410,42 @@ async def bank(interaction: nextcord.Interaction):
     view = BankView(interaction.user.name, base_m, sent_message)
     await sent_message.edit(view=view)
 
+class ImagineView(nextcord.ui.View):
+    def __init__(self, user_name, prompt):
+        super().__init__(timeout=60)  # Buttons will time out after 60 seconds
+        self.user_name = user_name
+        self.prompt = prompt
+
+    async def ensure_correct_user(self, interaction: nextcord.Interaction) -> bool:
+        if interaction.user.name != self.user_name:
+            await interaction.response.send_message(
+                "🚫 You cannot use this menu. It belongs to someone else!",
+                ephemeral=True
+            )
+            return False
+        return True
+
+    @nextcord.ui.button(label="Regenerate", style=nextcord.ButtonStyle.green, emoji="🔄")
+    async def regenerate_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        # Check if the user is the correct user
+        if not await self.ensure_correct_user(interaction):
+            return
+
+        # Regenerate the image
+        qlogs.info(f"{interaction.user.name} REGENERATING IMAGE :: {self.prompt}")
+        img_path = qopenai.imagine(interaction.user.name, self.prompt)
+
+        message = f"**{self.prompt[:100]}** :: by {interaction.user.mention}"
+        await interaction.followup.send(content=message, file=nextcord.File(img_path))
+
+    @nextcord.ui.button(label="Show Full Prompt", style=nextcord.ButtonStyle.blurple, emoji="📜")
+    async def show_prompt_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        # Check if the user is the correct user
+        if not await self.ensure_correct_user(interaction):
+            return
+
+        # Send the full prompt
+        await interaction.followup.send(content=f"Full prompt: {self.prompt}", ephemeral=True)
 
 @bot.slash_command(name="imagine", description="Cost : 1000.Qc - Image generation using AI", guild_ids=testid)
 async def imagine(interaction: nextcord.Interaction, prompt: str):
