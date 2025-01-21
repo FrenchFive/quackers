@@ -134,70 +134,16 @@ def add(guild, name, amount):
     CURSOR.execute(f"UPDATE '{guild}' SET coins = ? WHERE name = ?", (coins, name))
     CONNECTION.commit()
 
-def luck(name, amount):
-    CURSOR.execute("SELECT luck FROM members WHERE name = ?",(name,))
+def luck(guild, name, amount):
+    CURSOR.execute(f"SELECT luck FROM '{guild}' WHERE name = ?",(name,))
     rows = CURSOR.fetchall()
     data = rows[0]
     luck = data[0]
 
     luck += amount
 
-    CURSOR.execute("UPDATE members SET luck = ? WHERE name = ?", (luck, name))
-    CONNECTION.commit()
-
-def export():
-    global ROOT_DIR
-    export_path = os.path.join(ROOT_DIR, "txt/database.json")
-
-    CURSOR.execute('SELECT * FROM members')
-    data = CURSOR.fetchall()
-
-    # Convert data to a list of dictionaries
-    column_names = [desc[0] for desc in CURSOR.description]
-    json_data = []
-    for row in data:
-        json_data.append(dict(zip(column_names, row)))
-    
-    # Write JSON data to the output file
-    with open(export_path, 'w') as json_file:
-        json.dump(json_data, json_file, indent=4)
-
-def export_to_jsonl():
-    global ROOT_DIR
-    export_path = os.path.join(ROOT_DIR, "txt", "training_data.jsonl")
-
-    CURSOR.execute('SELECT * FROM members')
-    data = CURSOR.fetchall()
-
-    # Convert data to a list of dictionaries
-    column_names = [desc[0] for desc in CURSOR.description]
-    json_data = []
-    for row in data:
-        json_data.append(dict(zip(column_names, row)))
-
-    # Write data to a .jsonl file in the required format
-    with open(export_path, 'w') as jsonl_file:
-        for entry in json_data:
-            # Construct the messages list based on your data
-            messages = []
-
-            # Optional: Add a system prompt if needed
-            # messages.append({"role": "system", "content": "Your system prompt here."})
-
-            # Assuming your database has 'user_input' and 'assistant_response' fields
-            if 'user_input' in entry and 'assistant_response' in entry:
-                messages.append({"role": "user", "content": entry['user_input']})
-                messages.append({"role": "assistant", "content": entry['assistant_response']})
-            else:
-                # Skip entries without required fields
-                continue
-
-            # Create the JSON object
-            json_line = {"messages": messages}
-
-            # Write the JSON object as a line in the .jsonl file
-            jsonl_file.write(json.dumps(json_line) + '\n')
-            
+    CURSOR.execute(f"UPDATE '{guild}' SET luck = ? WHERE name = ?", (luck, name))
+    CONNECTION.commit()          
 
 def user_in_db(guild, name):
     CURSOR.execute(f"SELECT COUNT(*) FROM '{guild}' WHERE name = ?",(name,))
@@ -317,8 +263,8 @@ def send(guild, fname, dname, amount):
     qlogs.info(f'--QDB // SENT : {amount} // FROM : {fname} / TO : {dname} - GUILD :: {guild}')
     return(f"{fname.capitalize()} sent {amount} <:quackCoin:1124255606782578698> to {dname.capitalize()}")
 
-def coins(name):
-    CURSOR.execute("SELECT coins FROM members WHERE name = ?", (name,))
+def coins(guild, name):
+    CURSOR.execute(f"SELECT coins FROM '{guild}' WHERE name = ?", (name,))
     data = CURSOR.fetchall()
     return(f'{name.capitalize()} possède {data[0][0]} <:quackCoin:1124255606782578698>.')
 
