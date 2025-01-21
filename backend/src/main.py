@@ -459,7 +459,7 @@ async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(requi
 
     if money_check == 0:
         intro = f"{name.upper()} vs QUACKERS \n {amount} QuackCoins on the table for {roll} rounds !!!\n" + ' \n'
-        response, result = qgames.dices(roll, amount, name)
+        response, result = qgames.dices(interaction.guild.id, roll, amount, name)
         response = intro + response
 
         if result == 0:
@@ -500,7 +500,7 @@ async def rps(
     money_check = qdb.qcheck(interaction.guild.id, name, bet)
 
     if money_check == 0:
-        result, mult = qgames.rps(element, bet, name)
+        result, mult = qgames.rps(interaction.guild.id, element, bet, name)
 
         bet *= mult
         qdb.add(interaction.guild.id, name, bet)
@@ -668,7 +668,7 @@ async def bet_result(
         await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
     else:
         option = "A" if option == 0 else "B"
-        qgames.bet_result(interaction.user.name, option)
+        qgames.bet_result(interaction.guild.id, interaction.user.name, option)
         await interaction.response.send_message('MONEY SENT !!!')
 
 
