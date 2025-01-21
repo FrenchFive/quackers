@@ -38,6 +38,7 @@ LOGFILE = os.path.join(ROOT_DIR, "qlogs.log")
 
 bot = commands.Bot(command_prefix='!', intents=nextcord.Intents.all())
 
+BASE_INTEREST_RATE = 1
 
 # Server IDs
 serverid = qdb.get_all_server_ids()
@@ -886,7 +887,7 @@ async def admin_scan(interaction: Interaction):
 async def daily_update():
 
     for server in serverid:
-        interest_rate = 1
+        interest_rate = BASE_INTEREST_RATE
         qlogs.info(f"Updating BANK : {interest_rate} % :: {server}")
         qdb.bank_update(server, interest_rate)
 
