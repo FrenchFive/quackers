@@ -1055,7 +1055,7 @@ async def on_voice_state_update(member, before, after):
         if qdb.user_in_db(guild.id, member.name) == 0:
             qdb.add_user(guild.id, member)
 
-        qdb.voiceactive(member.name)
+        qdb.voiceactive(guild.id, member.name)
         qdb.add(guild.id, member.name, 15)
         qlogs.info(f"{member.name} is connected to a Voice Channel")
 
@@ -1073,7 +1073,7 @@ async def on_voice_state_update(member, before, after):
         if qdb.user_in_db(guild.id, member.name) == 0:
             qdb.add_user(guild.id, member)
 
-        hours = qdb.voicestalled(member.name)
+        hours = qdb.voicestalled(guild.id, member.name)
         qlogs.info(f"{member.name} is disconnected")
 
         qdb.add_stat(guild=guild.id, user=member.name, type="VC_HOUR", amount=hours)
