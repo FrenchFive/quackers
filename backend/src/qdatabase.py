@@ -318,19 +318,19 @@ def bank_update(guild, interest):
             CONNECTION.commit()
             qlogs.info(f'-- QDB // Added {int(bank * (interest / 100))} to {name} bank account. :: GUILD :: {guild}')
 
-def info(name):
-    CURSOR.execute("SELECT coins, bank, mess, created, epvoicet, voiceh, luck FROM members WHERE name = ?", (name,))
+def info(guild, name):
+    CURSOR.execute(f"SELECT coins, bank, mess, created, epvoicet, voiceh, luck FROM '{guild}' WHERE name = ?", (name,))
     data = CURSOR.fetchall()
 
     coins = data[0][0]
     bank = data[0][1]
-    CURSOR.execute("SELECT COUNT(*) FROM members WHERE (coins + bank) > ?",((coins+bank),))
+    CURSOR.execute(f"SELECT COUNT(*) FROM '{guild}' WHERE (coins + bank) > ?",((coins+bank),))
     cdata = CURSOR.fetchall()
     rank = cdata[0][0] + 1
     return(data[0], rank)
 
-def leaderboard():
-    CURSOR.execute("SELECT name, coins, bank FROM members ORDER BY (coins + bank) DESC LIMIT 10")
+def leaderboard(guild):
+    CURSOR.execute(f"SELECT name, coins, bank FROM '{guild}' ORDER BY (coins + bank) DESC LIMIT 10")
     data = CURSOR.fetchall()
     result = []
     emoji = ["🥇","🥈","🥉",""]
@@ -344,14 +344,14 @@ def leaderboard():
         result.append(f'{emoji[emo]} N.{i+1} :: {bold}{data[i][0].capitalize()}{bold} :: {(data[i][1] + data[i][2])} <:quackCoin:1124255606782578698>')
     return(result)
 
-def voiceactive(name):
+def voiceactive(guild, name):
     timenow = int(time.time())
-    CURSOR.execute("UPDATE members SET epvoicet = ? WHERE name = ?",(timenow, name))
+    CURSOR.execute(f"UPDATE '{guild}' SET epvoicet = ? WHERE name = ?",(timenow, name))
     CONNECTION.commit()
 
-def voicestalled(name):
+def voicestalled(guild, name):
     timenow = int(time.time())
-    CURSOR.execute("SELECT epvoicet FROM members WHERE name = ?",(name,))
+    CURSOR.execute(f"SELECT epvoicet FROM '{guild}' WHERE name = ?",(name,))
     data = CURSOR.fetchall()
     past = data[0][0]
     hours = 0
@@ -363,20 +363,20 @@ def voicestalled(name):
             amount = 50 * hours
             if amount > 500:
                 amount = 500
-            add(name, amount)
+            add(guild, name, amount)
             #ADD HOURS TO DB
-            CURSOR.execute("SELECT voiceh FROM members WHERE name = ?",(name,))
+            CURSOR.execute(f"SELECT voiceh FROM '{guild}' WHERE name = ?",(name,))
             raw = CURSOR.fetchall()
             data = raw[0][0]
 
             data += hours
 
-            CURSOR.execute("UPDATE members SET voiceh = ? WHERE name = ?", (data, name))
+            CURSOR.execute(f"UPDATE '{guild}' SET voiceh = ? WHERE name = ?", (data, name))
             CONNECTION.commit()
             #LOGS
             qlogs.info(f"-- QDB // Added {amount} to {name} for being active in Voice Channel.")
 
-    CURSOR.execute("UPDATE members SET epvoicet = ? WHERE name = ?",(0, name))
+    CURSOR.execute(f"UPDATE '{guild}' SET epvoicet = ? WHERE name = ?",(0, name))
     CONNECTION.commit()
 
     return hours
