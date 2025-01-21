@@ -38,10 +38,14 @@ LOGFILE = os.path.join(ROOT_DIR, "qlogs.log")
 
 bot = commands.Bot(command_prefix='!', intents=nextcord.Intents.all())
 
-# Server IDs - May change
+
+# Server IDs
 serverid = qdb.get_all_server_ids()
 testid = [1159282148042350642]
 
+#check each db for server ids
+for guild in serverid:
+    qdb.servers_table_exists(guild)
 
 #SERVER QUESTIONS
 questions = [
@@ -58,11 +62,11 @@ questions = [
 # COMMANDS
 @bot.slash_command(name="daily", description="Receive daily QuackCoins.", guild_ids=serverid)
 async def daily(interaction: Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
 
-    result = qdb.daily(interaction.user.name)
-    qdb.add(interaction.user.name, 5)
+    result = qdb.daily(interaction.guild.id, interaction.user.name)
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(result)
@@ -70,14 +74,14 @@ async def daily(interaction: Interaction):
 
 @bot.slash_command(name="send", description="Send QuackCoins to someone.", guild_ids=serverid)
 async def send(interaction: Interaction, amount: int, user: nextcord.Member):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
 
-    if qdb.user_in_db(user.name) == 0:
-        qdb.add_user(user)
+    if qdb.user_in_db(interaction.guild.id, user.name) == 0:
+        qdb.add_user(interaction.guild.id, user)
 
-    result = qdb.send(interaction.user.name, user.name, amount)
-    qdb.add(interaction.user.name, 5)
+    result = qdb.send(interaction.guild.id, interaction.user.name, user.name, amount)
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(result)
@@ -85,16 +89,17 @@ async def send(interaction: Interaction, amount: int, user: nextcord.Member):
 
 @bot.slash_command(name="coins", description="Gives you your QuackCoins balance.", guild_ids=serverid)
 async def coins(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
-    
-    name = user.name if user else interaction.user.name
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
     if user:
-        if qdb.user_in_db(user.name) == 0:
-            qdb.add_user(user)
+        if qdb.user_in_db(interaction.guild.id, user.name) == 0:
+            qdb.add_user(interaction.guild.id, user)
 
-    result = qdb.coins(name)
-    qdb.add(interaction.user.name, 5)
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
+
+    name = user.name if user else interaction.user.name
+    result = qdb.coins(interaction.guild.id, name)
+    
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(result)
