@@ -38,9 +38,15 @@ LOGFILE = os.path.join(ROOT_DIR, "qlogs.log")
 
 bot = commands.Bot(command_prefix='!', intents=nextcord.Intents.all())
 
+BASE_INTEREST_RATE = 1
+
 # Server IDs
 serverid = qdb.get_all_server_ids()
 testid = [1159282148042350642]
+
+#check each db for server ids
+for guild in serverid:
+    qdb.servers_table_exists(guild)
 
 #SERVER QUESTIONS
 questions = [
@@ -57,11 +63,11 @@ questions = [
 # COMMANDS
 @bot.slash_command(name="daily", description="Receive daily QuackCoins.", guild_ids=serverid)
 async def daily(interaction: Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
 
-    result = qdb.daily(interaction.user.name)
-    qdb.add(interaction.user.name, 5)
+    result = qdb.daily(interaction.guild.id, interaction.user.name)
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(result)
@@ -69,14 +75,14 @@ async def daily(interaction: Interaction):
 
 @bot.slash_command(name="send", description="Send QuackCoins to someone.", guild_ids=serverid)
 async def send(interaction: Interaction, amount: int, user: nextcord.Member):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
 
-    if qdb.user_in_db(user.name) == 0:
-        qdb.add_user(user)
+    if qdb.user_in_db(interaction.guild.id, user.name) == 0:
+        qdb.add_user(interaction.guild.id, user)
 
-    result = qdb.send(interaction.user.name, user.name, amount)
-    qdb.add(interaction.user.name, 5)
+    result = qdb.send(interaction.guild.id, interaction.user.name, user.name, amount)
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(result)
@@ -84,16 +90,17 @@ async def send(interaction: Interaction, amount: int, user: nextcord.Member):
 
 @bot.slash_command(name="coins", description="Gives you your QuackCoins balance.", guild_ids=serverid)
 async def coins(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
-    
-    name = user.name if user else interaction.user.name
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
     if user:
-        if qdb.user_in_db(user.name) == 0:
-            qdb.add_user(user)
+        if qdb.user_in_db(interaction.guild.id, user.name) == 0:
+            qdb.add_user(interaction.guild.id, user)
 
-    result = qdb.coins(name)
-    qdb.add(interaction.user.name, 5)
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
+
+    name = user.name if user else interaction.user.name
+    result = qdb.coins(interaction.guild.id, name)
+    
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(result)
@@ -108,16 +115,16 @@ async def info(interaction: Interaction, user: Optional[nextcord.Member] = Slash
         name = user.name
         url = user.display_avatar.url
 
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
     if user:
-        if qdb.user_in_db(user.name) == 0:
-            qdb.add_user(user)
+        if qdb.user_in_db(interaction.guild.id, user.name) == 0:
+            qdb.add_user(interaction.guild.id, user)
 
     await interaction.response.defer()
 
-    result, rank = qdb.info(name)
-    qdb.add(interaction.user.name, 5)
+    result, rank = qdb.info(interaction.guild.id, name)
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     path = qdraw.info(name, url, result, rank)
@@ -128,15 +135,15 @@ async def info(interaction: Interaction, user: Optional[nextcord.Member] = Slash
 
 @bot.slash_command(name="leaderboard", description="Display the Top.10 of the server", guild_ids=serverid)
 async def leaderboard(interaction: Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
 
     intro = "HERE IS A LEADERBOARD OF THE CURRENT STATE OF THE QUACK COINS // \n"
-    results = qdb.leaderboard()
+    results = qdb.leaderboard(interaction.guild.id)
     result = '\n'.join(results)
     message = intro + result
 
-    qdb.add(interaction.user.name, 5)
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(message)
@@ -144,13 +151,13 @@ async def leaderboard(interaction: Interaction):
 
 @bot.slash_command(name="duck", description="Send a cute pic", guild_ids=serverid)
 async def duck(interaction: Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
     
     response = requests.get("https://random-d.uk/api/v2/random").json()
     url = response["url"]
     
-    qdb.add(interaction.user.name, 5)
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
     
     await interaction.response.send_message(url)
@@ -227,7 +234,7 @@ class PresentationModal(nextcord.ui.Modal):
             ephemeral=True,
         )
 
-        qdb.add(self.user, 300)
+        qdb.add(interaction.guild.id, self.user, 300)
 
         #removing the role NEWBIE
         await self.interaction.remove_roles(self.role, reason="Role removed after presentation completion.")
@@ -255,8 +262,8 @@ class PresentationModal(nextcord.ui.Modal):
 
 @bot.slash_command(name="presentation", description="Introduce yourself to the server!", guild_ids=serverid)
 async def introduce(interaction: nextcord.Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
     
     guild = interaction.guild
     role_newbies = qdb.get_role_newbie(guild.id)
@@ -322,11 +329,11 @@ class AmountModal(nextcord.ui.Modal):
 
         # Perform the action (Add or Withdraw)
         if self.action == 0:  # Add
-            response = qdb.bank_deposit(self.user_name, int(amount))
+            response = qdb.bank_deposit(interaction.guild.id, self.user_name, int(amount))
         elif self.action == 1:  # Withdraw
-            response = qdb.bank_withdraw(self.user_name, int(amount))
+            response = qdb.bank_withdraw(interaction.guild.id, self.user_name, int(amount))
         
-        coins, bank = qdb.bank(self.user_name)
+        coins, bank = qdb.bank(interaction.guild.id, self.user_name)
 
         update = str(self.base_m)
         update = update.replace("{name}", self.user_name.upper())
@@ -373,14 +380,14 @@ class BankView(nextcord.ui.View):
 
 @bot.slash_command(name="bank", description="Interact with The Quackery Treasury", guild_ids=serverid)
 async def bank(interaction: nextcord.Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
     
-    qdb.add(interaction.user.name, 5)
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     # Get the user's balance
-    coins, bank = qdb.bank(interaction.user.name)
+    coins, bank = qdb.bank(interaction.guild.id, interaction.user.name)
 
     message = '''
     - 💷 THE QUACKERY TREASURY 💷 :: {name} -
@@ -408,10 +415,10 @@ async def bank(interaction: nextcord.Interaction):
 async def imagine(interaction: nextcord.Interaction, prompt: str):
     await interaction.response.defer()  # Defer the response
 
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
     
-    qdb.add(interaction.user.name, 5)
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     check = qdb.qcheck(interaction.user.name, 1000)
@@ -419,7 +426,7 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
         await interaction.followup.send("Not enough QuackCoins", ephemeral=True)
         return
     
-    qdb.add(interaction.user.name, -1000)
+    qdb.add(interaction.guild.id, interaction.user.name, -1000)
 
     qlogs.info(f"{interaction.user.name} GENERATING IMAGE :: {prompt}")
     img_path = qopenai.imagine(interaction.user.name, prompt)
@@ -437,8 +444,8 @@ async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(requi
     amount = bet
     name = interaction.user.name
 
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
 
     if amount > 100:
         amount = 100
@@ -449,11 +456,11 @@ async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(requi
         roll = 10
 
     # CHECK MONEY
-    money_check = qdb.qcheck(name, amount)
+    money_check = qdb.qcheck(interaction.guild.id, name, amount)
 
     if money_check == 0:
         intro = f"{name.upper()} vs QUACKERS \n {amount} QuackCoins on the table for {roll} rounds !!!\n" + ' \n'
-        response, result = qgames.dices(roll, amount, name)
+        response, result = qgames.dices(interaction.guild.id, roll, amount, name)
         response = intro + response
 
         if result == 0:
@@ -461,8 +468,8 @@ async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(requi
         elif result == 2:
             amount = 0
 
-        qdb.add(name, amount)
-        qdb.add(interaction.user.name, random.randint(0, 5))
+        qdb.add(interaction.guild.id, name, amount)
+        qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
         qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=amount)
     else:
         response = "Not enough QuackCoins"
@@ -482,8 +489,8 @@ async def rps(
 ):
     name = interaction.user.name
 
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
 
     if bet > 100:
         bet = 100
@@ -491,14 +498,14 @@ async def rps(
         bet = 1
 
     # CHECK MONEY
-    money_check = qdb.qcheck(name, bet)
+    money_check = qdb.qcheck(interaction.guild.id, name, bet)
 
     if money_check == 0:
-        result, mult = qgames.rps(element, bet, name)
+        result, mult = qgames.rps(interaction.guild.id, element, bet, name)
 
         bet *= mult
-        qdb.add(name, bet)
-        qdb.add(interaction.user.name, random.randint(0, 5))
+        qdb.add(interaction.guild.id, name, bet)
+        qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
         qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=bet)
     else:
         result = "Not enough QuackCoins available."
@@ -509,7 +516,7 @@ async def rps(
 async def eightball(interaction: Interaction, question: str):
     result = qgames.hball(interaction.user.name)
     message = f'> {interaction.user.name.capitalize()} asked : " *{question}* " \n {result}'
-    qdb.add(interaction.user.name, random.randint(0, 5))
+    qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
     await interaction.response.send_message(message)
 
@@ -565,8 +572,8 @@ class ButtonMessage(nextcord.ui.View):
 
     @nextcord.ui.button(label=f"BET : A", style=nextcord.ButtonStyle.green)
     async def beta(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if qdb.user_in_db(interaction.user.name) == 0:
-            qdb.add_user(interaction.user)
+        if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+            qdb.add_user(interaction.guild.id, interaction.user)
         if qgames.bet_status(self.id) == "open" and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
             await interaction.response.send_modal(Betting(self.id, "A"))
             self.value = True
@@ -575,8 +582,8 @@ class ButtonMessage(nextcord.ui.View):
 
     @nextcord.ui.button(label="BET : B", style=nextcord.ButtonStyle.blurple)
     async def betb(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        if qdb.user_in_db(interaction.user.name) == 0 and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
-            qdb.add_user(interaction.user)
+        if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0 and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
+            qdb.add_user(interaction.guild.id, interaction.user)
         if qgames.bet_status(self.id) == "open":
             await interaction.response.send_modal(Betting(self.id, "B"))
             self.value = True
@@ -608,17 +615,17 @@ class Betting(nextcord.ui.Modal):
             return
 
         if amount > 0:
-            if qdb.qcheck(interaction.user.name, amount) == 0:
+            if qdb.qcheck(interaction.guild.id, interaction.user.name, amount) == 0:
                 qgames.bet_join(self.id, interaction.user.name, amount, self.option)
-                qdb.add(interaction.user.name, (amount * -1))
+                qdb.add(interaction.guild.id, interaction.user.name, (amount * -1))
                 await interaction.send(f"Confirming Joining Bet : {self.option}, with : {amount} QuackCoins", ephemeral=True)
             else:
                 await interaction.send(f'{interaction.user.mention} do not have enough QuackCoins', ephemeral=True)
 
 @bot.slash_command(name="bet-create", description="Create a BET", guild_ids=serverid)
 async def bet_create(interaction: nextcord.Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
 
     if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_modal(BetCreation())
@@ -629,8 +636,8 @@ async def bet_create(interaction: nextcord.Interaction):
 
 @bot.slash_command(name="bet-close", description="Close a BET, users won't be able to bet on it.", guild_ids=serverid)
 async def bet_close(interaction: nextcord.Interaction):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
 
     if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
@@ -655,14 +662,14 @@ async def bet_result(
         choices={"A": 0, "B": 1},
     ),
 ):
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
 
     if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
     else:
         option = "A" if option == 0 else "B"
-        qgames.bet_result(interaction.user.name, option)
+        qgames.bet_result(interaction.guild.id, interaction.user.name, option)
         await interaction.response.send_message('MONEY SENT !!!')
 
 
@@ -672,13 +679,13 @@ async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member
     name = interaction.user.name
     user_name = user.name
 
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
 
-    if qdb.user_in_db(user.name) == 0:
-        qdb.add_user(user)
+    if qdb.user_in_db(interaction.guild.id, user.name) == 0:
+        qdb.add_user(interaction.guild.id, user)
 
-    qdb.add(user_name, amount)
+    qdb.add(interaction.guild.id, user_name, amount)
     result = qlogs.admin(f"[ADMIN : {name}] ADDED {amount} <:quackCoin:1124255606782578698> to {user_name.upper()}")
 
     await interaction.response.send_message(result)
@@ -689,13 +696,13 @@ async def admin_remove(interaction: Interaction, amount: int, user: nextcord.Mem
     name = interaction.user.name
     user_name = user.name
 
-    if qdb.user_in_db(interaction.user.name) == 0:
-        qdb.add_user(interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
+        qdb.add_user(interaction.guild.id, interaction.user)
     
-    if qdb.user_in_db(user.name) == 0:
-        qdb.add_user(user)
+    if qdb.user_in_db(interaction.guild.id, user.name) == 0:
+        qdb.add_user(interaction.guild.id, user)
 
-    qdb.add(user_name, (amount * -1))
+    qdb.add(interaction.guild.id, user_name, (amount * -1))
     result = qlogs.admin(f"[ADMIN : {name}] REMOVED {amount} <:quackCoin:1124255606782578698> from {user_name.upper()}")
 
     await interaction.response.send_message(result)
@@ -857,12 +864,12 @@ async def admin_scan(interaction: Interaction):
 
     #make a tuple of members name and their joining date 
     membersjoin = [(member.name, member.joined_at.strftime("%Y-%m-%d %H:%M")) for member in guild.members]
-    qdb.user_joined_time(membersjoin)
+    qdb.user_joined_time(server_id, membersjoin)
 
     #deleting bot from the db
     for member in guild.members:
         if member.bot:
-            qdb.del_bot(member)
+            qdb.del_bot(server_id, member)
 
     # Send the initial message with server details
     await interaction.response.send_message(response_message)
@@ -878,12 +885,12 @@ async def admin_scan(interaction: Interaction):
 #TASKS
 @tasks.loop(hours=24)
 async def daily_update():
-    
-    interest = 1
-    qlogs.info(f"Updating BANK : {str(interest)[:5]} %")
-    qdb.bank_update(interest)
 
     for server in serverid:
+        interest_rate = BASE_INTEREST_RATE
+        qlogs.info(f"Updating BANK : {interest_rate} % :: {server}")
+        qdb.bank_update(server, interest_rate)
+
         channel = bot.get_channel(qdb.get_ch_test(server))
         if channel:
             await channel.send("BANK HAS BEEN UPDATED")
@@ -1008,10 +1015,10 @@ async def on_message(ctx):
     if ctx.guild is None or ctx.author == bot.user:
         return
 
-    if qdb.user_in_db(ctx.author.name) == 0:
-        qdb.add_user(ctx.author)
+    if qdb.user_in_db(ctx.guild.id, ctx.author.name) == 0:
+        qdb.add_user(ctx.guild.id, ctx.author)
 
-    qdb.add_mess(ctx.author.name)
+    qdb.add_mess(ctx.guild.id, ctx.author.name)
     qdb.add_stat(guild=ctx.guild.id, user=ctx.author.name, type="MESS", amount=len(ctx.content))
 
     #COIFFEUR
@@ -1024,7 +1031,7 @@ async def on_message(ctx):
         await bot.process_commands(ctx)
         return
 
-    qdb.add_quackers(ctx.author.name)
+    qdb.add_quackers(ctx.guild.id, ctx.author.name)
     qlogs.info(f'// RESPONDING TO : {ctx.author.name}')
 
     message = unidecode(qopenai.generate_response(ctx.content, ctx.author.name))
@@ -1046,28 +1053,28 @@ async def on_voice_state_update(member, before, after):
 
     if before.channel is None and after.channel is not None:
         # User connected to a voice channel
-        if qdb.user_in_db(member.name) == 0:
-            qdb.add_user(member)
+        if qdb.user_in_db(guild.id, member.name) == 0:
+            qdb.add_user(guild.id, member)
 
-        qdb.voiceactive(member.name)
-        qdb.add(member.name, 15)
+        qdb.voiceactive(guild.id, member.name)
+        qdb.add(guild.id, member.name, 15)
         qlogs.info(f"{member.name} is connected to a Voice Channel")
 
         qdb.add_stat(guild=guild.id, user=member.name, type="VC_CON", amount=1)
 
     if before.channel is None and after.channel.name == qdb.get_vc_afk(guild.id):
         # USER CONNECTED TO AFK
-        if qdb.user_in_db(member.name) == 0:
-            qdb.add_user(member)
+        if qdb.user_in_db(guild.id, member.name) == 0:
+            qdb.add_user(guild.id, member)
         qlogs.info(f"{member.name} is detected AFK")
-        qdb.voicestalled(member.name)
+        qdb.voicestalled(guild.id, member.name)
 
     if before.channel is not None and after.channel is None:
         # User disconnects
-        if qdb.user_in_db(member.name) == 0:
-            qdb.add_user(member)
+        if qdb.user_in_db(guild.id, member.name) == 0:
+            qdb.add_user(guild.id, member)
 
-        hours = qdb.voicestalled(member.name)
+        hours = qdb.voicestalled(guild.id, member.name)
         qlogs.info(f"{member.name} is disconnected")
 
         qdb.add_stat(guild=guild.id, user=member.name, type="VC_HOUR", amount=hours)
@@ -1075,13 +1082,13 @@ async def on_voice_state_update(member, before, after):
 #WELCOME and GOODBYE
 @bot.event
 async def on_member_join(member):
-    print(f"{member.name} has joined the server")
-    qlogs.info(f"{member.name} has joined the server")
-    
-    if qdb.user_in_db(member.name) == 0:
-        qdb.add_user(member)
-    
     guild = member.guild
+
+    qlogs.info(f"{member.name} has joined the server :: {guild.name}")
+    
+    if qdb.user_in_db(guild.id, member.name) == 0:
+        qdb.add_user(guild.id, member)
+    
 
     with open(os.path.join(TXT_PATH, "welcome.txt"), "r") as file:
         welcome_message = file.readlines()
@@ -1130,7 +1137,7 @@ async def on_member_remove(member):
 
     channel = bot.get_channel(qdb.get_ch_info(guild.id))
     if channel:
-        await channel.send(f"{member.name} a quitte le serveur de la team QUACK!")
+        await channel.send(f"{member.name} a quitte le serveur")
     
     qdb.add_stat(guild=guild.id, user=member.name, type="DEP", amount=1)
 

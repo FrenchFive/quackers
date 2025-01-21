@@ -24,7 +24,7 @@ def roll(num):
         dicelist.append(random.randint(1,6))
     return(dicelist)
 
-def dices(num, money, name):
+def dices(guild, num, money, name):
     botroll = roll(num)
     userroll = roll(num)
 
@@ -42,19 +42,19 @@ def dices(num, money, name):
         response+= f'\nQuackers WON // with {bottotal} over {usertotal}\n'
         response+= f'{money} <:quackCoin:1124255606782578698> removed from {name} balance.'
         end = 0
-        qdb.luck(name, -1)
+        qdb.luck(guild, name, -1)
     elif usertotal > bottotal :
         response+= f'\n{name.capitalize()} WON // with {usertotal} over {bottotal}\n'
         response+= f'{money} <:quackCoin:1124255606782578698> added to {name} balance.'
         end = 1
-        qdb.luck(name, 1)
+        qdb.luck(guild, name, 1)
     else :
         response+= f'\nEGALITE !!! // with {usertotal} over {bottotal}\n'
         end = 2
     
     return(response, end)
 
-def rps(user, bet, name):
+def rps(guild, user, bet, name):
     play = ["scissors","paper","rock","lizard","spock"]
     emoji = ['✂️', '🧻', '🪨', '🦎', '🖖']
     bot = random.randint(0, len(play)-1)
@@ -65,11 +65,11 @@ def rps(user, bet, name):
     elif user+1 == bot or user-2 == bot or user+1 == bot+5 or user-2 == bot-5:
         gameresult = 1
         text = f'\n {name} a GAGNE !!! // {bet} <:quackCoin:1124255606782578698> gagnés'
-        qdb.luck(name, 1)
+        qdb.luck(guild, name, 1)
     elif bot+1 == user or bot-2 == user or bot+1 == user+5 or bot-2 == user-5:
         gameresult = -1
         text = f'\n {name} a PERDU !!! // {bet} <:quackCoin:1124255606782578698> perdus'
-        qdb.luck(name, -1)
+        qdb.luck(guild, name, -1)
     else:
         return('ERROR', 0)
     
@@ -165,7 +165,7 @@ def bet_has_betted(name, id):
     data = CURSOR.fetchall()
     return(data[0][0])
 
-def bet_result(name, option):
+def bet_result(guild, name, option):
     CURSOR.execute("SELECT id FROM dashboard WHERE user = ? and status != ?",(name,"result"))
     data = CURSOR.fetchall()
     id = data[0][0]
@@ -198,15 +198,15 @@ def bet_result(name, option):
         amount = data[i][1]
         proportion = amount / wintotal
         result = amount + int(proportion * lostotal)
-        qdb.add(user, result)
-        qdb.luck(user, 1)
+        qdb.add(guild, user, result)
+        qdb.luck(guild, user, 1)
         qlogs.info(f'--BET-DB // ADDED {result} QC to {user} for Winning the BET')
     
     CURSOR.execute(f"SELECT user FROM 'qbet-{id}' WHERE option = ?",(loslet.upper(),))
     data = CURSOR.fetchall()[0]
     for i in range(len(data)):
         user = data[i]
-        qdb.luck(user, -1)
+        qdb.luck(guild, user, -1)
     
     
     CURSOR.execute("UPDATE dashboard SET status = ? WHERE id = ?", ("result", id))

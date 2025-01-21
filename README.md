@@ -182,6 +182,8 @@ Enjoy using **Quackers**! 🦆
 ---
 
 ### IN WORK : 
+For Active Development check the Dev Project 
+
 - [ ] Making Admin Commands check for the roles in the db (except for admin scan if the server already is in the db)
 - [ ] **Petting System** :
   - [x] Create Images
@@ -210,11 +212,6 @@ Enjoy using **Quackers**! 🦆
         - [ ] Sell to get coins 
         - [ ] Send to another user
   - [ ] Make a role "pet" and have it display all functions except /pet => user buy a pet if doesnt have one already
-- [ ] **IMAGE GEN** : `/imagine` Letting user generate AI images
-  - [ ] Buttons to regen
-  - [ ] Add info button
-  - [x] Have info about prompt and user
-  - [x] Generate images using OpenAI API
 - [ ] Programmable messages for ADMIN
   - [ ] Making work programmed messages
   - [ ] Having an interface to see what is planned by admin 
@@ -230,15 +227,16 @@ Enjoy using **Quackers**! 🦆
   - [ ] Making a database / server using their id
 - [ ] Find a way for Admin to see the DB for troubleshooting
 - [ ] Add badges to INFO 
-  - [ ] Admin Badge
-  - [ ] Badge for newbies
-  - [ ] Badge for the one here for a long time
-  - [ ] Badge for Activity (Experience based)
-  - [ ] Badge for boost
-- [ ] Modify the INFO to make the image more beautiful 
-  - [ ] Switch to a dark Theme 
-  - [ ] Make a moodboard of typos and styles 
-    - [ ] Look into Frosted effects
+  - [ ] Add Images to Quackers
+    - [ ] Generate images via Google Icons
+  - [ ] Badge Ideas
+    - [ ] Admin Badge
+    - [ ] Badge for newbies
+    - [ ] Badge for the one here for a long time
+    - [ ] Badge for Activity (Experience based or Stat based)
+    - [ ] Badge for boost
+- [x] Modify the INFO to make the image more beautiful 
+  - [x] Switch to a dark Theme
 - [ ] Making an EXP system (hidden)
   - [ ] Exp cannot be reduced, used to see how Active are users
   - [ ] Give them rank as they become more active
@@ -250,26 +248,22 @@ Enjoy using **Quackers**! 🦆
   - [ ] Make a Youtube Integration
   - [ ] Make it cost Quackcoins each message
 - [ ] Create Temporary Voice Channels ?? 
-- [ ] Create Statistics about the server
-  - [x] Make a task - every week 
-    - [x] Send the stat to the Admin channel every week 
-  - [ ] Display data 
-    - [ ] [MATPLOTLIB](https://matplotlib.org/stable/plot_types/index.html)
-  - [x] Store Data
-    - [x] Have a Database table/server
-      - [x] id INTEGER PRIMARY KEY AUTOINCREMENT
-      - [x] user TEXT
-      - [x] type TEXT ["MESS", "COMMAND", "VC_CON", "VC_HOURS", "GAME", "ARR", "DEP"]
-      - [x] How many messages sent
-  - [ ] Draw Curves
 - [ ] Help Function
   - [ ] Create a Support Ticket to get help
 - [ ] Admin GiveAways 
-- [ ] Use a better password env file system
+- [x] Use a better password env file system
 - [ ] Have a WEB Interface for ADMINs to modify stuff 
   - [ ] Allows ADMINS to connect to discord 
   - [ ] Select a server (in which Quackers is in)
   - [ ] Have parameters for Everything
   - [ ] Save to the Database
 - [ ] Create a DataBase backup every now and then ... 
-- [ ] Correct AFK Detection
+- [ ] Get rid of DANGEROUS and Not Important Function (implemented to fix small issues that are not that important)
+  - [ ] Get rid of del_bot 
+  - [ ] user_joined_time in qdatabase
+- [ ] Make functions use the add function to add coins instead of adding them by themselves
+  - [ ] Search for more functions 
+  - [ ] add_quackers
+  - [ ] add_message
+- [ ] Rename the ADD Button into DEPOSIT in the Bank System
+- [ ] Make a function to check user in DB instead of repeating the same lines EVERYWHERE
