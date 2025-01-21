@@ -886,9 +886,9 @@ async def admin_scan(interaction: Interaction):
 async def daily_update():
 
     for server in serverid:
-        interest = 1
-        qlogs.info(f"Updating BANK : {interest} % :: {server}")
-        qdb.bank_update(server, interest)
+        interest_rate = 1
+        qlogs.info(f"Updating BANK : {interest_rate} % :: {server}")
+        qdb.bank_update(server, interest_rate)
 
         channel = bot.get_channel(qdb.get_ch_test(server))
         if channel:
