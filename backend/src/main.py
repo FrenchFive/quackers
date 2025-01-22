@@ -416,10 +416,10 @@ class ImagineView(nextcord.ui.View):
         self.user_name = user_name
         self.prompt = prompt
 
-    async def ensure_funds(self, interaction: nextcord.Interaction) -> bool:
-        if qdb.qcheck(interaction.guild.id, interaction.user.name, 1000) == 1:
+    async def ensure_funds(self, interaction: nextcord.Interaction, price) -> bool:
+        if qdb.qcheck(interaction.guild.id, interaction.user.name, price) == 1:
             await interaction.response.send_message(
-                "🚫 You do not have the money !",
+                f"🚫 You do not have the money !  {price} Qc. are necessary",
                 ephemeral=True
             )
             return False
@@ -427,13 +427,15 @@ class ImagineView(nextcord.ui.View):
     @nextcord.ui.button(label="Regenerate", style=nextcord.ButtonStyle.green, emoji="🔄")
     async def regenerate_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         # Check if the user is the correct user
-        if not await self.ensure_funds(interaction):
+        price = 100 #Will be changed to ask for DB / server price (not transmitted to check if the price has changed in the meantime)
+
+        if not await self.ensure_funds(interaction, price):
             return
 
         # Regenerate the image
         qdb.add(interaction.guild.id, interaction.user.name, 5)
         qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-        qdb.add(interaction.guild.id, interaction.user.name, -1000)
+        qdb.add(interaction.guild.id, interaction.user.name, -price)
 
         qlogs.info(f"{interaction.user.name} RE-GENERATING IMAGE :: {self.prompt}")
         img_path = qopenai.imagine(interaction.user.name, self.prompt)
@@ -441,29 +443,31 @@ class ImagineView(nextcord.ui.View):
         message = f"**{self.prompt[:100]}** :: by {interaction.user.mention}"
 
         view = ImagineView(interaction.user.name, self.prompt)
-        await interaction.followup.send(content=message, file=nextcord.File(img_path))
+        await interaction.followup.send(content=message, file=nextcord.File(img_path), view=view)
 
     @nextcord.ui.button(label="Show Full Prompt", style=nextcord.ButtonStyle.blurple, emoji="📜")
     async def show_prompt_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         # Send the full prompt
         await interaction.followup.send(content=f"Full prompt: {self.prompt} by {interaction.user.name}")
 
-@bot.slash_command(name="imagine", description="Cost : 1000.Qc - Image generation using AI", guild_ids=testid)
+@bot.slash_command(name="imagine", description="Cost : 100.Qc - Image generation using AI", guild_ids=serverid)
 async def imagine(interaction: nextcord.Interaction, prompt: str):
     await interaction.response.defer()  # Defer the response
 
+    price = 100 #Will be changed to ask for DB / server price
+
     if qdb.user_in_db(interaction.guild.id, interaction.user.name) == 0:
         qdb.add_user(interaction.guild.id, interaction.user)
-    
-    qdb.add(interaction.guild.id, interaction.user.name, 5)
-    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
-    check = qdb.qcheck(interaction.user.name, 1000)
+    check = qdb.qcheck(interaction.user.name, price)
     if check != 0:
         await interaction.followup.send("Not enough QuackCoins", ephemeral=True)
         return
+
+    qdb.add(interaction.guild.id, interaction.user.name, 5)
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
     
-    qdb.add(interaction.guild.id, interaction.user.name, -1000)
+    qdb.add(interaction.guild.id, interaction.user.name, -price)
 
     qlogs.info(f"{interaction.user.name} GENERATING IMAGE :: {prompt}")
     img_path = qopenai.imagine(interaction.user.name, prompt)
