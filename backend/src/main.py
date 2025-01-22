@@ -412,40 +412,41 @@ async def bank(interaction: nextcord.Interaction):
 
 class ImagineView(nextcord.ui.View):
     def __init__(self, user_name, prompt):
-        super().__init__(timeout=60)  # Buttons will time out after 60 seconds
+        super().__init__() 
         self.user_name = user_name
         self.prompt = prompt
 
-    async def ensure_correct_user(self, interaction: nextcord.Interaction) -> bool:
-        if interaction.user.name != self.user_name:
+    async def ensure_funds(self, interaction: nextcord.Interaction) -> bool:
+        if qdb.qcheck(interaction.guild.id, interaction.user.name, 1000) == 1:
             await interaction.response.send_message(
-                "🚫 You cannot use this menu. It belongs to someone else!",
+                "🚫 You do not have the money !",
                 ephemeral=True
             )
             return False
         return True
-
     @nextcord.ui.button(label="Regenerate", style=nextcord.ButtonStyle.green, emoji="🔄")
     async def regenerate_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         # Check if the user is the correct user
-        if not await self.ensure_correct_user(interaction):
+        if not await self.ensure_funds(interaction):
             return
 
         # Regenerate the image
-        qlogs.info(f"{interaction.user.name} REGENERATING IMAGE :: {self.prompt}")
+        qdb.add(interaction.guild.id, interaction.user.name, 5)
+        qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
+        qdb.add(interaction.guild.id, interaction.user.name, -1000)
+
+        qlogs.info(f"{interaction.user.name} RE-GENERATING IMAGE :: {self.prompt}")
         img_path = qopenai.imagine(interaction.user.name, self.prompt)
 
         message = f"**{self.prompt[:100]}** :: by {interaction.user.mention}"
+
+        view = ImagineView(interaction.user.name, self.prompt)
         await interaction.followup.send(content=message, file=nextcord.File(img_path))
 
     @nextcord.ui.button(label="Show Full Prompt", style=nextcord.ButtonStyle.blurple, emoji="📜")
     async def show_prompt_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        # Check if the user is the correct user
-        if not await self.ensure_correct_user(interaction):
-            return
-
         # Send the full prompt
-        await interaction.followup.send(content=f"Full prompt: {self.prompt}", ephemeral=True)
+        await interaction.followup.send(content=f"Full prompt: {self.prompt} by {interaction.user.name}")
 
 @bot.slash_command(name="imagine", description="Cost : 1000.Qc - Image generation using AI", guild_ids=testid)
 async def imagine(interaction: nextcord.Interaction, prompt: str):
@@ -469,7 +470,8 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
 
     message = f"**{prompt[:100]}** :: by {interaction.user.mention}"
 
-    await interaction.followup.send(content=message ,file=nextcord.File(img_path))
+    view = ImagineView(interaction.user.name, prompt)
+    await interaction.followup.send(content=message ,file=nextcord.File(img_path), view=view)
 
 
 # qgames

@@ -267,3 +267,4 @@ For Active Development check the Dev Project
   - [ ] add_message
 - [ ] Rename the ADD Button into DEPOSIT in the Bank System
 - [ ] Make a function to check user in DB instead of repeating the same lines EVERYWHERE
+- [ ] Rework on the way servers are added to Quackers
