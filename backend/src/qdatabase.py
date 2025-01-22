@@ -123,20 +123,24 @@ def get_emoji_list(guild_id):
     return json.loads(result[0]) if result else None
 
 #MEMBERS
-def user_in_db(guild, name):
+def user_in_db(guild, member):
+    if member.bot:
+        return  0# Skip adding bots
+
+    name = member.name
+
     CURSOR.execute(f"SELECT COUNT(*) FROM '{guild}' WHERE name = ?",(name,))
     data = CURSOR.fetchall()
-    return(data[0][0])
+    result = data[0][0]
 
-def add_user(guild, member):
-    if member.bot:
-        return  # Skip adding bots
+    if result == 0:
+        # Add the user to the database
+        date = member.joined_at.strftime('%Y-%m-%d %H:%M')
+        CURSOR.execute(f'INSERT INTO "{guild}" (name, coins, daily, quackers, mess, created, streak, epvoicet, voiceh, luck, bank) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0, 0, 0, 0))
+        CONNECTION.commit()
+        qlogs.info(f'--QDB // ADDED USER : {name} :: to {guild}')
     
-    name = member.name
-    date = member.joined_at.strftime('%Y-%m-%d %H:%M')
-    CURSOR.execute(f'INSERT INTO "{guild}" (name, coins, daily, quackers, mess, created, streak, epvoicet, voiceh, luck, bank) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0, 0, 0, 0))
-    CONNECTION.commit()
-    qlogs.info(f'--QDB // ADDED USER : {name} :: to {guild}')
+    return 1
 
 def coins(guild, name):
     CURSOR.execute(f"SELECT coins FROM '{guild}' WHERE name = ?", (name,))
