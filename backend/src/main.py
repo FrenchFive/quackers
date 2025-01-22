@@ -351,6 +351,7 @@ class BankView(nextcord.ui.View):
 
     @nextcord.ui.button(label="Add", style=nextcord.ButtonStyle.green)
     async def add_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        qdb.user_in_db(interaction.guild.id, interaction.user)
         # Check if the user is the correct user
         if not await self.ensure_correct_user(interaction):
             return
@@ -360,6 +361,7 @@ class BankView(nextcord.ui.View):
 
     @nextcord.ui.button(label="Withdraw", style=nextcord.ButtonStyle.red)
     async def withdraw_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        qdb.user_in_db(interaction.guild.id, interaction.user)
         # Check if the user is the correct user
         if not await self.ensure_correct_user(interaction):
             return
