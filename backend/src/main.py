@@ -1033,6 +1033,7 @@ async def on_message(ctx):
         return
 
     qdb.add_quackers(ctx.guild.id, ctx.author.name)
+    qdb.add(ctx.guild.id, ctx.author.name, 10)
     qlogs.info(f'// RESPONDING TO : {ctx.author.name}')
 
     message = unidecode(qopenai.generate_response(ctx.content, ctx.author.name))

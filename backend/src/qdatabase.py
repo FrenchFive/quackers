@@ -191,9 +191,8 @@ def del_bot(guild, member):
 
 def add_mess(guild, name):
     CURSOR.execute(f"SELECT mess FROM '{guild}' WHERE name = ?",(name,))
-    rows = CURSOR.fetchall()
-    data = rows[0]
-    mess = data[0]
+    data = CURSOR.fetchall()
+    mess = data[0][0]
 
     mess += 1
 
@@ -201,16 +200,13 @@ def add_mess(guild, name):
     CONNECTION.commit()
 
 def add_quackers(guild, name):
-    CURSOR.execute(f"SELECT coins, quackers FROM '{guild}' WHERE name = ?",(name,))
-    rows = CURSOR.fetchall()
-    data = rows[0]
-    coins = data[0]
-    quackers = data[1]
+    CURSOR.execute(f"SELECT quackers FROM '{guild}' WHERE name = ?",(name,))
+    data = CURSOR.fetchall()
+    quackers = data[0][0]
 
-    coins += 9  #9 + 1coin from message => 10
     quackers += 1
 
-    CURSOR.execute(f"UPDATE '{guild}' SET coins = ?, quackers = ? WHERE name = ?", (coins, quackers, name))
+    CURSOR.execute(f"UPDATE '{guild}' quackers = ? WHERE name = ?", (quackers, name))
     CONNECTION.commit()
 
 def daily(guild, name):
