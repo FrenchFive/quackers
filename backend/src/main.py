@@ -862,15 +862,6 @@ async def admin_scan(interaction: Interaction):
         f"**Emoji Count**: {len(guild.emojis)}\n"
     )
 
-    #make a tuple of members name and their joining date 
-    membersjoin = [(member.name, member.joined_at.strftime("%Y-%m-%d %H:%M")) for member in guild.members]
-    qdb.user_joined_time(server_id, membersjoin)
-
-    #deleting bot from the db
-    for member in guild.members:
-        if member.bot:
-            qdb.del_bot(server_id, member)
-
     # Send the initial message with server details
     await interaction.response.send_message(response_message)
 

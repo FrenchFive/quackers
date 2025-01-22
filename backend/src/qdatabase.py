@@ -175,20 +175,6 @@ def luck(guild, name, amount):
     CURSOR.execute(f"UPDATE '{guild}' SET luck = ? WHERE name = ?", (luck, name))
     CONNECTION.commit()          
 
-def user_joined_time(guild, members):
-    for name, date in members:
-        CURSOR.execute(f"SELECT created FROM '{guild}' WHERE name = ?", (name,))
-        data = CURSOR.fetchone()
-        if data and data[0] != date:
-            CURSOR.execute(f"UPDATE '{guild}' SET created = ? WHERE name = ?", (date, name))
-            CONNECTION.commit()
-
-def del_bot(guild, member):
-    name = member.name
-    CURSOR.execute(f"DELETE FROM '{guild}' WHERE name = ?", (name,))
-    CONNECTION.commit()
-    qlogs.info(f'--QDB // DELETED USER : {name}')
-
 def add_mess(guild, name):
     CURSOR.execute(f"SELECT mess FROM '{guild}' WHERE name = ?",(name,))
     data = CURSOR.fetchall()
