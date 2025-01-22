@@ -1,0 +1,44 @@
+# FEATURES FOR QUACKERS 
+
+- [ ] Add badges to INFO 
+  - [ ] Add Images to Quackers
+    - [ ] Generate images via Google Icons
+  - [ ] Badge Ideas
+    - [ ] Admin Badge
+    - [ ] Badge for newbies
+    - [ ] Badge for the one here for a long time
+    - [ ] Badge for Activity (Experience based or Stat based)
+    - [ ] Badge for boost
+- [ ] **Petting System** :
+  - [x] Create Images
+  - [ ] Create a Database for all accessories
+    - [ ] Make a function to recreate the database when Quackers goes online based on the files in the folder
+      - [ ] Make the ID unique and not change w/ time 
+        - [ ] Read the ID from the json file, else write it from the Database or UUID
+      - [ ] Have an info .json file for each image that contains all necessary info as name, price etc ...
+  - [ ] Create a Database for Users and data about their pets
+  - [ ] Interactions with PET
+    - [ ] `/pet` to buy one or to have info about it
+    - [ ] `/pet-train` to train your pet for 5 hours => earn more money
+    - [ ] `/pet-mission` to send the pet search money for 2 hours => RANDOM (or accessory)
+    - [ ] Make the pet have energy so it needs food to do more actions
+      - [ ] Has 3 energy : Training takes 3 : Mission takes 1
+      - [ ] Possibility to refill energy by feeding the pet => Cost money
+  - [ ] Create functions to buy the pet and accessories [SHOP SYSTEM]
+    - [ ] `/pet-shop` Access the shop to buy Chest to get items
+      - [ ] Make it a Gatcha (random pull)
+      - [ ] Make it possible to sell items 
+    - [ ] `/pet-inventory` Sell items to get coins => not always worth it
+      - [ ] List all accessories the user possess
+        - [ ] Plus informations [ What position / Price / Rarity / Name ] 
+      - [ ] Add buttons to equip or sell or send 
+        - [ ] Equip / Unequip from the pet
+        - [ ] Sell to get coins 
+        - [ ] Send to another user
+  - [ ] Make a role "pet" and have it display all functions except /pet => user buy a pet if doesnt have one already
+- [x] GPT4-O
+  - [x] Rewrite the API python integration
+  - [x] Clean up what information is sent to OpenAi
+  - [ ] Transmit information about the server as server name and server context unique to each server 
+- [ ] Create a DataBase backup every now and then ... 
+- [ ] Rename the ADD Button into DEPOSIT in the Bank System
