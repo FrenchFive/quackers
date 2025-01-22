@@ -1019,6 +1019,7 @@ async def on_message(ctx):
         qdb.add_user(ctx.guild.id, ctx.author)
 
     qdb.add_mess(ctx.guild.id, ctx.author.name)
+    qdb.add(ctx.guild.id, ctx.author.name, 1)
     qdb.add_stat(guild=ctx.guild.id, user=ctx.author.name, type="MESS", amount=len(ctx.content))
 
     #COIFFEUR

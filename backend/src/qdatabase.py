@@ -190,16 +190,14 @@ def del_bot(guild, member):
     qlogs.info(f'--QDB // DELETED USER : {name}')
 
 def add_mess(guild, name):
-    CURSOR.execute(f"SELECT coins, mess FROM '{guild}' WHERE name = ?",(name,))
+    CURSOR.execute(f"SELECT mess FROM '{guild}' WHERE name = ?",(name,))
     rows = CURSOR.fetchall()
     data = rows[0]
-    coins = data[0]
-    mess = data[1]
+    mess = data[0]
 
-    coins += 1
     mess += 1
 
-    CURSOR.execute(f"UPDATE '{guild}' SET coins = ?, mess = ? WHERE name = ?", (coins, mess, name))
+    CURSOR.execute(f"UPDATE '{guild}' SET mess = ? WHERE name = ?", (mess, name))
     CONNECTION.commit()
 
 def add_quackers(guild, name):
