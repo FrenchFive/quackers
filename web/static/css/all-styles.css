@@ -1,3 +1,14 @@
+@font-face {
+    font-family: Quackers1;
+    src: url(../data/fonts/schabo.otf);
+}
+
+@font-face {
+    font-family: Quackers2;
+    src: url(../data/fonts/thunder.ttf);
+}
+
+
 /* General Body Styling */
 body {
     background-color: rgb(24, 25, 28);
@@ -145,16 +156,6 @@ img.user-avatar:hover {
 
 .centered-text h1 {
     font-size: 20rem; /* Taille du texte */
-}
-
-@font-face {
-    font-family: Quackers1;
-    src: url(data/fonts/schabo.otf);
-}
-
-@font-face {
-    font-family: Quackers2;
-    src: url(data/fonts/thunder.ttf);
 }
 
 /* Section d'informations */

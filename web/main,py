@@ -1,0 +1,77 @@
+from flask import Flask, redirect, request, session, jsonify, render_template
+import requests
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+app = Flask(__name__)
+app.secret_key = os.getenv('FLASK_SECRET_KEY')
+
+# Discord OAuth2 credentials
+CLIENT_ID = os.getenv('DISCORD_CLIENT_ID')
+CLIENT_SECRET = os.getenv('DISCORD_CLIENT_SECRET')
+REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI')
+API_BASE_URL = "https://discord.com/api"
+
+@app.route('/')
+def home():
+    logged_in = "access_token" in session
+    return render_template('index.html', logged_in=logged_in)
+
+@app.route('/login')
+def login():
+    # Redirect to Discord's OAuth2 URL
+    discord_oauth_url = f"{API_BASE_URL}/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20guilds"
+    return redirect(discord_oauth_url)
+
+@app.route('/callback')
+def callback():
+    # Retrieve the authorization code
+    code = request.args.get('code')
+    if not code:
+        return "No code received from Discord", 400
+
+    # Exchange the authorization code for an access token
+    data = {
+        "client_id": CLIENT_ID,
+        "client_secret": CLIENT_SECRET,
+        "grant_type": "authorization_code",
+        "code": code,
+        "redirect_uri": REDIRECT_URI
+    }
+    headers = {"Content-Type": "application/x-www-form-urlencoded"}
+    response = requests.post(f"{API_BASE_URL}/oauth2/token", data=data, headers=headers)
+    response_json = response.json()
+
+    if "access_token" not in response_json:
+        return "Failed to get access token", 400
+
+    # Save the token in the session
+    session["access_token"] = response_json["access_token"]
+
+    return redirect('/profile')
+
+@app.route('/profile')
+def profile():
+    # Use the access token to get user info
+    access_token = session.get("access_token")
+    if not access_token:
+        return redirect('/login')
+
+    headers = {"Authorization": f"Bearer {access_token}"}
+    user_info = requests.get(f"{API_BASE_URL}/users/@me", headers=headers).json()
+    guilds_info = requests.get(f"{API_BASE_URL}/users/@me/guilds", headers=headers).json()
+
+    return jsonify({"user_info": user_info, "guilds_info": guilds_info})
+
+@app.route('/logout')
+def logout():
+    # Clear the session
+    session.clear()
+    # Redirect to home page
+    return redirect('/')
+
+if __name__ == '__main__':
+    app.run(debug=True)
