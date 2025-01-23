@@ -36,8 +36,7 @@ def check_access_token():
         return redirect('/')
 
 def get_server_info(server_id):
-    bot_token = os.getenv("KEY_DISCORD")  # Use the bot token
-    headers = {"Authorization": f"Bot {bot_token}"}
+    headers = {"Authorization": f"Bot {BOT_TOKEN}"}
 
     # Get server (guild) information
     guild_response = requests.get(f"{API_BASE_URL}/guilds/{server_id}", headers=headers)
@@ -70,8 +69,6 @@ def get_server_info(server_id):
         "voice_channels": voice_channels,
         "roles": [{"id": role["id"], "name": role["name"]} for role in roles_data],
     }
-
-#ADD A CHECK TO SEE IF THE USER IS ADMIN OR OWNER OF THE SERVER
 
 @app.route('/')
 def home():
@@ -107,6 +104,17 @@ def callback():
 
     # Save the token in the session
     session["access_token"] = response_json["access_token"]
+
+    # Get user information
+    headers = {"Authorization": f"Bearer {session['access_token']}"}
+    user_response = requests.get(f"{API_BASE_URL}/users/@me", headers=headers)
+    user_json = user_response.json()
+
+    if "id" not in user_json:
+        return "Failed to get user information", 400
+
+    # Save the user ID in the session
+    session["user_id"] = user_json["id"]
 
     return redirect('/')
 
