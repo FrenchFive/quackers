@@ -13,6 +13,7 @@ A discord bot in Python with a lot of functionalities.
   - `/duck` : Send a Duck Picture
   - `/info` : Send an image with information about a user
   - `/presentation` : User answer few questions about themselves, used to know new members
+  - `/imagine` : Generate an Image using AI based on a prompt :: **DALL-E-3** Model by OpenAI
   - Quackers repond to Mention and Replies with his personnality using :: **GPT4-o** Model by OpenAI
 - 👨🏻‍💻 || **Admin Functions** <sub>[Allows Admins to change value for the bot]</sub>
   - `/admin-scan` : Easy and quick bot setup
@@ -184,59 +185,10 @@ Enjoy using **Quackers**! 🦆
 ### IN WORK : 
 For Active Development check the Dev Project 
 
-- [ ] Making Admin Commands check for the roles in the db (except for admin scan if the server already is in the db)
-- [ ] **Petting System** :
-  - [x] Create Images
-  - [ ] Create a Database for all accessories
-    - [ ] Make a function to recreate the database when Quackers goes online based on the files in the folder
-      - [ ] Make the ID unique and not change w/ time 
-        - [ ] Read the ID from the json file, else write it from the Database or UUID
-      - [ ] Have an info .json file for each image that contains all necessary info as name, price etc ...
-  - [ ] Create a Database for Users and data about their pets
-  - [ ] Interactions with PET
-    - [ ] `/pet` to buy one or to have info about it
-    - [ ] `/pet-train` to train your pet for 5 hours => earn more money
-    - [ ] `/pet-mission` to send the pet search money for 2 hours => RANDOM (or accessory)
-    - [ ] Make the pet have energy so it needs food to do more actions
-      - [ ] Has 3 energy : Training takes 3 : Mission takes 1
-      - [ ] Possibility to refill energy by feeding the pet => Cost money
-  - [ ] Create functions to buy the pet and accessories [SHOP SYSTEM]
-    - [ ] `/pet-shop` Access the shop to buy Chest to get items
-      - [ ] Make it a Gatcha (random pull)
-      - [ ] Make it possible to sell items 
-    - [ ] `/pet-inventory` Sell items to get coins => not always worth it
-      - [ ] List all accessories the user possess
-        - [ ] Plus informations [ What position / Price / Rarity / Name ] 
-      - [ ] Add buttons to equip or sell or send 
-        - [ ] Equip / Unequip from the pet
-        - [ ] Sell to get coins 
-        - [ ] Send to another user
-  - [ ] Make a role "pet" and have it display all functions except /pet => user buy a pet if doesnt have one already
 - [ ] Programmable messages for ADMIN
   - [ ] Making work programmed messages
   - [ ] Having an interface to see what is planned by admin 
   - [ ] Having messages to be sent once and some to be repeated every x amount of time
-- [x] GPT4-O
-  - [x] Rewrite the API python integration
-  - [x] Clean up what information is sent to OpenAi
-  - [ ] Make it so short and long memory are dependant on the server and not global 
-    - [ ] Transmit information about the server as server name and server context unique to each server 
-- [x] Making a database for server
-  - [x] Making a SETUP function to easly register and Update the server info
-  - [ ] Having function display only the servers info and not global info (ex : Leaderboard of the server and not leaderboard of the bot)
-  - [ ] Making a database / server using their id
-- [ ] Find a way for Admin to see the DB for troubleshooting
-- [ ] Add badges to INFO 
-  - [ ] Add Images to Quackers
-    - [ ] Generate images via Google Icons
-  - [ ] Badge Ideas
-    - [ ] Admin Badge
-    - [ ] Badge for newbies
-    - [ ] Badge for the one here for a long time
-    - [ ] Badge for Activity (Experience based or Stat based)
-    - [ ] Badge for boost
-- [x] Modify the INFO to make the image more beautiful 
-  - [x] Switch to a dark Theme
 - [ ] Making an EXP system (hidden)
   - [ ] Exp cannot be reduced, used to see how Active are users
   - [ ] Give them rank as they become more active
@@ -247,23 +199,10 @@ For Active Development check the Dev Project
   - [ ] Make a Twitch Integration
   - [ ] Make a Youtube Integration
   - [ ] Make it cost Quackcoins each message
-- [ ] Create Temporary Voice Channels ?? 
+- [ ] Create Temporary Voice Channels
 - [ ] Help Function
   - [ ] Create a Support Ticket to get help
+  - [ ] Send link to Wiki // or the config HTML
 - [ ] Admin GiveAways 
-- [x] Use a better password env file system
-- [ ] Have a WEB Interface for ADMINs to modify stuff 
-  - [ ] Allows ADMINS to connect to discord 
-  - [ ] Select a server (in which Quackers is in)
-  - [ ] Have parameters for Everything
-  - [ ] Save to the Database
-- [ ] Create a DataBase backup every now and then ... 
-- [ ] Get rid of DANGEROUS and Not Important Function (implemented to fix small issues that are not that important)
-  - [ ] Get rid of del_bot 
-  - [ ] user_joined_time in qdatabase
-- [ ] Make functions use the add function to add coins instead of adding them by themselves
-  - [ ] Search for more functions 
-  - [ ] add_quackers
-  - [ ] add_message
-- [ ] Rename the ADD Button into DEPOSIT in the Bank System
-- [ ] Make a function to check user in DB instead of repeating the same lines EVERYWHERE
+- [ ] Have a Pet System
+- [ ] Add Badges to Info Image
