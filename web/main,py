@@ -13,6 +13,7 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY')
 CLIENT_ID = os.getenv('DISCORD_CLIENT_ID')
 CLIENT_SECRET = os.getenv('DISCORD_CLIENT_SECRET')
 REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI')
+BOT_TOKEN = os.getenv('KEY_DISCORD')
 API_BASE_URL = "https://discord.com/api"
 
 @app.route('/')
@@ -65,6 +66,47 @@ def profile():
     guilds_info = requests.get(f"{API_BASE_URL}/users/@me/guilds", headers=headers).json()
 
     return jsonify({"user_info": user_info, "guilds_info": guilds_info})
+
+@app.route('/servers')
+def servers():
+    if "access_token" not in session:
+        return redirect('/')
+    
+    access_token = session.get("access_token")
+    headers = {"Authorization": f"Bearer {access_token}"}
+    
+    # Fetch user's guilds information
+    guilds_info = requests.get(f"{API_BASE_URL}/users/@me/guilds", headers=headers).json()
+
+    # Fetch bot's guilds information
+    bot_headers = {"Authorization": f"Bot {BOT_TOKEN}"}
+    bot_guilds_info = requests.get(f"{API_BASE_URL}/users/@me/guilds", headers=bot_headers).json()
+    bot_guild_ids = {guild['id'] for guild in bot_guilds_info}
+
+    # Function to check if the user has administrative permissions
+    def is_admin(permissions):
+        ADMIN_PERMISSIONS = 0x00000008  # Example value, adjust as necessary
+        return (permissions & ADMIN_PERMISSIONS) == ADMIN_PERMISSIONS
+
+    # Filter guilds where the user is the owner or has administrative permissions
+    user_servers = []
+    for guild in guilds_info:
+        if guild['owner'] or is_admin(guild['permissions']):
+            # Construct the icon URL
+            if guild['icon']:
+                guild['icon_url'] = f"https://cdn.discordapp.com/icons/{guild['id']}/{guild['icon']}.png"
+            else:
+                guild['icon_url'] = url_for('static', filename='data/imgs/placeholder.jpg')
+            
+            # Check if the bot is already on the server
+            guild['bot_on_server'] = guild['id'] in bot_guild_ids
+            
+            user_servers.append(guild)
+
+    user_servers = sorted(user_servers, key=lambda x: not x['bot_on_server'])
+
+    return render_template('server.html', servers=user_servers)
+
 
 @app.route('/logout')
 def logout():
