@@ -13,23 +13,23 @@
         <!-- Sidebar -->
         <nav class="sidebar p-3">
             <div class="mb-4 text-center">
-                <h5>Server's Name</h5>
+                <h5>{{ server['name'] }}</h5>
             </div>
             <ul class="nav flex-column">
                 <li class="nav-item mb-2">
-                    <a href="{{ url_for('config', server_id=server_id) }}" class="nav-link">General</a>
+                    <a href="{{ url_for('config', server_id=server['id'] )}}" class="nav-link">General</a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="{{ url_for('config_welcome', server_id=server_id) }}" class="nav-link no-wrap">Arrivals & Departures</a>
+                    <a href="{{ url_for('config_welcome', server_id=server['id'] )}}" class="nav-link no-wrap">Arrivals & Departures</a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="{{ url_for('config_economy', server_id=server_id) }}" class="nav-link">Economy</a>
+                    <a href="{{ url_for('config_economy', server_id=server['id'] )}}" class="nav-link">Economy</a>
                 </li>
                 <li class="nav-item mb-2">
-                    <a href="{{ url_for('config_games', server_id=server_id) }}" class="nav-link">Games</a>
+                    <a href="{{ url_for('config_games', server_id=server['id'] )}}" class="nav-link">Games</a>
                 </li>                
                 <li class="nav-item mb-2">
-                    <a href="{{ url_for('config_ai', server_id=server_id) }}" class="nav-link">AI</a>
+                    <a href="{{ url_for('config_ai', server_id=server['id'] )}}" class="nav-link">AI</a>
                 </li>
             </ul>
         </nav>

@@ -26,9 +26,9 @@
                     <div class="mb-3">
                         <label for="welcome-channel" class="form-label">Welcome Channel</label>
                         <select id="welcome-channel" class="form-select">
-                            <option>#welcome</option>
-                            <option>#general</option>
-                            <option>#rules</option>
+                            {% for channel in server["text_channels"] %}
+                                <option>{{ channel.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
@@ -73,9 +73,9 @@
                     <div class="mb-3">
                         <label for="goodbye-channel" class="form-label">Goodbye Channel</label>
                         <select id="goodbye-channel" class="form-select">
-                            <option>#goodbye</option>
-                            <option>#general</option>
-                            <option>#off-topic</option>
+                            {% for channel in server["text_channels"] %}
+                                <option>{{ channel.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
@@ -105,17 +105,17 @@
                     <div class="mb-3">
                         <label for="presentation-txt-channel" class="form-label">Presentation texte channel</label>
                         <select id="presentation-txt-channel" class="form-select">
-                            <option>#presentation</option>
-                            <option>#general</option>
-                            <option>#off-topic</option>
+                            {% for channel in server["text_channels"] %}
+                                <option>{{ channel.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="newbie-role" class="form-label">Newbie role</label>
                         <select id="newbie-role" class="form-select">
-                            <option>#choice 1</option>
-                            <option>#choice 2</option>
-                            <option>#choice 3</option>
+                            {% for role in server["roles"] %}
+                                <option>{{ role.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <button type="submit" class="btn button text-white">Save Changes</button>

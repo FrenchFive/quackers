@@ -16,6 +16,63 @@ REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI')
 BOT_TOKEN = os.getenv('KEY_DISCORD')
 API_BASE_URL = "https://discord.com/api"
 
+def check_access_token():
+    # Redirect to the home page if no access token is in the session
+    if "access_token" not in session:
+        return redirect('/')
+
+    access_token = session.get("access_token")
+    headers = {"Authorization": f"Bearer {access_token}"}
+
+    # Verify the token by calling the Discord API
+    response = requests.get(f"{API_BASE_URL}/oauth2/@me", headers=headers)
+
+    if response.status_code == 200:
+        # Token is valid
+        return True
+    else:
+        # Token is invalid or expired
+        session.pop("access_token", None)  # Remove invalid token from the session
+        return redirect('/')
+
+def get_server_info(server_id):
+    bot_token = os.getenv("KEY_DISCORD")  # Use the bot token
+    headers = {"Authorization": f"Bot {bot_token}"}
+
+    # Get server (guild) information
+    guild_response = requests.get(f"{API_BASE_URL}/guilds/{server_id}", headers=headers)
+    guild_data = guild_response.json()
+
+    # Get channels
+    channels_response = requests.get(f"{API_BASE_URL}/guilds/{server_id}/channels", headers=headers)
+    channels_data = channels_response.json()
+
+    # Get roles
+    roles_response = requests.get(f"{API_BASE_URL}/guilds/{server_id}/roles", headers=headers)
+    roles_data = roles_response.json()
+
+    # Separate channels into text and voice
+    text_channels = [
+        {"id": channel["id"], "name": channel["name"]}
+        for channel in channels_data if channel["type"] == 0  # Type 0 is text channel
+    ]
+
+    voice_channels = [
+        {"id": channel["id"], "name": channel["name"]}
+        for channel in channels_data if channel["type"] == 2  # Type 2 is voice channel
+    ]
+
+    # Combine the data
+    return {
+        "name": guild_data.get("name"),
+        "id": guild_data.get("id"),
+        "text_channels": text_channels,
+        "voice_channels": voice_channels,
+        "roles": [{"id": role["id"], "name": role["name"]} for role in roles_data],
+    }
+
+#ADD A CHECK TO SEE IF THE USER IS ADMIN OR OWNER OF THE SERVER
+
 @app.route('/')
 def home():
     logged_in = "access_token" in session
@@ -23,8 +80,7 @@ def home():
 
 @app.route('/login')
 def login():
-    # Redirect to Discord's OAuth2 URL
-    discord_oauth_url = f"{API_BASE_URL}/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify%20guilds"
+    discord_oauth_url = f"{API_BASE_URL}/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify+guilds+email"
     return redirect(discord_oauth_url)
 
 @app.route('/callback')
@@ -52,25 +108,11 @@ def callback():
     # Save the token in the session
     session["access_token"] = response_json["access_token"]
 
-    return redirect('/profile')
-
-@app.route('/profile')
-def profile():
-    # Use the access token to get user info
-    access_token = session.get("access_token")
-    if not access_token:
-        return redirect('/login')
-
-    headers = {"Authorization": f"Bearer {access_token}"}
-    user_info = requests.get(f"{API_BASE_URL}/users/@me", headers=headers).json()
-    guilds_info = requests.get(f"{API_BASE_URL}/users/@me/guilds", headers=headers).json()
-
-    return jsonify({"user_info": user_info, "guilds_info": guilds_info})
+    return redirect('/')
 
 @app.route('/servers')
 def servers():
-    if "access_token" not in session:
-        return redirect('/')
+    check_access_token()
     
     access_token = session.get("access_token")
     headers = {"Authorization": f"Bearer {access_token}"}
@@ -109,23 +151,33 @@ def servers():
 
 @app.route('/config/<int:server_id>')
 def config(server_id):
-    return render_template('config-general.html', server_id=server_id)
+    check_access_token()
+    server = get_server_info(server_id)
+    return render_template('config-general.html', server=server)
 
 @app.route('/config-welcome/<int:server_id>')
 def config_welcome(server_id):
-    return render_template('config-welcome.html', server_id=server_id)
+    check_access_token()
+    server = get_server_info(server_id)
+    return render_template('config-welcome.html', server=server)
 
 @app.route('/config-economy/<int:server_id>')
 def config_economy(server_id):
-    return render_template('config-economy.html', server_id=server_id)
+    check_access_token()
+    server = get_server_info(server_id)
+    return render_template('config-economy.html', server=server)
 
 @app.route('/config-games/<int:server_id>')
 def config_games(server_id):
-    return render_template('config-games.html', server_id=server_id)
+    check_access_token()
+    server = get_server_info(server_id)
+    return render_template('config-games.html', server=server)
 
 @app.route('/config-ai/<int:server_id>')
 def config_ai(server_id):
-    return render_template('config-ai.html', server_id=server_id)
+    check_access_token()
+    server = get_server_info(server_id)
+    return render_template('config-ai.html', server=server)
 
 @app.route('/logout')
 def logout():
