@@ -111,6 +111,22 @@ def servers():
 def config(server_id):
     return render_template('config-general.html', server_id=server_id)
 
+@app.route('/config-welcome/<int:server_id>')
+def config_welcome(server_id):
+    return render_template('config-welcome.html', server_id=server_id)
+
+@app.route('/config-economy/<int:server_id>')
+def config_economy(server_id):
+    return render_template('config-economy.html', server_id=server_id)
+
+@app.route('/config-games/<int:server_id>')
+def config_games(server_id):
+    return render_template('config-games.html', server_id=server_id)
+
+@app.route('/config-ai/<int:server_id>')
+def config_ai(server_id):
+    return render_template('config-ai.html', server_id=server_id)
+
 @app.route('/logout')
 def logout():
     # Clear the session
