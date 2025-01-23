@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, session, jsonify, render_template
+from flask import Flask, url_for, redirect, request, session, jsonify, render_template
 import requests
 import os
 from dotenv import load_dotenv
@@ -105,8 +105,11 @@ def servers():
 
     user_servers = sorted(user_servers, key=lambda x: not x['bot_on_server'])
 
-    return render_template('server.html', servers=user_servers)
+    return render_template('server.html', servers=user_servers, clientid=CLIENT_ID)
 
+@app.route('/config/<int:server_id>')
+def config(server_id):
+    return render_template('config-general.html', server_id=server_id)
 
 @app.route('/logout')
 def logout():

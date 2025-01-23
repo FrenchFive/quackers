@@ -25,9 +25,9 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{ server.name }}</h5>
                                     {% if server['bot_on_server']==1 %}
-                                        <a href="#" class="btn button btn-primary">Go somewhere</a>
+                                        <a href="/config/{{ server['id'] }}" class="btn button btn-primary">Go somewhere</a>
                                     {% else %}
-                                        <a href="/con" class="btn btn-secondary">Configure</a>
+                                        <a href="https://discord.com/oauth2/authorize?client_id={{clientid}}&guild_id={{ server['id'] }}" class="btn btn-secondary">Configure</a>
                                     {% endif %}
                                 </div>
                             </div>
