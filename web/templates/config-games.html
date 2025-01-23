@@ -28,9 +28,9 @@
                         </div>
                         <div style="width: 100%;">
                             <select id="limit-games-channel" class="form-select">
-                                <option>#welcome</option>
-                                <option>#general</option>
-                                <option>#rules</option>
+                                {% for channel in server["text_channels"] %}
+                                    <option>{{ channel.name }}</option>
+                                {% endfor %}
                             </select>
                         </div>
                     </div>

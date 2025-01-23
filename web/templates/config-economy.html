@@ -69,9 +69,9 @@
                         </div>
                         <div style="width: 100%;">
                             <select id="welcome-channel" class="form-select">
-                                <option>#welcome</option>
-                                <option>#general</option>
-                                <option>#rules</option>
+                                {% for channel in server["voice_channels"] %}
+                                    <option>{{ channel.name }}</option>
+                                {% endfor %}
                             </select>
                             
                         </div>
