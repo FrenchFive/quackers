@@ -123,20 +123,24 @@ def get_emoji_list(guild_id):
     return json.loads(result[0]) if result else None
 
 #MEMBERS
-def user_in_db(guild, name):
+def user_in_db(guild, member):
+    if member.bot:
+        return  0# Skip adding bots
+
+    name = member.name
+
     CURSOR.execute(f"SELECT COUNT(*) FROM '{guild}' WHERE name = ?",(name,))
     data = CURSOR.fetchall()
-    return(data[0][0])
+    result = data[0][0]
 
-def add_user(guild, member):
-    if member.bot:
-        return  # Skip adding bots
+    if result == 0:
+        # Add the user to the database
+        date = member.joined_at.strftime('%Y-%m-%d %H:%M')
+        CURSOR.execute(f'INSERT INTO "{guild}" (name, coins, daily, quackers, mess, created, streak, epvoicet, voiceh, luck, bank) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0, 0, 0, 0))
+        CONNECTION.commit()
+        qlogs.info(f'--QDB // ADDED USER : {name} :: to {guild}')
     
-    name = member.name
-    date = member.joined_at.strftime('%Y-%m-%d %H:%M')
-    CURSOR.execute(f'INSERT INTO "{guild}" (name, coins, daily, quackers, mess, created, streak, epvoicet, voiceh, luck, bank) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (name, 0, "", 0, 0, date, 0, 0, 0, 0, 0))
-    CONNECTION.commit()
-    qlogs.info(f'--QDB // ADDED USER : {name} :: to {guild}')
+    return 1
 
 def coins(guild, name):
     CURSOR.execute(f"SELECT coins FROM '{guild}' WHERE name = ?", (name,))
@@ -175,44 +179,24 @@ def luck(guild, name, amount):
     CURSOR.execute(f"UPDATE '{guild}' SET luck = ? WHERE name = ?", (luck, name))
     CONNECTION.commit()          
 
-def user_joined_time(guild, members):
-    for name, date in members:
-        CURSOR.execute(f"SELECT created FROM '{guild}' WHERE name = ?", (name,))
-        data = CURSOR.fetchone()
-        if data and data[0] != date:
-            CURSOR.execute(f"UPDATE '{guild}' SET created = ? WHERE name = ?", (date, name))
-            CONNECTION.commit()
-
-def del_bot(guild, member):
-    name = member.name
-    CURSOR.execute(f"DELETE FROM '{guild}' WHERE name = ?", (name,))
-    CONNECTION.commit()
-    qlogs.info(f'--QDB // DELETED USER : {name}')
-
 def add_mess(guild, name):
-    CURSOR.execute(f"SELECT coins, mess FROM '{guild}' WHERE name = ?",(name,))
-    rows = CURSOR.fetchall()
-    data = rows[0]
-    coins = data[0]
-    mess = data[1]
+    CURSOR.execute(f"SELECT mess FROM '{guild}' WHERE name = ?",(name,))
+    data = CURSOR.fetchall()
+    mess = data[0][0]
 
-    coins += 1
     mess += 1
 
-    CURSOR.execute(f"UPDATE '{guild}' SET coins = ?, mess = ? WHERE name = ?", (coins, mess, name))
+    CURSOR.execute(f"UPDATE '{guild}' SET mess = ? WHERE name = ?", (mess, name))
     CONNECTION.commit()
 
 def add_quackers(guild, name):
-    CURSOR.execute(f"SELECT coins, quackers FROM '{guild}' WHERE name = ?",(name,))
-    rows = CURSOR.fetchall()
-    data = rows[0]
-    coins = data[0]
-    quackers = data[1]
+    CURSOR.execute(f"SELECT quackers FROM '{guild}' WHERE name = ?",(name,))
+    data = CURSOR.fetchall()
+    quackers = data[0][0]
 
-    coins += 9  #9 + 1coin from message => 10
     quackers += 1
 
-    CURSOR.execute(f"UPDATE '{guild}' SET coins = ?, quackers = ? WHERE name = ?", (coins, quackers, name))
+    CURSOR.execute(f"UPDATE '{guild}' quackers = ? WHERE name = ?", (quackers, name))
     CONNECTION.commit()
 
 def daily(guild, name):
