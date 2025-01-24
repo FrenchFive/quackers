@@ -27,10 +27,44 @@ document.addEventListener("DOMContentLoaded", () => {
     dailyblock.style.display = toggle.checked ? "block" : "none";
 });
 
-//WELCOME TOGGLE
+//BANK TOGGLE
 document.addEventListener("DOMContentLoaded", () => {
     const toggle = document.getElementById("bank-toggle");
     const section = document.getElementById("bank-section");
+
+    toggle.addEventListener("change", () => {
+        if (toggle.checked) {
+            section.style.display = "block";
+        } else {
+            section.style.display = "none";
+        }
+    });
+
+    // Initialize the visibility based on the toggle's initial state
+    section.style.display = toggle.checked ? "block" : "none";
+});
+
+//SEND TOGGLE
+document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("send-toggle");
+    const section = document.getElementById("send-section");
+
+    toggle.addEventListener("change", () => {
+        if (toggle.checked) {
+            section.style.display = "block";
+        } else {
+            section.style.display = "none";
+        }
+    });
+
+    // Initialize the visibility based on the toggle's initial state
+    section.style.display = toggle.checked ? "block" : "none";
+});
+
+//DAILY TOGGLE
+document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("daily-toggle");
+    const section = document.getElementById("daily-section");
 
     toggle.addEventListener("change", () => {
         if (toggle.checked) {
