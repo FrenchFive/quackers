@@ -96,7 +96,7 @@
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="goodbye-toggle" checked>
+                    <input class="form-check-input toggle-section" type="checkbox" id="presentation-toggle" checked>
                     <label class="form-check-label" for="presentation-toggle">Active</label>
                 </div>
             </div>
@@ -131,15 +131,15 @@
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="goodbye-toggle" checked>
-                    <label class="form-check-label" for="goodbye-toggle">Active</label>
+                    <input class="form-check-input toggle-section" type="checkbox" id="dm-toggle" checked>
+                    <label class="form-check-label" for="dm-toggle">Active</label>
                 </div>
             </div>
-            <div class="card-body" id="goodbye-section">
+            <div class="card-body" id="dm-section">
                 <form>
                     <div class="mb-3">
-                        <label for="goodbye-message" class="form-label">Custom Message</label>
-                        <textarea id="goodbye-message" class="form-control" rows="3">What the user will receive once they join</textarea>
+                        <label for="dm-message" class="form-label">Custom Message</label>
+                        <textarea id="dm-message" class="form-control" rows="3">What the user will receive once they join</textarea>
                     </div>
                     
                     <button type="submit" class="btn button text-white">Save Changes</button>
@@ -148,4 +148,5 @@
         </div>
     </section>
 </main>
+<script src="{{ url_for('static', filename='js/config-welcome.js') }}"></script>
 {% endblock %}
