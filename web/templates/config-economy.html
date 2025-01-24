@@ -15,11 +15,11 @@
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="bank-toggle" checked>
-                    <label class="form-check-label" for="bank-toggle">Active</label>
+                    <input class="form-check-input toggle-section" type="checkbox" id="coin-toggle" checked>
+                    <label class="form-check-label" for="coin-toggle">Active</label>
                 </div>                                         
             </div>
-            <div class="card-body" id="welcome-section">
+            <div class="card-body" id="coin-section">
                 <form>
                     <div class="mb-3">
                         <label for="welcome-channel" class="form-label">Passive income</label>
@@ -84,7 +84,7 @@
             </div>
         </div>
         <!-- Bank Section -->
-        <div class="card mb-4">
+        <div class="card mb-4" id="bank-block">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Bank
                     <p>
@@ -119,7 +119,7 @@
             </div>
         </div>
         <!-- Send Section -->
-        <div class="card mb-4">
+        <div class="card mb-4" id="send-block">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Send
                     <p>
@@ -151,7 +151,7 @@
             </div>
         </div>
         <!-- Daily Section -->
-        <div class="card mb-4">
+        <div class="card mb-4" id="daily-block">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Daily
                     <p>
@@ -180,4 +180,5 @@
         </div>
     </section>
 </main>
+<script src="{{ url_for('static', filename='js/config-economy.js') }}"></script>
 {% endblock %}
