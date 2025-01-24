@@ -240,7 +240,7 @@ def send(guild, fname, dname, amount):
     data = CURSOR.fetchall()
     fcoin = data[0][0]
     if fcoin < amount:
-        return("INSUFICIENT FUNDS")
+        return("INSUFFICIENT FUNDS")
     
     CURSOR.execute(f"UPDATE '{guild}' SET coins = ? WHERE name = ?", (fcoin-amount, fname))
     CONNECTION.commit()
@@ -429,7 +429,7 @@ def clear_stats(guild):
 
 def backup_db():
     bckup_path = os.path.join(ROOT_DIR, "db/backup/")
-    bckup_file = os.path.join(ROOT_DIR, "bckup_quackers.db")
+    bckup_file = os.path.join(backup_db, "bckup_quackers.db")
 
     os.makedirs(bckup_path, exist_ok=True)
 
