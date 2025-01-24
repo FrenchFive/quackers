@@ -448,7 +448,7 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
 
     await interaction.response.defer()  # Defer the response
 
-    check = qdb.qcheck(interaction.user.name, price)
+    check = qdb.qcheck(interaction.guild.id, interaction.user.name, price)
     if check != 0:
         await interaction.followup.send("Not enough QuackCoins", ephemeral=True)
         return
