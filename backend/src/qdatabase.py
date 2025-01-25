@@ -19,86 +19,40 @@ CURSOR = CONNECTION.cursor()
 STATS_CONNECTION = sqlite3.connect(STATS_PATH)
 STATS_CURSOR = STATS_CONNECTION.cursor()
 
-CURSOR.execute('''
-CREATE TABLE IF NOT EXISTS "servers" (
-    "id" INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
-    "server_id" INTEGER UNIQUE NOT NULL, 
-    "server_name" TEXT NOT NULL, 
-    "lang" TEXT DEFAULT 'eng',
-    
-    "admin_role_id" INTEGER DEFAULT 0,
-    "admin_ch_id" INTEGER DEFAULT 0,
-    "gnrl_ch_id" INTEGER DEFAULT 0,
-    "dbg_ch" BOOLEAN DEFAULT 0,
-    "dbg_ch_id" INTEGER DEFAULT 0,
-    "bot_ch_id" INTEGER DEFAULT 0,
-
-    "wlc" BOOLEAN DEFAULT 0,
-    "wlc_ch_id" INTEGER DEFAULT 0,
-    "wlc_msg" BOOLEAN DEFAULT 0,
-    "wlc_msg_content" TEXT DEFAULT ' ',
-    "wlc_rct" BOOLEAN DEFAULT 0,
-    "wlc_rct_cstm" BOOLEAN DEFAULT 1,
-
-    "gdb" BOOLEAN DEFAULT 0,
-    "gdb_ch_id" INTEGER DEFAULT 0,
-    "gdb_msg" BOOLEAN DEFAULT 0,
-    "gdb_msg_content" TEXT DEFAULT ' ',
-
-    "prst" BOOLEAN DEFAULT 0,
-    "prst_ch_id" INTEGER DEFAULT 0,
-    "prst_role" INTEGER DEFAULT 0,
-
-    "dm" BOOLEAN DEFAULT 0,
-    "dm_msg_content" TEXT DEFAULT ' ',
-
-    "eco" BOOLEAN DEFAULT 0,
-    "eco_pss" BOOLEAN DEFAULT 1,
-    "eco_pss_msg" BOOLEAN DEFAULT 1,
-    "eco_pss_msg_value" INTEGER DEFAULT 1,
-    "eco_pss_ch" BOOLEAN DEFAULT 1,
-    "eco_pss_ch_value" INTEGER DEFAULT 15,
-    "eco_pss_ch_afk" BOOLEAN DEFAULT 0,
-    "eco_pss_ch_afk_id" INTEGER DEFAULT 0,
-    "eco_pss_cmd" BOOLEAN DEFAULT 1,
-    "eco_pss_cmd_value" INTEGER DEFAULT 5,
-
-    "bnk" BOOLEAN DEFAULT 0,
-    "bnk_itrs" BOOLEAN DEFAULT 1,
-    "bnk_itrs_value" INTEGER DEFAULT 30,
-
-    "snd" BOOLEAN DEFAULT 0,
-    "snd_limit" BOOLEAN DEFAULT 0,
-    "snd_limit_value" INTEGER DEFAULT 100,
-
-    "dly" BOOLEAN DEFAULT 0,
-    "dly_from_value" INTEGER DEFAULT 100,
-    "dly_to_value" INTEGER DEFAULT 250,
-    "dly_random" BOOLEAN DEFAULT 1,
-
-    "game" BOOLEAN DEFAULT 0,
-    "game_limit" BOOLEAN DEFAULT 1,
-    "game_limit_value" INTEGER DEFAULT 100,
-
-    "dices" BOOLEAN DEFAULT 0,
-    "rps" BOOLEAN DEFAULT 0,
-    "hball" BOOLEAN DEFAULT 0,
-    "bet" BOOLEAN DEFAULT 0,
-    "bet_limit" BOOLEAN DEFAULT 0,
-    "bet_limit_value" INTEGER DEFAULT 1000,
-
-    "ai_chat" BOOLEAN DEFAULT 0,
-    "ai_img" BOOLEAN DEFAULT 0,
-    "ai_img_pay" BOOLEAN DEFAULT 1,
-    "ai_img_pay_value" INTEGER DEFAULT 100
-);
-''')
+CURSOR.execute('''CREATE TABLE IF NOT EXISTS "servers" (
+    "id" INTEGER UNIQUE, 
+    "server_id" INTEGER UNIQUE, 
+    "server_name" TEXT, 
+    "vc_afk" TEXT, 
+    "channel_welcome" INTEGER, 
+    "channel_info" INTEGER, 
+    "channel_test" INTEGER, 
+    "channel_general" INTEGER,
+    "channel_bot" INTEGER,
+    "role_newbie" TEXT, 
+    "role_admin" TEXT,
+    PRIMARY KEY("id" AUTOINCREMENT)
+);''')
 
 #SERVERS
-def add_server(server_id, server_name):
-    CURSOR.execute('''INSERT INTO servers (server_id, server_name, lang) VALUES (?, ?, ?)''', (server_id, server_name))
+def add_or_update_server(server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, channel_bot_id, role_newbie_name, role_admin_name):
+    
+    # Check if the server already exists in the database
+    CURSOR.execute('SELECT * FROM servers WHERE server_id = ?', (server_id,))
+    existing_server = CURSOR.fetchone()
+
+    if existing_server:
+        # Update the existing server information
+        CURSOR.execute('''UPDATE servers SET server_name = ?, vc_afk = ?, channel_welcome = ?, channel_info = ?, channel_test = ?, channel_general = ?, channel_bot = ?, role_newbie = ?, role_admin = ? WHERE server_id = ?''',
+                        (server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, channel_bot_id, role_newbie_name, role_admin_name, server_id))
+        qlogs.info(f'--QDB // UPDATED SERVER: {server_name} (ID: {server_id})')
+    else:
+        # Add a new server entry
+        CURSOR.execute('''INSERT INTO servers (server_id, server_name, vc_afk, channel_welcome, channel_info, channel_test, channel_general, channel_bot, role_newbie, role_admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
+                        (server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, channel_bot_id, role_newbie_name, role_admin_name))
+        qlogs.info(f'--QDB // ADDED SERVER: {server_name} (ID: {server_id})')
+
     CONNECTION.commit()
-    qlogs.info(f'--QDB // ADDED SERVER: {server_name} (ID: {server_id})')
 
 def get_all_server_ids():
     # Query the database for all server IDs
@@ -128,11 +82,45 @@ def servers_table_exists(guild):
     );''')
     CONNECTION.commit()
 
-def get_lang(guild_id):
-    CURSOR.execute('SELECT lang FROM servers WHERE server_id = ?', (guild_id,))
+def get_vc_afk(guild_id):
+    CURSOR.execute('SELECT vc_afk FROM servers WHERE server_id = ?', (guild_id,))
     result = CURSOR.fetchone()
     return result[0] if result else None
 
+def get_ch_welcome(guild_id):
+    CURSOR.execute('SELECT channel_welcome FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_ch_info(guild_id):
+    CURSOR.execute('SELECT channel_info FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_ch_test(guild_id):
+    CURSOR.execute('SELECT channel_test FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_ch_general(guild_id):
+    CURSOR.execute('SELECT channel_general FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_role_newbie(guild_id):
+    CURSOR.execute('SELECT role_newbie FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_role_admin(guild_id):
+    CURSOR.execute('SELECT role_admin FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return result[0] if result else None
+
+def get_emoji_list(guild_id):
+    CURSOR.execute('SELECT emoji_list FROM servers WHERE server_id = ?', (guild_id,))
+    result = CURSOR.fetchone()
+    return json.loads(result[0]) if result else None
 
 #MEMBERS
 def user_in_db(guild, member):
