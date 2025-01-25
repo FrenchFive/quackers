@@ -308,19 +308,24 @@ class AmountModal(nextcord.ui.Modal):
 
     async def callback(self, interaction: nextcord.Interaction):
         # Get the entered amount
-        amount = self.amount_input.value
+        data = self.amount_input.value
 
         #convert amount to numbers
-        try:
-            amount = int(amount)
-        except:
-            amount = 0
+        amount = abs(int(data)) if data.isdigit() else 0
 
-        # Perform the action (Add or Withdraw)
-        if self.action == 0:  # Add
-            response = qdb.bank_deposit(interaction.guild.id, self.user_name, int(amount))
-        elif self.action == 1:  # Withdraw
-            response = qdb.bank_withdraw(interaction.guild.id, self.user_name, int(amount))
+        coins, bank = qdb.bank(interaction.guild.id, self.user_name)
+
+        match self.action:
+            case 0:
+                if amount > coins:
+                    amount = coins
+                response = qdb.bank_deposit(interaction.guild.id, self.user_name, amount)
+            case 1:
+                if amount > bank:
+                    amount = bank
+                response = qdb.bank_withdraw(interaction.guild.id, self.user_name, amount)
+            case _:
+                response = "Invalid action"
         
         coins, bank = qdb.bank(interaction.guild.id, self.user_name)
 
@@ -349,7 +354,7 @@ class BankView(nextcord.ui.View):
             return False
         return True
 
-    @nextcord.ui.button(label="Add", style=nextcord.ButtonStyle.green)
+    @nextcord.ui.button(label="Deposit", style=nextcord.ButtonStyle.green)
     async def add_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         qdb.user_in_db(interaction.guild.id, interaction.user)
         # Check if the user is the correct user
