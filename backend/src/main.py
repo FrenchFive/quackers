@@ -255,7 +255,7 @@ async def introduce(interaction: nextcord.Interaction):
     qdb.user_in_db(interaction.guild.id, interaction.user)
     
     guild = interaction.guild
-    role_newbies = qdb.get_role_newbie(guild.id)
+    role_newbies = qdb.get_server_info(guild.id, "prst_role")
     role = next((role for role in guild.roles if role.name == role_newbies), None)
     if role is None:
         await interaction.response.send_message(
@@ -285,7 +285,7 @@ async def introduce(interaction: nextcord.Interaction):
         introduction.append((tmp[0],tmp[1]))
     random_questions = random.sample(introduction, 3)
 
-    channel_welcome = qdb.get_ch_welcome(guild.id)
+    channel_welcome = qdb.get_server_info(interaction.guild.id, "wlc_ch_id")
     await interaction.response.send_modal(PresentationModal(target_channel=channel_welcome, user=interaction.user, imgpath=imgpath, questions=random_questions, role=role, newbies=role_newbies))  
 
 
@@ -909,7 +909,7 @@ async def daily_update():
         qlogs.info(f"Updating BANK : {interest_rate} % :: {server}")
         qdb.bank_update(server, interest_rate)
 
-        channel = bot.get_channel(qdb.get_ch_test(server))
+        channel = bot.get_channel(qdb.get_server_info(server, "dbg_ch_id"))
         if channel:
             await channel.send("BANK HAS BEEN UPDATED")
     
@@ -998,7 +998,7 @@ async def weekly_update():
         mess = "\n".join(message)
         mess = mess[:1000] #Cutting too long message
 
-        channel = bot.get_channel(qdb.get_ch_info(server))
+        channel = bot.get_channel(qdb.get_server_info(server, "admin_ch_id"))
         if channel:
             await channel.send(mess, file=imgfile)
             
@@ -1080,7 +1080,7 @@ async def on_voice_state_update(member, before, after):
 
         qdb.add_stat(guild=guild.id, user=member.name, type="VC_CON", amount=1)
 
-    if before.channel is None and after.channel.name == qdb.get_vc_afk(guild.id):
+    if before.channel is not None and after.channel.id == qdb.get_server_info(guild.id, "eco_pss_ch_afk_id") and qdb.get_server_info(guild.id, "eco_pss_ch_afk")==True:
         # USER CONNECTED TO AFK
         qdb.user_in_db(guild.id, member)
         
@@ -1110,7 +1110,7 @@ async def on_member_join(member):
         welcome_message = file.readlines()
     random_welcome = random.choice(welcome_message).replace("{name}", member.mention)
 
-    channel = bot.get_channel(qdb.get_ch_welcome(guild.id))
+    channel = bot.get_channel(qdb.get_server_info(guild.id, "wlc_ch_id"))
     if channel:
         message = await channel.send(random_welcome)
         emojis = ["\U0001F44C", "\U0001F4AF", "\U0001F389", "\U0001F38A"]
@@ -1118,7 +1118,7 @@ async def on_member_join(member):
         emojis.extend([str(e) for e in server_emojis])
         await message.add_reaction(random.choice(emojis))
     
-    role_newbies = qdb.get_role_newbie(guild.id)
+    role_newbies = qdb.get_server_info(guild.id, "prst_role")
     role = next((r for r in guild.roles if r.name == role_newbies), None)
 
     if role:
@@ -1151,7 +1151,7 @@ async def on_member_remove(member):
 
     guild = member.guild
 
-    channel = bot.get_channel(qdb.get_ch_info(guild.id))
+    channel = bot.get_channel(qdb.get_server_info(guild.id, "admin_ch_id"))
     if channel:
         await channel.send(f"{member.name} a quitte le serveur")
     
