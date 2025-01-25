@@ -311,7 +311,9 @@ class AmountModal(nextcord.ui.Modal):
         data = self.amount_input.value
 
         #convert amount to numbers
-        amount = abs(int(data)) if data.isdigit() else 0
+        amount = int(data) if data.isdigit() else 0
+        if amount < 0:
+            amount = 0
 
         coins, bank = qdb.bank(interaction.guild.id, self.user_name)
 
