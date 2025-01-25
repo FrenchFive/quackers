@@ -954,7 +954,7 @@ async def daily_update():
         qdb.bank_update(server, interest_rate)
 
         channel = bot.get_channel(qdb.get_server_info(server, "dbg_ch_id"))
-        if channel:
+        if channel and qdb.get_server_info(server, "dbg_ch")==True:
             await channel.send("BANK HAS BEEN UPDATED")
     
     qdb.backup_db()
