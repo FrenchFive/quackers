@@ -228,16 +228,17 @@ def daily(guild, name):
     streak = data[2]
 
     if daily != date:
-        amount = 100
+        amount_min = get_server_info(guild, 'dly_from_value')
+        amount_max = get_server_info(guild, 'dly_to_value')
+        max_streak = 20
         if daily == (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'):
             streak += 1
-            if streak > 20:
-                amount = random.randint(250, 350)
+            if streak > max_streak and get_server_info(guild, 'dly_random') == True:
+                amount = random.randint(amount_max, amount_max * 1.5)
             else:
-                mult = 1 + (streak - 1) * (2.5 - 1) / (20 - 1)
-                amount *= mult
-            
+                amount = amount_min + (streak - 1) * (amount_max - amount_min) / (max_streak - 1)
         else:
+            amount = amount_min
             streak = 0
 
         coins += int((amount))
