@@ -255,6 +255,9 @@ def daily(guild, name):
 def send(guild, fname, dname, amount):
     if amount<0:
         return('The amount must be higher than 1 <:quackCoin:1124255606782578698>.')
+    if get_server_info(guild, 'snd_limit') == True:
+        if amount > get_server_info(guild, 'snd_limit_value'):
+            amount = get_server_info(guild, 'snd_limit_value')
     CURSOR.execute(f"SELECT coins FROM '{guild}' WHERE name = ?",(fname,))
     data = CURSOR.fetchall()
     fcoin = data[0][0]
