@@ -21,7 +21,7 @@
                         {% for server in servers %}
                         <div class="col-md-4">
                             <div class="card cardimg mb-4" style="width: 15rem;">
-                                <img src="{{ server['icon_url'] }}" class="card-img-top" alt="..." style="width: 100%; height: 200px; object-fit: cover;">
+                                <img src="{{ server['icon_url'] }}" class="card-img-top" alt="..." style="width: 100%; height: 200px; object-fit: cover; object-position: center;">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ server.name }}</h5>
                                     {% if server['bot_on_server']==1 %}
