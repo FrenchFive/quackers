@@ -48,10 +48,9 @@ for guild in serverid:
 
 def serv_list(li):
     if len(li) == 0:
-        return None
+        return [0]
     else:
         return li
-
 
 # COMMANDS
 @bot.slash_command(name="daily", description="Receive daily QuackCoins.", guild_ids = serv_list(list(set(qdb.get_server_list("dly")) & set(qdb.get_server_list("eco")))))
@@ -991,6 +990,10 @@ async def on_ready():
     if not weekly_update.is_running():
         weekly_update.start()
 
+    for guild in bot.guilds:
+        qdb.add_server(guild.id, guild.name)
+    
+    #reload all slash commands
     await bot.tree.sync()
 
 @bot.event
