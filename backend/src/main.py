@@ -481,11 +481,14 @@ async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(requi
 
     bet = bet if bet else 100
     roll = roll if roll else 3
-    amount = bet
+
+    if qdb.get_server_info(interaction.guild.id, "game_limit")==True and qdb.get_server_info(interaction.guild.id, "game_limit_value")>bet:
+        amount = qdb.get_server_info(interaction.guild.id, "game_limit_value")
+    else:
+        amount = bet
+
     name = interaction.user.name
 
-    if amount > 100:
-        amount = 100
     if amount <= 0:
         amount = 1
 
@@ -528,8 +531,9 @@ async def rps(
 
     name = interaction.user.name
 
-    if bet > 100:
-        bet = 100
+    if qdb.get_server_info(interaction.guild.id, "game_limit")==True and qdb.get_server_info(interaction.guild.id, "game_limit_value")>bet:
+        bet = qdb.get_server_info(interaction.guild.id, "game_limit_value")
+
     if bet <= 0:
         bet = 1
 
@@ -611,7 +615,7 @@ class ButtonMessage(nextcord.ui.View):
         qdb.user_in_db(interaction.guild.id, interaction.user)
 
         if qgames.bet_status(self.id) == "open" and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
-            await interaction.response.send_modal(Betting(self.id, "A"))
+            await interaction.response.send_modal(Betting(self.id, "A", interaction))
             self.value = True
         else:
             await interaction.response.send_message("THIS BET HAS BEEN CLOSED", ephemeral=True)
@@ -621,13 +625,13 @@ class ButtonMessage(nextcord.ui.View):
         qdb.user_in_db(interaction.guild.id, interaction.user)
 
         if qgames.bet_status(self.id) == "open" and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
-            await interaction.response.send_modal(Betting(self.id, "B"))
+            await interaction.response.send_modal(Betting(self.id, "B", interaction))
             self.value = True
         else:
             await interaction.response.send_message("THIS BET HAS BEEN CLOSED", ephemeral=True)
 
 class Betting(nextcord.ui.Modal):
-    def __init__(self, id, option):
+    def __init__(self, id, option, interaction):
         super().__init__(
             title="BETTING",
             timeout=None,
@@ -637,7 +641,7 @@ class Betting(nextcord.ui.Modal):
 
         self.amount = nextcord.ui.TextInput(
             label="AMOUNT",
-            placeholder="100",
+            placeholder=str(int(qdb.get_server_info(interaction.guild.id, "bet_limit_value")*0.5)) if qdb.get_server_info(interaction.guild.id, "bet_limit")==True else "100",
             min_length=1,
             max_length=50,
         )
@@ -651,6 +655,8 @@ class Betting(nextcord.ui.Modal):
             return
 
         if amount > 0:
+            if qdb.get_server_info(interaction.guild.id, "bet_limit")==True and amount > qdb.get_server_info(interaction.guild.id, "bet_limit_value"):
+                amount = qdb.get_server_info(interaction.guild.id, "bet_limit_value")
             if qdb.qcheck(interaction.guild.id, interaction.user.name, amount) == 0:
                 qgames.bet_join(self.id, interaction.user.name, amount, self.option)
                 qdb.add(interaction.guild.id, interaction.user.name, (amount * -1))
