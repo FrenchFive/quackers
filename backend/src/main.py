@@ -765,7 +765,7 @@ def is_admin(interaction: Interaction) -> bool:
     if interaction.user.guild_permissions.administrator:
         return True
 
-@bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids= serv_list(serverid))
+@bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids= serv_list(qdb.get_server_list("eco")))
 async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member):
     qdb.user_in_db(interaction.guild.id, interaction.user)
     qdb.user_in_db(interaction.guild.id, user)
@@ -783,7 +783,7 @@ async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member
     await interaction.response.send_message(result)
 
 
-@bot.slash_command(name="admin-remove", description="[ADMIN] remove QuackCoins from a User", guild_ids= serv_list(serverid))
+@bot.slash_command(name="admin-remove", description="[ADMIN] remove QuackCoins from a User", guild_ids= serv_list(qdb.get_server_list("eco")))
 async def admin_remove(interaction: Interaction, amount: int, user: nextcord.Member):
     qdb.user_in_db(interaction.guild.id, interaction.user)
     qdb.user_in_db(interaction.guild.id, user)
@@ -801,7 +801,7 @@ async def admin_remove(interaction: Interaction, amount: int, user: nextcord.Mem
     await interaction.response.send_message(result)
 
 
-@bot.slash_command(name="admin-logs", description="[ADMIN] Retrieve last 5 lines from LOGS", guild_ids= serv_list(serverid))
+@bot.slash_command(name="admin-logs", description="[ADMIN] Retrieve last 5 lines from LOGS", guild_ids= serv_list(testid))
 async def admin_logs(interaction: Interaction):
     if not is_admin(interaction):
         await interaction.response.send_message("You do not have permission to use this command.")
@@ -848,6 +848,9 @@ async def admin_scan(interaction: Interaction):
         f"**Owner**: {guild.owner.name}\n"
         f"**Created At**: {guild.created_at}\n"
         f"**Emoji Count**: {len(guild.emojis)}\n"
+        f"\n \n"
+        f"To SETUP the QUACKERS go to :: [QUACKERS](https://quackersbot.com/setup)\n"
+        f"To Locally Setup the BOT :: [GITHUB](https://github.com/FrenchFive/quackers/wiki)\n"
     )
 
     # Send the initial message with server details
