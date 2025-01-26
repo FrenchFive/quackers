@@ -1056,21 +1056,22 @@ async def on_message(ctx):
         await bot.process_commands(ctx)
         return
 
-    qdb.add_quackers(ctx.guild.id, ctx.author.name)
-    qdb.add(ctx.guild.id, ctx.author.name, 10)
-    qlogs.info(f'// RESPONDING TO : {ctx.author.name}')
+    if qdb.get_server_info(ctx.guild.id, "ai_chat"):
+        qdb.add_quackers(ctx.guild.id, ctx.author.name)
+        qdb.add(ctx.guild.id, ctx.author.name, 10)
+        qlogs.info(f'// RESPONDING TO : {ctx.author.name}')
 
-    message = unidecode(qopenai.generate_response(ctx.content, ctx.author.name))
+        message = unidecode(qopenai.generate_response(ctx.content, ctx.author.name))
 
-    chunk = 1800
-    if len(message) < chunk:
-        await ctx.channel.send(message)
-    else:
-        li_tosend = [message[i:i + chunk] for i in range(0, len(message), chunk)]
-        for mess in li_tosend:
-            await ctx.channel.send(mess)
-    
-    qopenai.update_memory_summary()
+        chunk = 1800
+        if len(message) < chunk:
+            await ctx.channel.send(message)
+        else:
+            li_tosend = [message[i:i + chunk] for i in range(0, len(message), chunk)]
+            for mess in li_tosend:
+                await ctx.channel.send(mess)
+        
+        qopenai.update_memory_summary()
 
 
 @bot.event
