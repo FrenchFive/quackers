@@ -48,17 +48,6 @@ testid = [1159282148042350642]
 for guild in serverid:
     qdb.servers_table_exists(guild)
 
-#SERVER QUESTIONS
-questions = [
-    {"q": "Select an Admin Role", "type": "role", "format": "name"},
-    {"q": "Select a Newbie Role", "type": "role", "format": "name"},
-    {"q": "Select an AFK Voice Channel", "type": "audio", "format": "name"},
-    {"q": "Select a General Channel", "type": "text", "format": "id"},
-    {"q": "Select a Debugging Channel", "type": "text", "format": "id"},
-    {"q": "Select a Welcome Channel", "type": "text", "format": "id"},
-    {"q": "Select an Admin Info Channel", "type": "text", "format": "id"},
-    {"q": "Select a Bot Channel", "type": "text", "format": "id"},
-]
 
 # COMMANDS
 @bot.slash_command(name="daily", description="Receive daily QuackCoins.", guild_ids = list(set(qdb.get_server_list("dly")) & set(qdb.get_server_list("eco"))))
@@ -572,7 +561,6 @@ async def eightball(interaction: Interaction, question: str):
     await interaction.response.send_message(message)
 
 # BETTING SYSTEM
-
 class BetCreation(nextcord.ui.Modal):
     def __init__(self):
         super().__init__(
@@ -724,10 +712,20 @@ async def bet_result(
 
 
 # ADMIN
+def is_admin(interaction: Interaction) -> bool:
+    if interaction.user.id == interaction.guild.owner_id:
+        return True
+    if interaction.user.guild_permissions.administrator:
+        return True
+
 @bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids=serverid)
 async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member):
     qdb.user_in_db(interaction.guild.id, interaction.user)
     qdb.user_in_db(interaction.guild.id, user)
+
+    if not is_admin(interaction):
+        await interaction.response.send_message("You do not have permission to use this command.")
+        return
 
     name = interaction.user.name
     user_name = user.name
@@ -743,6 +741,10 @@ async def admin_remove(interaction: Interaction, amount: int, user: nextcord.Mem
     qdb.user_in_db(interaction.guild.id, interaction.user)
     qdb.user_in_db(interaction.guild.id, user)
 
+    if not is_admin(interaction):
+        await interaction.response.send_message("You do not have permission to use this command.")
+        return
+
     name = interaction.user.name
     user_name = user.name
 
@@ -754,6 +756,10 @@ async def admin_remove(interaction: Interaction, amount: int, user: nextcord.Mem
 
 @bot.slash_command(name="admin-logs", description="[ADMIN] Retrieve last 5 lines from LOGS", guild_ids=serverid)
 async def admin_logs(interaction: Interaction):
+    if not is_admin(interaction):
+        await interaction.response.send_message("You do not have permission to use this command.")
+        return
+    
     try:
         # Read the last 5 lines from qlogs.log
         with open(LOGFILE, "r") as log_file:
@@ -766,121 +772,6 @@ async def admin_logs(interaction: Interaction):
         await interaction.response.send_message("Error: qlogs.log file not found.")
 
 
-class DynamicQuestionDropdown(nextcord.ui.Select):
-    def __init__(self, question, items):
-        # Truncate items if there are too many
-        max_option= 24
-        if len(items) > max_option:
-            truncated_items = dict(list(items.items())[:max_option])
-            truncated_items["..."] = "Too many items, truncated"
-        else:
-            truncated_items = items
-
-        options = [
-            nextcord.SelectOption(label=name, value=str(id_)) for id_, name in truncated_items.items()
-        ]
-        super().__init__(
-            placeholder=question["q"],
-            min_values=1,
-            max_values=1,
-            options=options,
-        )
-        self.question = question
-        self.selected_value = None
-
-    async def callback(self, interaction: Interaction):
-        # Store the selected value
-        self.selected_value = self.values[0]
-        await interaction.response.defer()  # Acknowledge the interaction
-
-class DynamicQuestionView(nextcord.ui.View):
-    def __init__(self, questions, guild, current_index=0, answers=None):
-        super().__init__()
-        self.questions = questions
-        self.guild = guild
-        self.current_index = current_index
-        self.answers = answers or {}
-
-        # Add the dropdown for the current question
-        question = questions[current_index]
-        items = self.get_items(question)
-        if items:
-            dropdown = DynamicQuestionDropdown(question, items)
-            self.add_item(dropdown)
-
-        # Add the "Next" button
-        next_button = nextcord.ui.Button(label="Next", style=nextcord.ButtonStyle.primary)
-        next_button.callback = self.next_button_callback  # Attach the callback
-        self.add_item(next_button)
-
-    def get_items(self, question):
-        if question["type"] == "audio":
-            items = {channel.id: channel.name for channel in self.guild.voice_channels}
-        elif question["type"] == "text":
-            items = {channel.id: channel.name for channel in self.guild.text_channels}
-        elif question["type"] == "role":
-            items = {role.id: role.name for role in self.guild.roles}
-        else:
-            items = {}
-
-        # Truncate items if necessary
-        max_option = 24
-        if len(items) > max_option:
-            truncated_items = dict(list(items.items())[:max_option])
-            truncated_items["..."] = "Too many items, truncated"
-            return truncated_items
-        return items
-
-    async def next_button_callback(self, interaction: Interaction):
-        # Collect the answer from the dropdown
-        for child in self.children:
-            if isinstance(child, DynamicQuestionDropdown) and child.selected_value:
-                # Save based on the "format"
-                question = self.questions[self.current_index]
-                if question["format"] == "name":
-                    self.answers[question["q"]] = self.get_items(question).get(
-                        int(child.selected_value), "Unknown"
-                    )
-                elif question["format"] == "id":
-                    self.answers[question["q"]] = child.selected_value
-
-        # Move to the next question
-        if self.current_index + 1 < len(self.questions):
-            next_view = DynamicQuestionView(
-                questions=self.questions,
-                guild=self.guild,
-                current_index=self.current_index + 1,
-                answers=self.answers,
-            )
-            await interaction.response.edit_message(
-                content=f"**{self.questions[self.current_index + 1]['q']}**",
-                view=next_view,
-            )
-        else:
-            # All questions answered
-            answer_text = "\n".join(
-                f"**{question}**: {value}" for question, value in self.answers.items()
-            )
-            
-            # Explicitly map answers to database fields
-            qdb.add_or_update_server(
-                server_id=self.guild.id,
-                server_name=self.guild.name,
-                vc_afk=self.answers.get("Select an AFK Voice Channel", None),
-                channel_welcome_id=self.answers.get("Select a Welcome Channel", None),
-                channel_info_id=self.answers.get("Select an Admin Info Channel", None),
-                channel_test_id=self.answers.get("Select a Debugging Channel", None),
-                channel_general_id=self.answers.get("Select a General Channel", None),
-                channel_bot_id=self.answers.get("Select a Bot Channel", None),
-                role_newbie_name=self.answers.get("Select a Newbie Role", None),
-                role_admin_name=self.answers.get("Select an Admin Role", None),
-            )
-
-            await interaction.response.edit_message(
-                content=f"Here are your selections:\n\n{answer_text}",
-                view=None,  # Remove the view
-            )
-
 @bot.slash_command(name="admin-scan", description="[ADMIN] scans the server and retrieves details about channels and roles.") #NO GUILD SPECIFIED SO ANY SERVER CAN BE ADDED
 async def admin_scan(interaction: Interaction):
     guild = interaction.guild  # Get the guild (server) where the command was invoked
@@ -889,9 +780,15 @@ async def admin_scan(interaction: Interaction):
         await interaction.response.send_message("This command can only be used in a server.")
         return
 
+    if not is_admin(interaction):
+        await interaction.response.send_message("You do not have permission to use this command.")
+        return
+
     # Get the server ID and name
     server_id = guild.id
     server_name = guild.name
+
+    qdb.add_server(server_id, server_name)
 
     # Construct a response message
     response_message = (
@@ -909,13 +806,6 @@ async def admin_scan(interaction: Interaction):
     # Send the initial message with server details
     await interaction.response.send_message(response_message)
 
-    # Start with the first question
-    question = questions[0]
-    view = DynamicQuestionView(questions, guild)
-    await interaction.followup.send(
-        f"**{question['q']}**",
-        view=view,
-    )
 
 #TASKS
 @tasks.loop(hours=24)
