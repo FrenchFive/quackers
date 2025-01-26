@@ -1093,14 +1093,10 @@ async def on_message(ctx):
     #COIFFEUR
     pattern = re.compile(r"(?:^|\s)[qQ]+[uU]+[oO]+[iI]+[!? ]*$")
     feurlist = ["...feur","FEUR","FEUR !!!","feur","FEUUUUUR","coubeh!","kwak"]
-    if bool(pattern.search(ctx.content)) == True and random.randint(0, 100) < 50:
+    if bool(pattern.search(ctx.content)) == True and random.randint(0, 100) < 30:
         await ctx.channel.send(random.choice(feurlist))
 
-    if not bot.user.mentioned_in(ctx):
-        await bot.process_commands(ctx)
-        return
-
-    if qdb.get_server_info(ctx.guild.id, "ai_chat"):
+    if qdb.get_server_info(ctx.guild.id, "ai_chat") and bot.user.mentioned_in(ctx)==True:
         qdb.add_quackers(ctx.guild.id, ctx.author.name)
         qdb.add(ctx.guild.id, ctx.author.name, 10)
         qlogs.info(f'// RESPONDING TO : {ctx.author.name}')
@@ -1116,7 +1112,9 @@ async def on_message(ctx):
                 await ctx.channel.send(mess)
         
         qopenai.update_memory_summary()
-
+    else:
+        await bot.process_commands(ctx)
+        return
 
 @bot.event
 async def on_voice_state_update(member, before, after):
