@@ -16,7 +16,7 @@
                     </p>
                 </h5>  
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="welcome-toggle" checked>
+                    <input class="form-check-input toggle-section" type="checkbox" id="game-toggle" checked>
                     <label class="form-check-label" for="welcome-toggle">Active</label>
                 </div>                              
             </div>
@@ -41,6 +41,7 @@
             <button type="submit" class="btn button text-white">Save Changes</button>
         </div>
         <!-- Dices Section -->
+        <div id="dice-block">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Dices
@@ -59,7 +60,9 @@
             </div>
             <button type="submit" class="btn button text-white">Save Changes</button>
         </div>
+        </div>
         <!-- RPS Section -->
+        <div id="rps-block">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>RPS
@@ -78,7 +81,9 @@
             </div>
             <button type="submit" class="btn button text-white">Save Changes</button>
         </div>
+        </div>
         <!-- 8Ball Section -->
+        <div id="hball-block">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>8 Ball
@@ -98,7 +103,9 @@
             </div>
             <button type="submit" class="btn button text-white">Save Changes</button>
         </div>
+        </div>
         <!-- Bets Section -->
+        <div id="bet-block">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Bets
@@ -130,7 +137,8 @@
                 </form>
             </div>
             <button type="submit" class="btn button text-white">Save Changes</button>
-        </div>                
+        </div>
+        </div>             
     </section>
 </main>
 <script src="{{ url_for('static', filename='js/config-games.js') }}"></script>
