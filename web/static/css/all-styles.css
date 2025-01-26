@@ -15,6 +15,15 @@ body {
     -ms-user-select: none; /* For older versions of IE */
     -moz-user-select: none; /* For Firefox */
 }
+/* Disable dragging for all images and links */
+img, a {
+    -webkit-user-drag: none; /* For WebKit browsers */
+    -khtml-user-drag: none;  /* For Konqueror */
+    -moz-user-drag: none;    /* For older Firefox */
+    -o-user-drag: none;      /* For Opera */
+    user-drag: none;         /* Standard property */
+}
+
 
 
 /* General Body Styling */
