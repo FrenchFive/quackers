@@ -137,6 +137,8 @@ def get_server_info(guild, info):
 def get_server_list(param):
     CURSOR.execute(f'SELECT server_id FROM servers WHERE {param} = 1')
     result = CURSOR.fetchall()
+    if result == None:
+        return []
     return result
 
 #MEMBERS
@@ -446,7 +448,7 @@ def clear_stats(guild):
 
 def backup_db():
     bckup_path = os.path.join(ROOT_DIR, "db/backup/")
-    bckup_file = os.path.join(backup_db, "bckup_quackers.db")
+    bckup_file = os.path.join(bckup_path, "bckup_quackers.db")
 
     os.makedirs(bckup_path, exist_ok=True)
 
