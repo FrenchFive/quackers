@@ -228,7 +228,7 @@ class PresentationModal(nextcord.ui.Modal):
 
         #removing the role NEWBIE
         await self.interaction.remove_roles(self.role, reason="Role removed after presentation completion.")
-        qlogs.info(f"Role '{self.newbies}' removed from {self.user}.")
+        qlogs.info(f"Role '{self.role.name}' removed from {self.user}.")
 
         embed = nextcord.Embed(
             title=f"🎉 Welcome {self.user} to the Server! 🎉",
@@ -250,13 +250,13 @@ class PresentationModal(nextcord.ui.Modal):
             else:
                 print(f"Error: Channel {self.target_channel} not found.")
 
-@bot.slash_command(name="presentation", description="Introduce yourself to the server!", guild_ids=serverid)
+@bot.slash_command(name="presentation", description="Introduce yourself to the server!", guild_ids=qdb.get_server_list("prst"))
 async def introduce(interaction: nextcord.Interaction):
     qdb.user_in_db(interaction.guild.id, interaction.user)
-    
+
     guild = interaction.guild
-    role_newbies = qdb.get_server_info(guild.id, "prst_role")
-    role = next((role for role in guild.roles if role.name == role_newbies), None)
+    role_new = qdb.get_server_info(guild.id, "prst_role")
+    role = guild.get_role(role_new)
     if role is None:
         await interaction.response.send_message(
             "Required role not found in the server.",
@@ -265,7 +265,7 @@ async def introduce(interaction: nextcord.Interaction):
         return
 
     user_roles = interaction.user.roles
-    has_required_role = any(role.name == role_newbies for role in user_roles)
+    has_required_role = any(urole.id == role.id for urole in user_roles)
     if not has_required_role:
         await interaction.response.send_message(
             "You do not have the required role to use this command.",
@@ -286,7 +286,7 @@ async def introduce(interaction: nextcord.Interaction):
     random_questions = random.sample(introduction, 3)
 
     channel_welcome = qdb.get_server_info(interaction.guild.id, "wlc_ch_id")
-    await interaction.response.send_modal(PresentationModal(target_channel=channel_welcome, user=interaction.user, imgpath=imgpath, questions=random_questions, role=role, newbies=role_newbies))  
+    await interaction.response.send_modal(PresentationModal(target_channel=channel_welcome, user=interaction.user, imgpath=imgpath, questions=random_questions, role=role, newbies=role_new))  
 
 
 class AmountModal(nextcord.ui.Modal):
