@@ -847,6 +847,13 @@ async def admin_scan(interaction: Interaction):
         f"**Emoji Count**: {len(guild.emojis)}\n"
     )
 
+    try:
+        # Reload all slash commands
+        await bot.tree.sync()
+        qlogs.ingo("Successfully reloaded and updated all slash commands.")
+    except Exception as e:
+        qlogs.ingo(f"An error occurred while reloading slash commands: {e}")
+
     # Send the initial message with server details
     await interaction.response.send_message(response_message)
 
