@@ -46,7 +46,7 @@
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
                             <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
-                            <span class="form-control" id="basic-addon2">per message</span>
+                            <span class="form-control" id="basic-addon2">per command</span>
                         </div>
                     </div>  
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
@@ -72,6 +72,13 @@
                         <div class="form-check form-switch">
                             <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
                             <label class="form-check-label" for="bot-reaction">Active</label>
+                        </div>
+                        <div style="width: 100%;">
+                            <span class="explanation-text" style="margin-top: 0; display: block;">Connection Reward</span>
+                        </div>
+                        <div class="input-group mb-3" style="width: 100%;">
+                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <span class="form-control" id="basic-addon2">per connection</span>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per hour spent:</span>
@@ -199,7 +206,13 @@
                             <span class="input-group-text" id="basic-addon1">To</span>
                             <input type="text" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
                         </div>
-                          
+                        <label for="percentage-of-growth" class="form-label" style="margin-bottom: 1;">
+                            Randomize once once reached the limit:
+                        </label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
+                            <label class="form-check-label" for="bot-reaction">Active</label>
+                        </div>
                           
                     </div>
                     <button type="submit" class="btn button text-white">Save Changes</button> 
