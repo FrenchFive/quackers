@@ -84,7 +84,7 @@ async def send(interaction: Interaction, amount: int, user: nextcord.Member):
     await interaction.response.send_message(result)
 
 
-@bot.slash_command(name="coins", description="Gives you your QuackCoins balance.", guild_ids=serverid)
+@bot.slash_command(name="coins", description="Gives you your QuackCoins balance.", guild_ids=qdb.get_server_list("eco"))
 async def coins(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
     qdb.user_in_db(interaction.guild.id, interaction.user)
     if user:
@@ -125,7 +125,7 @@ async def info(interaction: Interaction, user: Optional[nextcord.Member] = Slash
     await interaction.followup.send(file=imgfile)
 
 
-@bot.slash_command(name="leaderboard", description="Display the Top.10 of the server", guild_ids=serverid)
+@bot.slash_command(name="leaderboard", description="Display the Top.10 of the server", guild_ids=qdb.get_server_list("eco"))
 async def leaderboard(interaction: Interaction):
     qdb.user_in_db(interaction.guild.id, interaction.user)
 
@@ -475,7 +475,7 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
 
 
 # qgames
-@bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=serverid)
+@bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids=list(set(qdb.get_server_list("dices")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game"))))
 async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(required=False), roll: Optional[int] = SlashOption(required=False)):
     qdb.user_in_db(interaction.guild.id, interaction.user)
 
@@ -514,7 +514,7 @@ async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(requi
     await interaction.response.send_message(response)
 
 
-@bot.slash_command(name="rps", description="Gamble QuackCoins against Quackers by playing Rock Paper Scissors ...", guild_ids=serverid)
+@bot.slash_command(name="rps", description="Gamble QuackCoins against Quackers by playing Rock Paper Scissors ...", guild_ids=list(set(qdb.get_server_list("rps")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game"))))
 async def rps(
     interaction: Interaction,
     bet: int,
@@ -548,7 +548,7 @@ async def rps(
     await interaction.response.send_message(result)
 
 
-@bot.slash_command(name="8ball", description="Quackers gives answers to any questions. [YES or NO questions]", guild_ids=serverid)
+@bot.slash_command(name="8ball", description="Quackers gives answers to any questions. [YES or NO questions]", guild_ids=list(set(qdb.get_server_list("hball")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game"))))
 async def eightball(interaction: Interaction, question: str):
     result = qgames.hball(interaction.user.name)
     message = f'> {interaction.user.name.capitalize()} asked : " *{question}* " \n {result}'
@@ -658,7 +658,7 @@ class Betting(nextcord.ui.Modal):
             else:
                 await interaction.send(f'{interaction.user.mention} do not have enough QuackCoins', ephemeral=True)
 
-@bot.slash_command(name="bet-create", description="Create a BET", guild_ids=serverid)
+@bot.slash_command(name="bet-create", description="Create a BET", guild_ids=list(set(qdb.get_server_list("bet")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game"))))
 async def bet_create(interaction: nextcord.Interaction):
     qdb.user_in_db(interaction.guild.id, interaction.user)
 
@@ -669,7 +669,7 @@ async def bet_create(interaction: nextcord.Interaction):
         await interaction.response.send_message('You already have a Bet going on. || send results of your bet before creating another one "/bet-result"', ephemeral=True)
 
 
-@bot.slash_command(name="bet-close", description="Close a BET, users won't be able to bet on it.", guild_ids=serverid)
+@bot.slash_command(name="bet-close", description="Close a BET, users won't be able to bet on it.", guild_ids=list(set(qdb.get_server_list("bet")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game"))))
 async def bet_close(interaction: nextcord.Interaction):
     qdb.user_in_db(interaction.guild.id, interaction.user)
 
@@ -687,7 +687,7 @@ async def bet_close(interaction: nextcord.Interaction):
         await interaction.send(mess)
 
 
-@bot.slash_command(name="bet-result", description="Sends the money", guild_ids=serverid)
+@bot.slash_command(name="bet-result", description="Sends the money", guild_ids=list(set(qdb.get_server_list("bet")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game"))))
 async def bet_result(
     interaction: Interaction,
     option: int = SlashOption(
