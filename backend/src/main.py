@@ -72,7 +72,7 @@ async def daily(interaction: Interaction):
     await interaction.response.send_message(result)
 
 
-@bot.slash_command(name="send", description="Send QuackCoins to someone.", guild_ids=serverid)
+@bot.slash_command(name="send", description="Send QuackCoins to someone.", guild_ids=list(set(qdb.get_server_list("snd")) & set(qdb.get_server_list("eco"))))
 async def send(interaction: Interaction, amount: int, user: nextcord.Member):
     qdb.user_in_db(interaction.guild.id, interaction.user)
     qdb.user_in_db(interaction.guild.id, user)
