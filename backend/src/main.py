@@ -1070,9 +1070,12 @@ async def on_member_remove(member):
 
     if qdb.get_server_info(guild.id, "gdb")==True:
         channel = bot.get_channel(qdb.get_server_info(guild.id, "gdb_ch_id"))
-        message = qdb.get_server_info(guild.id, "gdb_msg_content").replace("{name}", member.name)
-        if len(message) <= 1:
-            message = f"{member.name} a quitte le serveur"
+        if qdb.get_server_info(guild.id, "gdb_msg")==True:
+            message = qdb.get_server_info(guild.id, "gdb_msg_content").replace("{name}", member.name)
+        else:
+            with open(os.path.join(TXT_PATH, "goodbye.txt"), "r") as file:
+                goodbye_message = file.readlines()
+            message = random.choice(goodbye_message).replace("{name}", member.name)
         if channel:
             await channel.send(message)
     

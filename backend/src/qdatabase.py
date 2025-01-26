@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS "servers" (
 
     "gdb" BOOLEAN DEFAULT 0,
     "gdb_ch_id" INTEGER DEFAULT 0,
+    "gdb_msg" BOOLEAN DEFAULT 0,
     "gdb_msg_content" TEXT DEFAULT '',
 
     "prst" BOOLEAN DEFAULT 0,
