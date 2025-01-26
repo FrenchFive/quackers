@@ -141,6 +141,11 @@ def get_server_list(param):
         return []
     return result
 
+def get_server_name(guild):
+    CURSOR.execute('SELECT server_name FROM servers WHERE server_id = ?', (guild,))
+    result = CURSOR.fetchone()
+    return result
+
 #MEMBERS
 def user_in_db(guild, member):
     if member.bot:
