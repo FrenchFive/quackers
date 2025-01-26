@@ -36,21 +36,20 @@ CREATE TABLE IF NOT EXISTS "servers" (
     "wlc" BOOLEAN DEFAULT 0,
     "wlc_ch_id" INTEGER DEFAULT 0,
     "wlc_msg" BOOLEAN DEFAULT 0,
-    "wlc_msg_content" TEXT DEFAULT ' ',
+    "wlc_msg_content" TEXT DEFAULT '',
     "wlc_rct" BOOLEAN DEFAULT 0,
     "wlc_rct_cstm" BOOLEAN DEFAULT 1,
 
     "gdb" BOOLEAN DEFAULT 0,
     "gdb_ch_id" INTEGER DEFAULT 0,
-    "gdb_msg" BOOLEAN DEFAULT 0,
-    "gdb_msg_content" TEXT DEFAULT ' ',
+    "gdb_msg_content" TEXT DEFAULT '',
 
     "prst" BOOLEAN DEFAULT 0,
     "prst_ch_id" INTEGER DEFAULT 0,
     "prst_role" INTEGER DEFAULT 0,
 
     "dm" BOOLEAN DEFAULT 0,
-    "dm_msg_content" TEXT DEFAULT ' ',
+    "dm_msg_content" TEXT DEFAULT '',
 
     "eco" BOOLEAN DEFAULT 0,
     "eco_pss" BOOLEAN DEFAULT 1,

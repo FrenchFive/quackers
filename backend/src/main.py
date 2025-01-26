@@ -1149,55 +1149,63 @@ async def on_member_join(member):
     
     qdb.user_in_db(guild.id, member)
     
+    if qdb.get_server_info(guild.id, "wlc")==True:
+        if qdb.get_server_info(guild.id, "wlc_msg")==True:
+            welcomemsg = qdb.get_server_info(guild.id, "wlc_msg_content").replace("{name}", member.mention)
+        else:
+            with open(os.path.join(TXT_PATH, "welcome.txt"), "r") as file:
+                welcome_message = file.readlines()
+            welcomemsg = random.choice(welcome_message).replace("{name}", member.mention)
 
-    with open(os.path.join(TXT_PATH, "welcome.txt"), "r") as file:
-        welcome_message = file.readlines()
-    random_welcome = random.choice(welcome_message).replace("{name}", member.mention)
-
-    channel = bot.get_channel(qdb.get_server_info(guild.id, "wlc_ch_id"))
-    if channel:
-        message = await channel.send(random_welcome)
-        emojis = ["\U0001F44C", "\U0001F4AF", "\U0001F389", "\U0001F38A"]
-        server_emojis = guild.emojis
-        emojis.extend([str(e) for e in server_emojis])
-        await message.add_reaction(random.choice(emojis))
+        channel = bot.get_channel(qdb.get_server_info(guild.id, "wlc_ch_id"))
+        if channel:
+            message = await channel.send(welcomemsg)
+            if qdb.get_server_info(guild.id, "wlc_rct")==True:
+                emojis = ["\U0001F44C", "\U0001F4AF", "\U0001F389", "\U0001F38A"]
+                if qdb.get_server_info(guild.id, "wlc_rct_cstm")==True:
+                    server_emojis = guild.emojis
+                    emojis.extend([str(e) for e in server_emojis])
+                await message.add_reaction(random.choice(emojis))
     
-    role_newbies = qdb.get_server_info(guild.id, "prst_role")
-    role = next((r for r in guild.roles if r.name == role_newbies), None)
+    #ROLE ASSIGNEMENT
+    if qdb.get_server_info(guild.id, "prst")==True:
+        role_new = qdb.get_server_info(guild.id, "prst_role")
+        role = guild.get_role(role_new)
 
-    if role:
-        try:
+        if role:
             await member.add_roles(role, reason="Assigned role upon joining the server.")
-            print(f"Assigned role '{role_newbies}' to {member.name}.")
-        except Exception as e:
-            print(f"Failed to assign role '{role_newbies}' to {member.name}: {e}")
-    else:
-        print(f"Role '{role_newbies}' not found in the server.")
+            print(f"Assigned role '{role.name}' to {member.name}.")
+        else:
+            print(f"Role '{role.name}' not found in the server.")
     
-    #read from the file
-    with open(os.path.join(TXT_PATH, "welcome_private.txt"), "r", encoding='utf-8') as file:
-        message_welcome = file.read().replace("{name}", member.name)
-
+    
     # Send a private message to the user
-    try:
-        await member.send(message_welcome)
-        qlogs.info(f"- Sent a welcome message to {member.name}")
-    except Exception as e:
-        qlogs.error(f"Failed to send a welcome message to {member.name}: {e}")
+    if qdb.get_server_info(guild.id, "dm")==True:
+        message_welcome = qdb.get_server_info(guild.id, "dm_msg_content").replace("{name}", member.name)
+        if len(message_welcome) <= 1:
+            with open(os.path.join(TXT_PATH, "welcome_private.txt"), "r", encoding='utf-8') as file:
+                message_welcome = file.read()
+        try:
+            await member.send(message_welcome)
+            qlogs.info(f"- Sent a welcome message to {member.name}")
+        except Exception as e:
+            qlogs.error(f"Failed to send a welcome message to {member.name}: {e}")
     
     qdb.add_stat(guild=guild.id, user=member.name, type="ARR", amount=1)
 
 
 @bot.event
 async def on_member_remove(member):
-    print(f"{member.name} has left the server")
-    qlogs.info(f"{member.name} has left the server")
-
     guild = member.guild
+    qlogs.info(f"{member.name} has left the server :: {guild.name}")
 
-    channel = bot.get_channel(qdb.get_server_info(guild.id, "admin_ch_id"))
-    if channel:
-        await channel.send(f"{member.name} a quitte le serveur")
+    if qdb.get_server_info(guild.id, "gdb")==True:
+        channel = bot.get_channel(qdb.get_server_info(guild.id, "gdb_ch_id"))
+        message = qdb.get_server_info(guild.id, "gdb_msg_content").replace("{name}", member.name)
+        if len(message) <= 1:
+            message = f"{member.name} a quitte le serveur"
+        if channel:
+            await channel.send(message)
     
     qdb.add_stat(guild=guild.id, user=member.name, type="DEP", amount=1)
 
