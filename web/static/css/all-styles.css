@@ -8,6 +8,14 @@
     src: url(../data/fonts/thunder.ttf);
 }
 
+/* Disabling txt Selection */
+body {
+    user-select: none; /* Standard property */
+    -webkit-user-select: none; /* For Safari */
+    -ms-user-select: none; /* For older versions of IE */
+    -moz-user-select: none; /* For Firefox */
+}
+
 
 /* General Body Styling */
 body {
