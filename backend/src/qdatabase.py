@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS "servers" (
     "eco_pss_msg_value" INTEGER DEFAULT 1,
     "eco_pss_ch" BOOLEAN DEFAULT 1,
     "eco_pss_ch_value" INTEGER DEFAULT 15,
+    "eco_pss_ch_hour" INTEGER DEFAULT 50,
     "eco_pss_ch_afk" BOOLEAN DEFAULT 0,
     "eco_pss_ch_afk_id" INTEGER DEFAULT 0,
     "eco_pss_cmd" BOOLEAN DEFAULT 1,
@@ -372,9 +373,7 @@ def voicestalled(guild, name):
         secelapsed = timenow - past
         if secelapsed > 3600:
             hours = divmod(secelapsed, 3600)[0]
-            amount = 50 * hours
-            if amount > 500:
-                amount = 500
+            amount = get_server_info(guild, "eco_pss_ch_hour") * hours
             add(guild, name, amount)
             #ADD HOURS TO DB
             CURSOR.execute(f"SELECT voiceh FROM '{guild}' WHERE name = ?",(name,))
