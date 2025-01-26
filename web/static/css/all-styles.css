@@ -199,3 +199,16 @@ body {
     font-family: Arial, sans-serif;
     padding-bottom: 50px; /* Ajoute un peu d'espace sous la page */
 }
+
+
+.schabo {
+    font-family: 'Quackers1', sans-serif;
+    letter-spacing: -0.5px;
+    font-size: 50pt;
+}
+
+.thunder {
+    font-family: 'Quackers2', sans-serif;
+    letter-spacing: 0.5px;
+    font-size: 30pt;
+}
