@@ -61,7 +61,7 @@ questions = [
 ]
 
 # COMMANDS
-@bot.slash_command(name="daily", description="Receive daily QuackCoins.", guild_ids=serverid)
+@bot.slash_command(name="daily", description="Receive daily QuackCoins.", guild_ids = list(set(qdb.get_server_list("dly")) & set(qdb.get_server_list("eco"))))
 async def daily(interaction: Interaction):
     qdb.user_in_db(interaction.guild.id, interaction.user)
     
@@ -376,7 +376,7 @@ class BankView(nextcord.ui.View):
         # Show the modal for withdrawing coins
         await interaction.response.send_modal(AmountModal(self.user_name, action=1, base_m=self.base_m, message=self.message))
 
-@bot.slash_command(name="bank", description="Interact with The Quackery Treasury", guild_ids=serverid)
+@bot.slash_command(name="bank", description="Interact with The Quackery Treasury", guild_ids=list(set(qdb.get_server_list("bnk")) & set(qdb.get_server_list("eco"))))
 async def bank(interaction: nextcord.Interaction):
     qdb.user_in_db(interaction.guild.id, interaction.user)
     
@@ -905,13 +905,14 @@ async def admin_scan(interaction: Interaction):
 async def daily_update():
 
     for server in serverid:
-        interest_rate = BASE_INTEREST_RATE
-        qlogs.info(f"Updating BANK : {interest_rate} % :: {server}")
-        qdb.bank_update(server, interest_rate)
+        if qdb.get_server_info(server, "bnk_itrs")==True and qdb.get_server_info(server, "bnk")==True:
+            interest_rate = (qdb.get_server_info(server, "bnk_itrs_value")/(datetime(datetime.now().year, datetime.now().month % 12 + 1, 1) - timedelta(days=1)).day) 
+            qlogs.info(f"Updating BANK : {interest_rate} % :: {server}")
+            qdb.bank_update(server, interest_rate)
 
-        channel = bot.get_channel(qdb.get_server_info(server, "dbg_ch_id"))
-        if channel and qdb.get_server_info(server, "dbg_ch")==True:
-            await channel.send("BANK HAS BEEN UPDATED")
+            channel = bot.get_channel(qdb.get_server_info(server, "dbg_ch_id"))
+            if channel and qdb.get_server_info(server, "dbg_ch")==True:
+                await channel.send("BANK HAS BEEN UPDATED")
     
     qdb.backup_db()
 
