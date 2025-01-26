@@ -1043,8 +1043,9 @@ async def on_message(ctx):
     qdb.user_in_db(ctx.guild.id, ctx.author)
 
     qdb.add_mess(ctx.guild.id, ctx.author.name)
-    qdb.add(ctx.guild.id, ctx.author.name, 1)
     qdb.add_stat(guild=ctx.guild.id, user=ctx.author.name, type="MESS", amount=len(ctx.content))
+    if qdb.get_server_info(ctx.guild.id, "eco_pss_msg")==True:
+        qdb.add(ctx.guild.id, ctx.author.name, qdb.get_server_info(ctx.guild.id, "eco_pss_msg_value"))
 
     #COIFFEUR
     pattern = re.compile(r"(?:^|\s)[qQ]+[uU]+[oO]+[iI]+[!? ]*$")
@@ -1072,35 +1073,40 @@ async def on_message(ctx):
         await bot.process_commands(ctx)
         return
 
+def vc_connection(guild, member):
+    # User connected to a voice channel
+    qdb.voiceactive(guild.id, member.name)
+    qdb.add(guild.id, member.name, 15)
+    qlogs.info(f"{member.name} is connected to a Voice Channel :: {guild.name}")
+
+    qdb.add_stat(guild=guild.id, user=member.name, type="VC_CON", amount=1)
+
+def vc_disconnect(guild, member):
+    # User disconnected from a voice channel
+    hours = qdb.voicestalled(guild.id, member.name)
+    qlogs.info(f"{member.name} is disconnected")
+
+    qdb.add_stat(guild=guild.id, user=member.name, type="VC_HOUR", amount=hours)
+
 @bot.event
 async def on_voice_state_update(member, before, after):
     guild = member.guild
+    qdb.user_in_db(guild.id, member)
 
     if before.channel is None and after.channel is not None:
-        # User connected to a voice channel
-        qdb.user_in_db(guild.id, member)
-
-        qdb.voiceactive(guild.id, member.name)
-        qdb.add(guild.id, member.name, 15)
-        qlogs.info(f"{member.name} is connected to a Voice Channel")
-
-        qdb.add_stat(guild=guild.id, user=member.name, type="VC_CON", amount=1)
+        vc_connection(guild, member)
+    
+    if after.channel is not None and before.channel is not None and before.channel.id == qdb.get_server_info(guild.id, "eco_pss_ch_afk_id") and qdb.get_server_info(guild.id, "eco_pss_ch_afk")==True:
+        vc_connection(guild, member)
 
     if before.channel is not None and after.channel.id == qdb.get_server_info(guild.id, "eco_pss_ch_afk_id") and qdb.get_server_info(guild.id, "eco_pss_ch_afk")==True:
-        # USER CONNECTED TO AFK
-        qdb.user_in_db(guild.id, member)
-        
-        qlogs.info(f"{member.name} is detected AFK")
-        qdb.voicestalled(guild.id, member.name)
+        vc_disconnect(guild, member)
 
     if before.channel is not None and after.channel is None:
-        # User disconnects
-        qdb.user_in_db(guild.id, member)
-
-        hours = qdb.voicestalled(guild.id, member.name)
-        qlogs.info(f"{member.name} is disconnected")
-
-        qdb.add_stat(guild=guild.id, user=member.name, type="VC_HOUR", amount=hours)
+        if before.channel.id == qdb.get_server_info(guild.id, "eco_pss_ch_afk_id") and qdb.get_server_info(guild.id, "eco_pss_ch_afk")==True:
+            pass
+        else:
+            vc_disconnect(guild, member)
 
 #WELCOME and GOODBYE
 @bot.event
