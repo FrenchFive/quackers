@@ -66,7 +66,8 @@ async def daily(interaction: Interaction):
     qdb.user_in_db(interaction.guild.id, interaction.user)
     
     result = qdb.daily(interaction.guild.id, interaction.user.name)
-    qdb.add(interaction.guild.id, interaction.user.name, 5)
+    if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
+        qdb.add(interaction.guild.id, interaction.user.name, qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value"))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(result)
@@ -78,7 +79,8 @@ async def send(interaction: Interaction, amount: int, user: nextcord.Member):
     qdb.user_in_db(interaction.guild.id, user)
 
     result = qdb.send(interaction.guild.id, interaction.user.name, user.name, amount)
-    qdb.add(interaction.guild.id, interaction.user.name, 5)
+    if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
+        qdb.add(interaction.guild.id, interaction.user.name, qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value"))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(result)
@@ -90,7 +92,8 @@ async def coins(interaction: Interaction, user: Optional[nextcord.Member] = Slas
     if user:
         qdb.user_in_db(interaction.guild.id, user)
 
-    qdb.add(interaction.guild.id, interaction.user.name, 5)
+    if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
+        qdb.add(interaction.guild.id, interaction.user.name, qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value"))
 
     name = user.name if user else interaction.user.name
     result = qdb.coins(interaction.guild.id, name)
@@ -116,7 +119,8 @@ async def info(interaction: Interaction, user: Optional[nextcord.Member] = Slash
     await interaction.response.defer()
 
     result, rank = qdb.info(interaction.guild.id, name)
-    qdb.add(interaction.guild.id, interaction.user.name, 5)
+    if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
+        qdb.add(interaction.guild.id, interaction.user.name, qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value"))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     path = qdraw.info(name, url, result, rank)
@@ -134,7 +138,8 @@ async def leaderboard(interaction: Interaction):
     result = '\n'.join(results)
     message = intro + result
 
-    qdb.add(interaction.guild.id, interaction.user.name, 5)
+    if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
+        qdb.add(interaction.guild.id, interaction.user.name, qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value"))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     await interaction.response.send_message(message)
@@ -147,7 +152,8 @@ async def duck(interaction: Interaction):
     response = requests.get("https://random-d.uk/api/v2/random").json()
     url = response["url"]
     
-    qdb.add(interaction.guild.id, interaction.user.name, 5)
+    if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
+        qdb.add(interaction.guild.id, interaction.user.name, qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value"))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
     
     await interaction.response.send_message(url)
@@ -380,7 +386,8 @@ class BankView(nextcord.ui.View):
 async def bank(interaction: nextcord.Interaction):
     qdb.user_in_db(interaction.guild.id, interaction.user)
     
-    qdb.add(interaction.guild.id, interaction.user.name, 5)
+    if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
+        qdb.add(interaction.guild.id, interaction.user.name, qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value"))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     # Get the user's balance
@@ -462,7 +469,8 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
             return
         qdb.add(interaction.guild.id, interaction.user.name, -price)
 
-    qdb.add(interaction.guild.id, interaction.user.name, 5)
+    if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
+        qdb.add(interaction.guild.id, interaction.user.name, qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value"))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
     qlogs.info(f"{interaction.user.name} GENERATING IMAGE :: {prompt}")
@@ -509,7 +517,8 @@ async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(requi
             amount = 0
 
         qdb.add(interaction.guild.id, name, amount)
-        qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
+        if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
+            qdb.add(interaction.guild.id, interaction.user.name, random.randint(0,qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value")))
         qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=amount)
     else:
         response = "Not enough QuackCoins"
@@ -545,7 +554,8 @@ async def rps(
 
         bet *= mult
         qdb.add(interaction.guild.id, name, bet)
-        qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
+        if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
+            qdb.add(interaction.guild.id, interaction.user.name, random.randint(0,qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value")))
         qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=bet)
     else:
         result = "Not enough QuackCoins available."
@@ -556,7 +566,8 @@ async def rps(
 async def eightball(interaction: Interaction, question: str):
     result = qgames.hball(interaction.user.name)
     message = f'> {interaction.user.name.capitalize()} asked : " *{question}* " \n {result}'
-    qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
+    if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
+            qdb.add(interaction.guild.id, interaction.user.name, random.randint(0,qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value")))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
     await interaction.response.send_message(message)
 
