@@ -106,13 +106,6 @@ def get_all_server_ids():
     
     return server_ids
 
-def add_server(guild, name):
-    if guild in get_all_server_ids():
-        return
-    CURSOR.execute('INSERT INTO servers (server_id, server_name) VALUES(?, ?)', (guild, name))
-    CONNECTION.commit()
-    qlogs.info(f'--QDB // ADDED SERVER : {name} :: {guild}')
-
 def servers_table_exists(guild):
     CURSOR.execute(f'''CREATE TABLE IF NOT EXISTS "{guild}" (
         "id" INTEGER UNIQUE, 
@@ -130,6 +123,14 @@ def servers_table_exists(guild):
         PRIMARY KEY("id" AUTOINCREMENT)
     );''')
     CONNECTION.commit()
+
+def add_server(guild, name):
+    if guild in get_all_server_ids():
+        return
+    CURSOR.execute('INSERT INTO servers (server_id, server_name) VALUES(?, ?)', (guild, name))
+    CONNECTION.commit()
+    qlogs.info(f'--QDB // ADDED SERVER : {name} :: {guild}')
+    servers_table_exists(guild)
 
 def get_server_info(guild, info):
     CURSOR.execute(f'SELECT {info} FROM servers WHERE server_id = ?', (guild,))
