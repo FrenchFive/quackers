@@ -1120,7 +1120,7 @@ async def on_message(ctx):
 def vc_connection(guild, member):
     # User connected to a voice channel
     qdb.voiceactive(guild.id, member.name)
-    qdb.add(guild.id, member.name, 15)
+    qdb.add(guild.id, member.name, qdb.get_server_info(guild.id, "eco_pss_ch_value"))
     qlogs.info(f"{member.name} is connected to a Voice Channel :: {guild.name}")
 
     qdb.add_stat(guild=guild.id, user=member.name, type="VC_CON", amount=1)
