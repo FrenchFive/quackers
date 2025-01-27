@@ -36,26 +36,23 @@
                             Custom Message
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="wlc-cstm-msg-toggle" checked>
+                            <label class="form-check-label" for="wlc-cstm-msg-toggle">Active</label>
                         </div>
-                        <textarea id="welcome-message" class="form-control" rows="3">🎉 Welcome {memberName} 🎉</textarea>
+                        <textarea id="wlc-cstm-msg-input" class="form-control" rows="3">🎉 Welcome {name} 🎉</textarea>
                     </div>
-                    
-                    
-                    
                     
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="general-channel" class="form-label" style="margin-bottom: 0;">
                             Bot Reaction
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction-toggle" checked>
+                            <label class="form-check-label" for="bot-reaction-toggle">Active</label>
                         </div>
                         <div class="form-check form-switch" style="width: 100%;"> <!-- Force le second toggle à prendre toute la largeur -->
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                            <label class="form-check-label" for="flexSwitchCheckDefault" style="font-size: 15px;">Random emote from the server</label>
+                            <input class="form-check-input" type="checkbox" role="switch" id="bot-random-reaction-toggle" checked>
+                            <label class="form-check-label" for="bot-random-reaction-toggle" style="font-size: 15px;">Random emote from the server</label>
                         </div>
                     </div>
                     
@@ -92,10 +89,10 @@
                     <div class="mb-3">
                         <label for="goodbye-message" class="form-label">Custom Message</label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="gdb-msg-toggle" checked>
                             <label class="form-check-label" for="bot-reaction">Active</label>
                         </div>
-                        <textarea id="goodbye-message" class="form-control" rows="3">👋 Goodbye {memberName} 👋</textarea>
+                        <textarea id="gdb-msg-input" class="form-control" rows="3">👋 Goodbye {memberName} 👋</textarea>
                     </div>
                 </form>
             </div>
