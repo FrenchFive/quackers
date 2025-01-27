@@ -10,12 +10,12 @@
          <!-- General Section -->
          <div class="card mb-4">
             <div class="card-body" id="welcome-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3">
-                        <label for="newbie-role" class="form-label">Admin role</label>
-                        <select id="newbie-role" class="form-select">
+                        <label for="admin-role" class="form-label">Admin role</label>
+                        <select id="admin-role" class="form-select">
                             {% for role in server["roles"] %}
-                                <option>{{ role.name }}</option>
+                                <option {% if data["admin_role_id"]|int == role.id|int %} selected="selected" {% endif %} value="{{ role.id }}">{{ role.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -23,7 +23,7 @@
                         <label for="presentation-txt-channel" class="form-label">General channel text</label>
                         <select id="presentation-txt-channel" class="form-select">
                             {% for channel in server["text_channels"] %}
-                                <option>{{ channel.name }}</option>
+                                <option {% if data["gnrl_ch_id"]|int == channel.id|int %} selected="selected" {% endif %}>{{ channel.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -35,7 +35,7 @@
                         </div>
                         <select id="debug-input" class="form-select">
                             {% for channel in server["text_channels"] %}
-                                <option>{{ channel.name }}</option>
+                                <option {% if data["dbg_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
                         </select>
                         
@@ -44,7 +44,7 @@
                         <label for="presentation-txt-channel" class="form-label">Bot channel text </label>
                         <select id="presentation-txt-channel" class="form-select">
                             {% for channel in server["text_channels"] %}
-                                <option>{{ channel.name }}</option>
+                                <option {% if data["bot_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -52,7 +52,7 @@
                         <label for="presentation-txt-channel" class="form-label">Admin channel text </label>
                         <select id="presentation-txt-channel" class="form-select">
                             {% for channel in server["text_channels"] %}
-                                <option>{{ channel.name }}</option>
+                                <option {% if data["admin_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
                         </select>
                     </div>                                  
