@@ -26,26 +26,27 @@
                             Passive income
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="passive-toggle" checked>
+                            <label class="form-check-label" for="passive-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">Explaination of the passive income</span>
                         </div>
                     </div> 
+                    <div id="passive-block">
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="welcome-channel" class="form-label" style="margin-bottom: 0;">
-                            Passive command income
+                            Command income
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="pss-cmd-toggle" checked>
+                            <label class="form-check-label" for="pss-cmd-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per passive commands sent:</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="pss-cmd-input" type="number" value="15" class="form-control" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">per command</span>
                         </div>
                     </div>  
@@ -54,14 +55,14 @@
                             Messages income
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="pss-msg-toggle" checked>
+                            <label class="form-check-label" for="pss-msg-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per messages sent:</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="pss-msg-input" type="number" value="15" class="form-control" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">per message</span>
                         </div>
                     </div>                              
@@ -70,21 +71,21 @@
                             Voice channel income
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="pss-vc-toggle" checked>
+                            <label class="form-check-label" for="pss-vc-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">Connection Reward</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="pss-vconn-input" type="number" value="15" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">per connection</span>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per hour spent:</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="pss-vch-input" type="number" value="15" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">per hour</span>
                         </div>
                     </div>
@@ -93,18 +94,19 @@
                             AFK Channel
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="afk-toggle" checked>
+                            <label class="form-check-label" for="afk-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
-                            <select id="welcome-channel" class="form-select">
+                            <select class="form-select" id="afk-channel">
                                 {% for channel in server["voice_channels"] %}
                                     <option>{{ channel.name }}</option>
                                 {% endfor %}
                             </select>
                             
                         </div>
-                    </div>    
+                    </div>  
+                    </div>  
                 </form>
             </div>
             <button type="submit" class="btn button text-white">Save Changes</button>
@@ -130,14 +132,14 @@
                             Percentage of growth
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="bank-itrs" checked>
+                            <label class="form-check-label" for="bank-itrs">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per months:</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="bank-itrs-input" type="number" value="15" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">%</span>
                         </div>
                     </div>
@@ -167,11 +169,11 @@
                             Limit of maximum amount exchanged:
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="send-limit-toggle" checked>
+                            <label class="form-check-label" for="send-limit-toggle">Active</label>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="send-limit-input" type="number" value="15" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">quack coins</span>
                         </div>
                     </div>
@@ -202,11 +204,11 @@
                         </label>
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1">From</span>
-                            <input type="text" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
+                            <input type="number" value="15" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
                         </div>
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1">To</span>
-                            <input type="text" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
+                            <input type="number" value="15" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
                         </div>
                         <label for="percentage-of-growth" class="form-label" style="margin-bottom: 1;">
                             Randomize once once reached the limit:
