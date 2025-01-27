@@ -16,18 +16,20 @@
                 </h5>
                                         
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="welcome-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="welcome-toggle" {% if data['wlc'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="welcome-toggle">Active</label>
+                    </form>
                 </div>              
             </div>
 
             <div class="card-body" id="welcome-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3">
                         <label for="welcome-channel" class="form-label">Welcome Channel</label>
                         <select id="welcome-channel" class="form-select">
                             {% for channel in server["text_channels"] %}
-                                <option>{{ channel.name }}</option>
+                                <option {% if data["wlc_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -36,10 +38,10 @@
                             Custom Message
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="wlc-cstm-msg-toggle" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="wlc-cstm-msg-toggle" {% if data['wlc_msg'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="wlc-cstm-msg-toggle">Active</label>
                         </div>
-                        <textarea id="wlc-cstm-msg-input" class="form-control" rows="3">🎉 Welcome {name} 🎉</textarea>
+                        <textarea id="wlc-cstm-msg-input" class="form-control" rows="3">{% if data['wlc_msg_content'] != "" %}{{ data['wlc_msg_content'] }}{% else %}🎉 Welcome {name} 🎉{% endif %}</textarea>
                     </div>
                     
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
@@ -47,16 +49,14 @@
                             Bot Reaction
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction-toggle" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction-toggle" {% if data['wlc_rct'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="bot-reaction-toggle">Active</label>
                         </div>
                         <div class="form-check form-switch" style="width: 100%;"> <!-- Force le second toggle à prendre toute la largeur -->
-                            <input class="form-check-input" type="checkbox" role="switch" id="bot-random-reaction-toggle" checked>
+                            <input class="form-check-input" type="checkbox" role="switch" id="bot-random-reaction-toggle" {% if data['wlc_rct_cstm'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="bot-random-reaction-toggle" style="font-size: 15px;">Random emote from the server</label>
                         </div>
                     </div>
-                    
-                      
                     
                 </form>
             </div>
