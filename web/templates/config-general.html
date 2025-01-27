@@ -30,10 +30,10 @@
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="presentation-txt-channel" class="form-label">Debugging channel text</label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="debug-toggle" checked>
+                            <label class="form-check-label" for="debug-toggle">Active</label>
                         </div>
-                        <select id="presentation-txt-channel" class="form-select">
+                        <select id="debug-input" class="form-select">
                             {% for channel in server["text_channels"] %}
                                 <option>{{ channel.name }}</option>
                             {% endfor %}
@@ -62,4 +62,5 @@
         </div>             
     </section>
 </main>
+<script src="{{ url_for('static', filename='js/config-general.js') }}"></script>
 {% endblock %}

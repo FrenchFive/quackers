@@ -222,3 +222,9 @@ input[type="number"]:disabled {
     background-color: black; /* Optional: Light gray background to indicate disabled state */
     opacity: 1; /* Ensures text color is not faded */
 }
+
+select:disabled {
+    color: gray; /* Ensures text color remains white for disabled inputs */
+    background-color: black; /* Optional: Light gray background to indicate disabled state */
+    opacity: 1; /* Ensures text color is not faded */
+}
