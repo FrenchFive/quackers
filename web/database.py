@@ -21,3 +21,16 @@ def server_check(server):
         return False
 
     return True
+
+def get_server_info(guild):
+    conn = sqlite3.connect(f"{ROOT_DIR}/db/quackers.db")
+    conn.row_factory = sqlite3.Row  # This allows accessing rows as dictionaries
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM servers WHERE server_id = ?", (guild,))
+    result = cursor.fetchone()
+
+    conn.close()
+
+    results = dict(result)
+    return results

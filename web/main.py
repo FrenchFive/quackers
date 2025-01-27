@@ -166,7 +166,8 @@ def config(server_id):
         return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
-    return render_template('config-general.html', server=server)
+    data = db.get_server_info(server_id)
+    return render_template('config-general.html', server=server, data=data)
 
 @app.route('/config-welcome/<int:server_id>')
 def config_welcome(server_id):
@@ -174,7 +175,8 @@ def config_welcome(server_id):
         return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
-    return render_template('config-welcome.html', server=server)
+    data = db.get_server_info(server_id)
+    return render_template('config-welcome.html', server=server, data=data)
 
 @app.route('/config-economy/<int:server_id>')
 def config_economy(server_id):
@@ -182,7 +184,8 @@ def config_economy(server_id):
         return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
-    return render_template('config-economy.html', server=server)
+    data = db.get_server_info(server_id)
+    return render_template('config-economy.html', server=server, data=data)
 
 @app.route('/config-games/<int:server_id>')
 def config_games(server_id):
@@ -190,7 +193,8 @@ def config_games(server_id):
         return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
-    return render_template('config-games.html', server=server)
+    data = db.get_server_info(server_id)
+    return render_template('config-games.html', server=server, data=data)
 
 @app.route('/config-ai/<int:server_id>')
 def config_ai(server_id):
@@ -198,7 +202,9 @@ def config_ai(server_id):
         return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
-    return render_template('config-ai.html', server=server)
+    print(server)
+    data = db.get_server_info(server_id)
+    return render_template('config-ai.html', server=server, data=data)
 
 @app.route('/logout')
 def logout():
