@@ -3,6 +3,8 @@ import requests
 import os
 from dotenv import load_dotenv
 
+import database as db
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -51,15 +53,16 @@ def get_server_info(server_id):
     roles_data = roles_response.json()
 
     # Separate channels into text and voice
-    text_channels = [
-        {"id": channel["id"], "name": channel["name"]}
-        for channel in channels_data if channel["type"] == 0  # Type 0 is text channel
-    ]
+    if channels_data!=None:
+        text_channels = [
+            {"id": channel["id"], "name": channel["name"]}
+            for channel in channels_data if channel["type"] == 0  # Type 0 is text channel
+        ]
 
-    voice_channels = [
-        {"id": channel["id"], "name": channel["name"]}
-        for channel in channels_data if channel["type"] == 2  # Type 2 is voice channel
-    ]
+        voice_channels = [
+            {"id": channel["id"], "name": channel["name"]}
+            for channel in channels_data if channel["type"] == 2  # Type 2 is voice channel
+        ]
 
     # Combine the data
     return {
@@ -159,30 +162,40 @@ def servers():
 
 @app.route('/config/<int:server_id>')
 def config(server_id):
+    if db.server_check(server_id)!=True:
+        return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
     return render_template('config-general.html', server=server)
 
 @app.route('/config-welcome/<int:server_id>')
 def config_welcome(server_id):
+    if db.server_check(server_id)!=True:
+        return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
     return render_template('config-welcome.html', server=server)
 
 @app.route('/config-economy/<int:server_id>')
 def config_economy(server_id):
+    if db.server_check(server_id)!=True:
+        return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
     return render_template('config-economy.html', server=server)
 
 @app.route('/config-games/<int:server_id>')
 def config_games(server_id):
+    if db.server_check(server_id)!=True:
+        return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
     return render_template('config-games.html', server=server)
 
 @app.route('/config-ai/<int:server_id>')
 def config_ai(server_id):
+    if db.server_check(server_id)!=True:
+        return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
     return render_template('config-ai.html', server=server)
