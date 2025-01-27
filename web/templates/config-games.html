@@ -17,7 +17,7 @@
                 </h5>  
                 <div class="form-check form-switch">
                     <input class="form-check-input toggle-section" type="checkbox" id="game-toggle" checked>
-                    <label class="form-check-label" for="welcome-toggle">Active</label>
+                    <label class="form-check-label" for="game-toggle">Active</label>
                 </div>                              
             </div>
             <div class="card-body" id="general-section">
@@ -27,11 +27,11 @@
                             Limit how much money can be gambled
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="game-limit-toggle" checked>
+                            <label class="form-check-label" for="game-limit-toggle">Active</label>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="game-limit-input" type="number" class="form-control" value="15" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">quack coins</span>
                         </div>
                     </div>
@@ -126,11 +126,11 @@
                             Limit how much money can be gambled at once
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="bet-limit-toggle" checked>
                             <label class="form-check-label" for="bot-reaction">Active</label>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="bet-limit-input" type="number" class="form-control" value="15" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">quack coins</span>
                         </div>
                     </div>

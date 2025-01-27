@@ -47,3 +47,41 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize the visibility based on the toggle's initial state
     section.style.display = toggle.checked ? "block" : "none";
 });
+
+//DISABLE INPUT Limitation of the amount Gambled 
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('game-limit-toggle');
+    const inputField = document.getElementById('game-limit-input');
+
+    toggle.addEventListener('change', () => {
+        if (toggle.checked) {
+            inputField.disabled = false;
+        } else {
+            inputField.disabled = true;
+        }
+    });
+
+    // Initial check
+    if (!toggle.checked) {
+        inputField.disabled = true;
+    }
+});
+
+//DISABLE INPUT Limitation of the amount Betted
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('bet-limit-toggle');
+    const inputField = document.getElementById('bet-limit-input');
+
+    toggle.addEventListener('change', () => {
+        if (toggle.checked) {
+            inputField.disabled = false;
+        } else {
+            inputField.disabled = true;
+        }
+    });
+
+    // Initial check
+    if (!toggle.checked) {
+        inputField.disabled = true;
+    }
+});

@@ -21,7 +21,7 @@ img, a {
     -khtml-user-drag: none;  /* For Konqueror */
     -moz-user-drag: none;    /* For older Firefox */
     -o-user-drag: none;      /* For Opera */
-    user-drag: none;         /* Standard property */
+    -webkit-user-drag: none;         /* Standard property */
 }
 
 
@@ -211,4 +211,14 @@ body {
     font-family: 'Quackers2', sans-serif;
     letter-spacing: 0.5px;
     font-size: 30pt;
+}
+
+input::placeholder {
+    color: white;
+}
+
+input[type="number"]:disabled {
+    color: gray; /* Ensures text color remains white for disabled inputs */
+    background-color: black; /* Optional: Light gray background to indicate disabled state */
+    opacity: 1; /* Ensures text color is not faded */
 }
