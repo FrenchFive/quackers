@@ -123,7 +123,7 @@
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="bank-toggle" checked>
+                    <input class="form-check-input toggle-section" type="checkbox" id="bank-toggle" {% if data['bnk'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="bank-toggle">Active</label>
                 </div>                                         
             </div>
@@ -134,14 +134,14 @@
                             Percentage of growth
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bank-itrs" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="bank-itrs" {% if data['bnk_itrs'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="bank-itrs">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per months:</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input id="bank-itrs-input" type="number" value="15" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="bank-itrs-input" type="number" value="{{ data['bnk_itrs_value'] }}" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">%</span>
                         </div>
                     </div>
