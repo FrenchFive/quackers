@@ -15,18 +15,20 @@
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="coin-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="coin-toggle" {% if data['eco'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="coin-toggle">Active</label>
+                    </form>
                 </div>                                         
             </div>
             <div class="card-body" id="coin-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="welcome-channel" class="form-label" style="margin-bottom: 0;">
                             Passive income
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="passive-toggle" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="passive-toggle" {% if data['eco_pss'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="passive-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
@@ -39,14 +41,14 @@
                             Command income
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="pss-cmd-toggle" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="pss-cmd-toggle" {% if data['eco_pss_cmd'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="pss-cmd-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per passive commands sent:</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input id="pss-cmd-input" type="number" value="15" class="form-control" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="pss-cmd-input" type="number" value="{{ data['eco_pss_cmd_value'] }}" class="form-control" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">per command</span>
                         </div>
                     </div>  
@@ -55,14 +57,14 @@
                             Messages income
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="pss-msg-toggle" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="pss-msg-toggle" {% if data['eco_pss_msg'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="pss-msg-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per messages sent:</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input id="pss-msg-input" type="number" value="15" class="form-control" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="pss-msg-input" type="number" value="{{ data['eco_pss_msg_value'] }}" class="form-control" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">per message</span>
                         </div>
                     </div>                              
@@ -71,21 +73,21 @@
                             Voice channel income
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="pss-vc-toggle" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="pss-vc-toggle" {% if data['eco_pss_ch'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="pss-vc-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">Connection Reward</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input id="pss-vconn-input" type="number" value="15" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="pss-vconn-input" type="number" value="{{ data['eco_pss_ch_value'] }}" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">per connection</span>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per hour spent:</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input id="pss-vch-input" type="number" value="15" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="pss-vch-input" type="number" value="{{ data['eco_pss_ch_hour'] }}" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">per hour</span>
                         </div>
                     </div>
@@ -94,13 +96,13 @@
                             AFK Channel
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="afk-toggle" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="afk-toggle" {% if data['eco_pss_ch_afk'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="afk-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <select class="form-select" id="afk-channel">
                                 {% for channel in server["voice_channels"] %}
-                                    <option>{{ channel.name }}</option>
+                                    <option {% if data["eco_pss_ch_afk_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                                 {% endfor %}
                             </select>
                             
