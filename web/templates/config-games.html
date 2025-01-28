@@ -16,22 +16,24 @@
                     </p>
                 </h5>  
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="game-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="game-toggle" {% if data['game'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="game-toggle">Active</label>
+                    </form>
                 </div>                              
             </div>
             <div class="card-body" id="general-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="welcome-channel" class="form-label" style="margin-bottom: 0;">
                             Limit how much money can be gambled
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="game-limit-toggle" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="game-limit-toggle" {% if data['game_limit'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="game-limit-toggle">Active</label>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input id="game-limit-input" type="number" class="form-control" value="15" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="game-limit-input" type="number" class="form-control" value="{{ data['game_limit_value'] }}" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">quack coins</span>
                         </div>
                     </div>
@@ -50,8 +52,10 @@
                     </p>
                 </h5> 
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" {% if data['dices'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="send-toggle">Active</label>
+                    </form>
                 </div>                                         
             </div>
             <div class="card-body" id="dices-section">
@@ -71,8 +75,10 @@
                     </p>
                 </h5> 
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" {% if data['rps'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="send-toggle">Active</label>
+                    </form>
                 </div>                                         
             </div>
             <div class="card-body" id="welcome-section">
@@ -92,8 +98,10 @@
                     </p>
                 </h5> 
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" {% if data['hball'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="send-toggle">Active</label>
+                    </form>
                 </div>
             </div>
         
@@ -114,23 +122,25 @@
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="bet-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="bet-toggle" {% if data['bet'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="bet-toggle">Active</label>
+                    </form>
                 </div>                                  
             </div>
             
             <div class="card-body" id="bet-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="limit-how-much-money-gambled" class="form-label" style="margin-bottom: 0;">
                             Limit how much money can be gambled at once
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bet-limit-toggle" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="bet-limit-toggle" {% if data['bet_limit'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="bot-reaction">Active</label>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input id="bet-limit-input" type="number" class="form-control" value="15" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="bet-limit-input" type="number" class="form-control" value="{{ data['bet_limit_value'] }}" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">quack coins</span>
                         </div>
                     </div>
