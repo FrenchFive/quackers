@@ -72,27 +72,29 @@
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="goodbye-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="goodbye-toggle" {% if data['gdb'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="goodbye-toggle">Active</label>
+                    </form>
                 </div>
             </div>
             <div class="card-body" id="goodbye-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3">
                         <label for="goodbye-channel" class="form-label">Goodbye Channel</label>
                         <select id="goodbye-channel" class="form-select">
                             {% for channel in server["text_channels"] %}
-                                <option>{{ channel.name }}</option>
+                                <option{% if data["gdb_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="goodbye-message" class="form-label">Custom Message</label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="gdb-msg-toggle" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="gdb-msg-toggle" {% if data['gdb_msg'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="bot-reaction">Active</label>
                         </div>
-                        <textarea id="gdb-msg-input" class="form-control" rows="3">👋 Goodbye {memberName} 👋</textarea>
+                        <textarea id="gdb-msg-input" class="form-control" rows="3">{% if data['gdb_msg_content'] != "" %}{{ data['gdb_msg_content'] }}{% else %}👋 Goodbye {name} 👋{% endif %}</textarea>
                     </div>
                 </form>
             </div>
