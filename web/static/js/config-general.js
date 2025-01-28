@@ -20,8 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
 //BUTTON SAVE
 document.getElementById("btn-general-main").addEventListener("click", () => {
     const saveButton = document.getElementById("btn-general-main");
-    saveButton.disabled = true; // Disable the button to prevent multiple clicks
-    saveButton.innerHTML = saveButton.getAttribute("data-loading-text");
+    saveButton.disabled = true;
+    saveButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    `;
 
     const server_id = document.getElementById("server-id").value;
 
@@ -44,7 +46,7 @@ document.getElementById("btn-general-main").addEventListener("click", () => {
         .then(response => response.json())
         .then(response => {
             if (response.success) {
-                alert(response.message);
+                console.log(response.message);
             } else {
                 alert("Failed to save changes.");
             }
@@ -55,7 +57,9 @@ document.getElementById("btn-general-main").addEventListener("click", () => {
         })
         .finally(() => {
             // Revert the button back to its original state
-            saveButton.disabled = false;
-            saveButton.innerHTML = "Save Changes";
+            setTimeout(() => {
+                saveButton.disabled = false;
+                saveButton.innerHTML = "Save Changes";
+            }, 1000);
         });
 });
