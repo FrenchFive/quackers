@@ -1,4 +1,4 @@
-from consts import ROOT_DIR
+from consts import ROOT_DIR, TXT_DIR
 import sqlite3
 import os
 
@@ -34,3 +34,8 @@ def get_server_info(guild):
 
     results = dict(result)
     return results
+
+def get_txt(file):
+    with open(f"{TXT_DIR}/{file}.txt", "r", encoding="utf-8") as f:
+        txt = f.read()
+    return txt

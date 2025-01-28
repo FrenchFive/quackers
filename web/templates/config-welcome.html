@@ -150,7 +150,7 @@
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="dm-toggle" checked>
+                    <input class="form-check-input toggle-section" type="checkbox" id="dm-toggle"  {% if data['dm'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="dm-toggle">Active</label>
                 </div>
             </div>
@@ -158,7 +158,7 @@
                 <form>
                     <div class="mb-3">
                         <label for="dm-message" class="form-label">Custom Message</label>
-                        <textarea id="dm-message" class="form-control" rows="3">What the user will receive once they join</textarea>
+                        <textarea id="dm-message" class="form-control" rows="3">{% if data['dm_msg_content'] != "" %}{{ data['dm_msg_content'] }}{% else %}{{ dm }}{% endif %}</textarea>
                     </div>
                     
                 </form>

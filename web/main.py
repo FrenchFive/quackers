@@ -176,7 +176,8 @@ def config_welcome(server_id):
     check_access_token()
     server = get_server_info(server_id)
     data = db.get_server_info(server_id)
-    return render_template('config-welcome.html', server=server, data=data)
+    dm = db.get_txt("welcome_private")
+    return render_template('config-welcome.html', server=server, data=data, dm=dm)
 
 @app.route('/config-economy/<int:server_id>')
 def config_economy(server_id):
