@@ -16,3 +16,46 @@ document.addEventListener('DOMContentLoaded', () => {
         inputField.disabled = true;
     }
 });
+
+//BUTTON SAVE
+document.getElementById("btn-general-main").addEventListener("click", () => {
+    const saveButton = document.getElementById("btn-general-main");
+    saveButton.disabled = true; // Disable the button to prevent multiple clicks
+    saveButton.innerHTML = saveButton.getAttribute("data-loading-text");
+
+    const server_id = document.getElementById("server-id").value;
+
+    const data = [
+        { name: "admin_role_id", value: document.getElementById("admin-role").value },
+        { name: "gnrl_ch_id", value: document.getElementById("gnr-txt-channel").value },
+        { name: "dbg_ch", value: document.getElementById("debug-toggle").checked ? 1 : 0 },
+        { name: "dbg_ch_id", value: document.getElementById("debug-input").value },
+        { name: "bot_ch_id", value: document.getElementById("bot-txt-channel").value },
+        { name: "admin_ch_id", value: document.getElementById("admin-txt-channel").value },
+    ];
+
+    fetch("/save-config", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ server_id, data }),
+    })
+        .then(response => response.json())
+        .then(response => {
+            if (response.success) {
+                alert(response.message);
+            } else {
+                alert("Failed to save changes.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        })
+        .finally(() => {
+            // Revert the button back to its original state
+            saveButton.disabled = false;
+            saveButton.innerHTML = "Save Changes";
+        });
+});

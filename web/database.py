@@ -35,6 +35,15 @@ def get_server_info(guild):
     results = dict(result)
     return results
 
+def update_server_info(guild, parm, value):
+    conn = sqlite3.connect(f"{ROOT_DIR}/db/quackers.db")
+    cursor = conn.cursor()
+
+    cursor.execute(f"UPDATE servers SET {parm} = ? WHERE server_id = ?", (value, guild))
+    conn.commit()
+
+    conn.close()
+
 def get_txt(file):
     with open(f"{TXT_DIR}/{file}.txt", "r", encoding="utf-8") as f:
         txt = f.read()

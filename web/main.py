@@ -207,6 +207,22 @@ def config_ai(server_id):
     data = db.get_server_info(server_id)
     return render_template('config-ai.html', server=server, data=data)
 
+@app.route('/save-config', methods=['POST'])
+def save_config():
+    # Retrieve JSON payload
+    payload = request.json
+
+    # Extract server_id and data from the payload
+    server_id = payload.get("server_id")
+    received_data = payload.get("data", [])
+    
+    # Ensure `received_data` is iterable and follows the expected structure
+    for item in received_data:
+        # Assuming `db.update_server_info` is a function that updates the database
+        db.update_server_info(server_id, item["name"], item["value"])
+
+    return jsonify({"success": True, "message": "Configuration updated successfully!"}), 200
+
 @app.route('/logout')
 def logout():
     # Clear the session

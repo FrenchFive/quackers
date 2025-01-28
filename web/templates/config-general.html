@@ -20,10 +20,10 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="presentation-txt-channel" class="form-label">General channel text</label>
-                        <select id="presentation-txt-channel" class="form-select">
+                        <label for="gnr-txt-channel" class="form-label">General channel text</label>
+                        <select id="gnr-txt-channel" class="form-select">
                             {% for channel in server["text_channels"] %}
-                                <option {% if data["gnrl_ch_id"]|int == channel.id|int %} selected="selected" {% endif %}>{{ channel.name }}</option>
+                                <option {% if data["gnrl_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -41,16 +41,16 @@
                         
                     </div>
                     <div class="mb-3">
-                        <label for="presentation-txt-channel" class="form-label">Bot channel text </label>
-                        <select id="presentation-txt-channel" class="form-select">
+                        <label for="bot-txt-channel" class="form-label">Bot channel text </label>
+                        <select id="bot-txt-channel" class="form-select">
                             {% for channel in server["text_channels"] %}
                                 <option {% if data["bot_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="presentation-txt-channel" class="form-label">Admin channel text </label>
-                        <select id="presentation-txt-channel" class="form-select">
+                        <label for="admin-txt-channel" class="form-label">Admin channel text </label>
+                        <select id="admin-txt-channel" class="form-select">
                             {% for channel in server["text_channels"] %}
                                 <option {% if data["admin_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
@@ -58,7 +58,7 @@
                     </div>                                  
                 </form>
             </div>
-            <button type="submit" class="btn button text-white">Save Changes</button>
+            <button id="btn-general-main" type="submit" class="btn button text-white">Save Changes</button>
         </div>             
     </section>
 </main>
