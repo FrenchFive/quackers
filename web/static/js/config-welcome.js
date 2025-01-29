@@ -271,7 +271,7 @@ document.getElementById("btn-wlc-dm").addEventListener("click", () => {
 
     const data = [
         { name: "dm", value: document.getElementById("dm-toggle").checked ? 1 : 0 },
-        { name: "dm_msg_content", value: document.getElementById("presentation-txt-channel").value },
+        { name: "dm_msg_content", value: document.getElementById("dm-message").value },
     ];
 
     fetch("/save-config", {
