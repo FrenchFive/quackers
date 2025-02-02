@@ -1,3 +1,5 @@
+import { saveConfig } from "./utils.js";
+
 //GAME TOGGLE
 document.addEventListener("DOMContentLoaded", () => {
     const toggle = document.getElementById("game-toggle");

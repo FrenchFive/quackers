@@ -1,3 +1,5 @@
+import { saveConfig } from "./utils.js";
+
 //IMAGINE TOGGLE
 document.addEventListener("DOMContentLoaded", () => {
     const toggle = document.getElementById("imagine-toggle");

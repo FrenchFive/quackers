@@ -1,3 +1,5 @@
+import { saveConfig } from "./utils.js";
+
 //COIN TOGGLE
 document.addEventListener("DOMContentLoaded", () => {
     const toggle = document.getElementById("coin-toggle");

@@ -1,3 +1,5 @@
+import { saveConfig } from "./utils.js";
+
 //WELCOME TOGGLE
 document.addEventListener("DOMContentLoaded", () => {
     const toggle = document.getElementById("welcome-toggle");

@@ -1,3 +1,5 @@
+import { saveConfig } from "./utils.js";
+
 //DISABLE Debug channel
 document.addEventListener('DOMContentLoaded', () => {
     const toggle = document.getElementById('debug-toggle');
