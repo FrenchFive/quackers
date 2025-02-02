@@ -360,3 +360,48 @@ document.getElementById("btn-eco-snd").addEventListener("click", () => {
             }, 1000);
         });
 });
+
+//BUTTON SAVE DAILY
+document.getElementById("btn-eco-dly").addEventListener("click", () => {
+    const saveButton = document.getElementById("btn-eco-dly");
+    saveButton.disabled = true;
+    saveButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    `;
+
+    const server_id = document.getElementById("server-id").value;
+
+    const data = [
+        { name: "dly", value: document.getElementById("daily-toggle").checked ? 1 : 0 },
+        { name: "dly_from_value", value: document.getElementById("dly-from-input").value },
+        { name: "dly_to_value", value: document.getElementById("dly-to-input").value },
+        { name: "dly_random", value: document.getElementById("dly-random").checked ? 1 : 0 },
+    ];
+
+    fetch("/save-config", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ server_id, data }),
+    })
+        .then(response => response.json())
+        .then(response => {
+            if (response.success) {
+                console.log(response.message);
+            } else {
+                alert("Failed to save changes.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        })
+        .finally(() => {
+            // Revert the button back to its original state
+            setTimeout(() => {
+                saveButton.disabled = false;
+                saveButton.innerHTML = "Save Changes";
+            }, 1000);
+        });
+});
