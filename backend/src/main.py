@@ -849,8 +849,8 @@ async def admin_scan(interaction: Interaction):
         f"**Created At**: {guild.created_at}\n"
         f"**Emoji Count**: {len(guild.emojis)}\n"
         f"\n \n"
-        f"To SETUP the QUACKERS go to :: [QUACKERS](https://quackersbot.com/setup)\n"
-        f"To Locally Setup the BOT :: [GITHUB](https://github.com/FrenchFive/quackers/wiki)\n"
+        f"To SETUP the QUACKERS go to :: [QUACKERS](<https://quackersbot.com/setup>)\n"
+        f"To Locally Setup the BOT :: [GITHUB](<https://github.com/FrenchFive/quackers/wiki>)\n"
     )
 
     # Send the initial message with server details
