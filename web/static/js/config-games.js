@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const rps = document.getElementById("rps-block");
     const hball = document.getElementById("hball-block");
     const bet = document.getElementById("bet-block");
+    const roll = document.getElementById("roll-block");
 
     toggle.addEventListener("change", () => {
         if (toggle.checked) {
@@ -16,12 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
             rps.style.display = "block";
             hball.style.display = "block";
             bet.style.display = "block";
+            roll.style.display = "block";
         } else {
             section.style.display = "none";
             dice.style.display = "none";
             rps.style.display = "none";
             hball.style.display = "none";
             bet.style.display = "none";
+            roll.style.display = "none";
         }
     });
 
@@ -31,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
     rps.style.display = toggle.checked ? "block" : "none";
     hball.style.display = toggle.checked ? "block" : "none";
     bet.style.display = toggle.checked ? "block" : "none";
+    roll.style.display = toggle.checked ? "block" : "none";
 });
 
 //BET TOGGLE
@@ -143,6 +147,17 @@ document.getElementById("btn-gme-bet").addEventListener("click", () => {
     ];
     saveConfig(
         "btn-gme-bet",
+        data,
+    );
+});
+
+//BUTTON SAVE ROLL
+document.getElementById("btn-gme-roll").addEventListener("click", () => {
+    const data = [
+        { name: "roll", value: document.getElementById("roll-toggle").checked ? 1 : 0 },
+    ];
+    saveConfig(
+        "btn-gme-roll",
         data,
     );
 });
