@@ -713,7 +713,7 @@ async def bet_result(
         qgames.bet_result(interaction.guild.id, interaction.user.name, option)
         await interaction.response.send_message('MONEY SENT !!!')
 
-@bot.slash_command(name="roll", description="Roll a dice", guild_ids=serverid)
+@bot.slash_command(name="roll", description="Roll a dice", guild_ids=serv_list(list(set(qdb.get_server_list("eco")) & set(qdb.get_server_list("roll")))))
 async def roll(
         interaction: Interaction,
     sides: Optional[int] = SlashOption(

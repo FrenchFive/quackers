@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS "servers" (
     "bet" BOOLEAN DEFAULT 0,
     "bet_limit" BOOLEAN DEFAULT 0,
     "bet_limit_value" INTEGER DEFAULT 1000,
+    "roll" BOOLEAN DEFAULT 0,
 
     "ai_chat" BOOLEAN DEFAULT 0,
     "ai_img" BOOLEAN DEFAULT 0,
