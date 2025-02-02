@@ -705,6 +705,33 @@ async def bet_result(
         qgames.bet_result(interaction.guild.id, interaction.user.name, option)
         await interaction.response.send_message('MONEY SENT !!!')
 
+@bot.slash_command(name="roll", description="Roll a dice", guild_ids=serverid)
+async def roll(interaction: Interaction, sides: Optional[int] = SlashOption(required=False), number: Optional[int] = SlashOption(required=False)):
+    qdb.user_in_db(interaction.guild.id, interaction.user)
+
+    if sides is None:
+        sides = 20
+
+    if number is None:
+        number = 1
+    
+    if sides < 0:
+        sides = 20
+    if number < 0:
+        number = 1
+    
+    rolllist = []
+
+    for i in range(number):
+        result = random.randint(1, sides)
+        rolllist.append(result)
+
+    message = f"🎲 {interaction.user.name} rolled a {sides}-sided dice {number} times: {rolllist}"
+    message += f"\nTotal: {sum(rolllist)}"
+    qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
+    qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=1)
+    await interaction.response.send_message(message)
+
 
 # ADMIN
 @bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids=serverid)
