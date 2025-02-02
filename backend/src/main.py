@@ -723,12 +723,12 @@ async def roll(
 
     if sides is None:
         sides = 20
-    elif sides < 0:
+    elif sides <= 0:
         sides = 20
 
     if number is None:
         number = 1
-    elif number < 0:
+    elif number <= 0:
         number = 1
 
     for i in range(number):
