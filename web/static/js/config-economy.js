@@ -316,3 +316,47 @@ document.getElementById("btn-eco-bnk").addEventListener("click", () => {
             }, 1000);
         });
 });
+
+//BUTTON SAVE SEND
+document.getElementById("btn-eco-snd").addEventListener("click", () => {
+    const saveButton = document.getElementById("btn-eco-snd");
+    saveButton.disabled = true;
+    saveButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    `;
+
+    const server_id = document.getElementById("server-id").value;
+
+    const data = [
+        { name: "snd", value: document.getElementById("send-toggle").checked ? 1 : 0 },
+        { name: "snd_limit", value: document.getElementById("send-limit-toggle").checked ? 1 : 0 },
+        { name: "snd_limit_value", value: document.getElementById("send-limit-input").value },
+    ];
+
+    fetch("/save-config", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ server_id, data }),
+    })
+        .then(response => response.json())
+        .then(response => {
+            if (response.success) {
+                console.log(response.message);
+            } else {
+                alert("Failed to save changes.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        })
+        .finally(() => {
+            // Revert the button back to its original state
+            setTimeout(() => {
+                saveButton.disabled = false;
+                saveButton.innerHTML = "Save Changes";
+            }, 1000);
+        });
+});
