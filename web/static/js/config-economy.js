@@ -225,14 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //BUTTON SAVE ECO
 document.getElementById("btn-eco-eco").addEventListener("click", () => {
-    const saveButton = document.getElementById("btn-eco-eco");
-    saveButton.disabled = true;
-    saveButton.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    `;
-
-    const server_id = document.getElementById("server-id").value;
-
     const data = [
         { name: "eco", value: document.getElementById("coin-toggle").checked ? 1 : 0 },
         { name: "eco_pss", value: document.getElementById("passive-toggle").checked ? 1 : 0 },
@@ -246,164 +238,48 @@ document.getElementById("btn-eco-eco").addEventListener("click", () => {
         { name: "eco_pss_cmd", value: document.getElementById("pss-cmd-toggle").checked ? 1 : 0 },
         { name: "eco_pss_cmd_value", value: document.getElementById("pss-cmd-input").value },
     ];
-
-    fetch("/save-config", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ server_id, data }),
-    })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                console.log(response.message);
-            } else {
-                alert("Failed to save changes.");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        })
-        .finally(() => {
-            // Revert the button back to its original state
-            setTimeout(() => {
-                saveButton.disabled = false;
-                saveButton.innerHTML = "Save Changes";
-            }, 1000);
-        });
+    saveConfig(
+        "btn-eco-eco",
+        data,
+    );
 });
 
 //BUTTON SAVE BANK
 document.getElementById("btn-eco-bnk").addEventListener("click", () => {
-    const saveButton = document.getElementById("btn-eco-bnk");
-    saveButton.disabled = true;
-    saveButton.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    `;
-
-    const server_id = document.getElementById("server-id").value;
-
     const data = [
         { name: "bnk", value: document.getElementById("bank-toggle").checked ? 1 : 0 },
         { name: "bnk_itrs", value: document.getElementById("bank-itrs").checked ? 1 : 0 },
         { name: "bnk_itrs_value", value: document.getElementById("bank-itrs-input").value },
     ];
-
-    fetch("/save-config", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ server_id, data }),
-    })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                console.log(response.message);
-            } else {
-                alert("Failed to save changes.");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        })
-        .finally(() => {
-            // Revert the button back to its original state
-            setTimeout(() => {
-                saveButton.disabled = false;
-                saveButton.innerHTML = "Save Changes";
-            }, 1000);
-        });
+    saveConfig(
+        "btn-econ-bnk",
+        data,
+    );
 });
 
 //BUTTON SAVE SEND
 document.getElementById("btn-eco-snd").addEventListener("click", () => {
-    const saveButton = document.getElementById("btn-eco-snd");
-    saveButton.disabled = true;
-    saveButton.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    `;
-
-    const server_id = document.getElementById("server-id").value;
-
     const data = [
         { name: "snd", value: document.getElementById("send-toggle").checked ? 1 : 0 },
         { name: "snd_limit", value: document.getElementById("send-limit-toggle").checked ? 1 : 0 },
         { name: "snd_limit_value", value: document.getElementById("send-limit-input").value },
     ];
-
-    fetch("/save-config", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ server_id, data }),
-    })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                console.log(response.message);
-            } else {
-                alert("Failed to save changes.");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        })
-        .finally(() => {
-            // Revert the button back to its original state
-            setTimeout(() => {
-                saveButton.disabled = false;
-                saveButton.innerHTML = "Save Changes";
-            }, 1000);
-        });
+    saveConfig(
+        "btn-econ-snd",
+        data,
+    );
 });
 
 //BUTTON SAVE DAILY
 document.getElementById("btn-eco-dly").addEventListener("click", () => {
-    const saveButton = document.getElementById("btn-eco-dly");
-    saveButton.disabled = true;
-    saveButton.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    `;
-
-    const server_id = document.getElementById("server-id").value;
-
     const data = [
         { name: "dly", value: document.getElementById("daily-toggle").checked ? 1 : 0 },
         { name: "dly_from_value", value: document.getElementById("dly-from-input").value },
         { name: "dly_to_value", value: document.getElementById("dly-to-input").value },
         { name: "dly_random", value: document.getElementById("dly-random").checked ? 1 : 0 },
     ];
-
-    fetch("/save-config", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ server_id, data }),
-    })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                console.log(response.message);
-            } else {
-                alert("Failed to save changes.");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        })
-        .finally(() => {
-            // Revert the button back to its original state
-            setTimeout(() => {
-                saveButton.disabled = false;
-                saveButton.innerHTML = "Save Changes";
-            }, 1000);
-        });
+    saveConfig(
+        "btn-eco-dly",
+        data,
+    );
 });

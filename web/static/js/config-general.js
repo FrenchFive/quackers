@@ -21,14 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //BUTTON SAVE
 document.getElementById("btn-general-main").addEventListener("click", () => {
-    const saveButton = document.getElementById("btn-general-main");
-    saveButton.disabled = true;
-    saveButton.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    `;
-
-    const server_id = document.getElementById("server-id").value;
-
     const data = [
         { name: "admin_role_id", value: document.getElementById("admin-role").value },
         { name: "gnrl_ch_id", value: document.getElementById("gnr-txt-channel").value },
@@ -37,31 +29,8 @@ document.getElementById("btn-general-main").addEventListener("click", () => {
         { name: "bot_ch_id", value: document.getElementById("bot-txt-channel").value },
         { name: "admin_ch_id", value: document.getElementById("admin-txt-channel").value },
     ];
-
-    fetch("/save-config", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ server_id, data }),
-    })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                console.log(response.message);
-            } else {
-                alert("Failed to save changes.");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        })
-        .finally(() => {
-            // Revert the button back to its original state
-            setTimeout(() => {
-                saveButton.disabled = false;
-                saveButton.innerHTML = "Save Changes";
-            }, 1000);
-        });
+    saveConfig(
+        "btn-general-main",
+        data,
+    );
 });

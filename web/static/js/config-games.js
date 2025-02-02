@@ -90,214 +90,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
 //BUTTON SAVE GAME
 document.getElementById("btn-gme-gme").addEventListener("click", () => {
-    const saveButton = document.getElementById("btn-gme-gme");
-    saveButton.disabled = true;
-    saveButton.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    `;
-
-    const server_id = document.getElementById("server-id").value;
-
     const data = [
         { name: "game", value: document.getElementById("game-toggle").checked ? 1 : 0 },
         { name: "game_limit", value: document.getElementById("game-limit-toggle").checked ? 1 : 0 },
         { name: "game_limit_value", value: document.getElementById("game-limit-input").value },
     ];
-
-    fetch("/save-config", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ server_id, data }),
-    })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                console.log(response.message);
-            } else {
-                alert("Failed to save changes.");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        })
-        .finally(() => {
-            // Revert the button back to its original state
-            setTimeout(() => {
-                saveButton.disabled = false;
-                saveButton.innerHTML = "Save Changes";
-            }, 1000);
-        });
+    saveConfig(
+        "btn-gme-gme",
+        data,
+    );
 });
 
 //BUTTON SAVE DICES
 document.getElementById("btn-gme-dices").addEventListener("click", () => {
-    const saveButton = document.getElementById("btn-gme-dices");
-    saveButton.disabled = true;
-    saveButton.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    `;
-
-    const server_id = document.getElementById("server-id").value;
-
     const data = [
         { name: "dices", value: document.getElementById("dices-toggle").checked ? 1 : 0 },
     ];
-
-    fetch("/save-config", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ server_id, data }),
-    })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                console.log(response.message);
-            } else {
-                alert("Failed to save changes.");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        })
-        .finally(() => {
-            // Revert the button back to its original state
-            setTimeout(() => {
-                saveButton.disabled = false;
-                saveButton.innerHTML = "Save Changes";
-            }, 1000);
-        });
+    saveConfig(
+        "btn-gme-dices",
+        data,
+    );
 });
 
 //BUTTON SAVE RPS
 document.getElementById("btn-gme-rps").addEventListener("click", () => {
-    const saveButton = document.getElementById("btn-gme-rps");
-    saveButton.disabled = true;
-    saveButton.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    `;
-
-    const server_id = document.getElementById("server-id").value;
-
     const data = [
         { name: "rps", value: document.getElementById("rps-toggle").checked ? 1 : 0 },
     ];
-
-    fetch("/save-config", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ server_id, data }),
-    })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                console.log(response.message);
-            } else {
-                alert("Failed to save changes.");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        })
-        .finally(() => {
-            // Revert the button back to its original state
-            setTimeout(() => {
-                saveButton.disabled = false;
-                saveButton.innerHTML = "Save Changes";
-            }, 1000);
-        });
+    saveConfig(
+        "btn-gme-rps",
+        data,
+    );
 });
 
 //BUTTON SAVE HEIGHTBALL
 document.getElementById("btn-gme-hball").addEventListener("click", () => {
-    const saveButton = document.getElementById("btn-gme-hball");
-    saveButton.disabled = true;
-    saveButton.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    `;
-
-    const server_id = document.getElementById("server-id").value;
-
     const data = [
         { name: "hball", value: document.getElementById("hball-toggle").checked ? 1 : 0 },
     ];
-
-    fetch("/save-config", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ server_id, data }),
-    })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                console.log(response.message);
-            } else {
-                alert("Failed to save changes.");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        })
-        .finally(() => {
-            // Revert the button back to its original state
-            setTimeout(() => {
-                saveButton.disabled = false;
-                saveButton.innerHTML = "Save Changes";
-            }, 1000);
-        });
+    saveConfig(
+        "btn-gme-hball",
+        data,
+    );
 });
 
 //BUTTON SAVE BET
 document.getElementById("btn-gme-bet").addEventListener("click", () => {
-    const saveButton = document.getElementById("btn-gme-bet");
-    saveButton.disabled = true;
-    saveButton.innerHTML = `
-        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-    `;
-
-    const server_id = document.getElementById("server-id").value;
-
     const data = [
         { name: "bet", value: document.getElementById("bet-toggle").checked ? 1 : 0 },
         { name: "bet_limit", value: document.getElementById("bet-limit-toggle").checked ? 1 : 0 },
         { name: "bet_limit_value", value: document.getElementById("bet-limit-input").value },
     ];
-
-    fetch("/save-config", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ server_id, data }),
-    })
-        .then(response => response.json())
-        .then(response => {
-            if (response.success) {
-                console.log(response.message);
-            } else {
-                alert("Failed to save changes.");
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            alert("An error occurred. Please try again.");
-        })
-        .finally(() => {
-            // Revert the button back to its original state
-            setTimeout(() => {
-                saveButton.disabled = false;
-                saveButton.innerHTML = "Save Changes";
-            }, 1000);
-        });
+    saveConfig(
+        "btn-gme-bet",
+        data,
+    );
 });
