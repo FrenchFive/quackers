@@ -706,36 +706,41 @@ async def bet_result(
         await interaction.response.send_message('MONEY SENT !!!')
 
 @bot.slash_command(name="roll", description="Roll a dice", guild_ids=serverid)
-async def roll(interaction: Interaction, sides: Optional[int] = SlashOption(required=False), number: Optional[int] = SlashOption(required=False)):
+async def roll(
+        interaction: Interaction,
+    sides: Optional[int] = SlashOption(
+        required=False, 
+        description="Number of sides on the dice (e.g., 6 for a d6)"
+    ),
+    number: Optional[int] = SlashOption(
+        required=False, 
+        description="Number of dice to roll (default is 1)"
+    )
+):
     qdb.user_in_db(interaction.guild.id, interaction.user)
+    rolllist = []
+    emojili = [" ✨ ", " 💩 "]
 
     if sides is None:
+        sides = 20
+    elif sides < 0:
         sides = 20
 
     if number is None:
         number = 1
-    
-    if sides < 0:
-        sides = 20
-    if number < 0:
+    elif number < 0:
         number = 1
-    
-    rolllist = []
-    emojili = [" ✨ ", " 💩 ", ""]
 
     for i in range(number):
         result = random.randint(1, sides)
         rolllist.append(result)
 
-    if number == 1:
-        if sides in rolllist:
-            emoji = emojili[0]
-        elif 1 in rolllist:
-            emoji = emojili[1]
-        else:
-            emoji = emojili[2]
+    if all(x == sides for x in rolllist):
+        emoji = emojili[0]
+    elif all(x == 1 for x in rolllist):
+        emoji = emojili[1]
     else:
-        emoji = emojili[2]
+        emoji = ""
 
     message = f"🎲 {interaction.user.name} rolled a {sides}-sided dice {number} times: {rolllist}"
     message += f"\n{emoji}Total: **{sum(rolllist)}**{emoji}"
