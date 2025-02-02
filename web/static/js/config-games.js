@@ -213,3 +213,45 @@ document.getElementById("btn-gme-rps").addEventListener("click", () => {
             }, 1000);
         });
 });
+
+//BUTTON SAVE RPS
+document.getElementById("btn-gme-hball").addEventListener("click", () => {
+    const saveButton = document.getElementById("btn-gme-hball");
+    saveButton.disabled = true;
+    saveButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    `;
+
+    const server_id = document.getElementById("server-id").value;
+
+    const data = [
+        { name: "hball", value: document.getElementById("hball-toggle").checked ? 1 : 0 },
+    ];
+
+    fetch("/save-config", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ server_id, data }),
+    })
+        .then(response => response.json())
+        .then(response => {
+            if (response.success) {
+                console.log(response.message);
+            } else {
+                alert("Failed to save changes.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        })
+        .finally(() => {
+            // Revert the button back to its original state
+            setTimeout(() => {
+                saveButton.disabled = false;
+                saveButton.innerHTML = "Save Changes";
+            }, 1000);
+        });
+});
