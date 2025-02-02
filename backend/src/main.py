@@ -727,7 +727,7 @@ async def roll(interaction: Interaction, sides: Optional[int] = SlashOption(requ
         rolllist.append(result)
 
     message = f"🎲 {interaction.user.name} rolled a {sides}-sided dice {number} times: {rolllist}"
-    message += f"\nTotal: {sum(rolllist)}"
+    message += f"\nTotal: **{sum(rolllist)}**"
     qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=1)
     await interaction.response.send_message(message)
