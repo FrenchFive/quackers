@@ -735,9 +735,9 @@ async def roll(
         result = random.randint(1, sides)
         rolllist.append(result)
 
-    if all(x == sides for x in rolllist):
+    if sum(rolllist) == sides*number:
         emoji = emojili[0]
-    elif all(x == 1 for x in rolllist):
+    elif sum(rolllist) == number:
         emoji = emojili[1]
     else:
         emoji = ""
