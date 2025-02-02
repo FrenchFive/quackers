@@ -210,7 +210,10 @@ def luck(guild, name, amount):
 def add_mess(guild, name):
     CURSOR.execute(f"SELECT mess FROM '{guild}' WHERE name = ?",(name,))
     data = CURSOR.fetchall()
-    mess = data[0][0]
+    if data:
+        mess = data[0][0]
+    else:
+        mess = 0
 
     mess += 1
 
