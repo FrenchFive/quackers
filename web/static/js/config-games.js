@@ -129,3 +129,87 @@ document.getElementById("btn-gme-gme").addEventListener("click", () => {
             }, 1000);
         });
 });
+
+//BUTTON SAVE DICES
+document.getElementById("btn-gme-dices").addEventListener("click", () => {
+    const saveButton = document.getElementById("btn-gme-dices");
+    saveButton.disabled = true;
+    saveButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    `;
+
+    const server_id = document.getElementById("server-id").value;
+
+    const data = [
+        { name: "dices", value: document.getElementById("dices-toggle").checked ? 1 : 0 },
+    ];
+
+    fetch("/save-config", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ server_id, data }),
+    })
+        .then(response => response.json())
+        .then(response => {
+            if (response.success) {
+                console.log(response.message);
+            } else {
+                alert("Failed to save changes.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        })
+        .finally(() => {
+            // Revert the button back to its original state
+            setTimeout(() => {
+                saveButton.disabled = false;
+                saveButton.innerHTML = "Save Changes";
+            }, 1000);
+        });
+});
+
+//BUTTON SAVE RPS
+document.getElementById("btn-gme-rps").addEventListener("click", () => {
+    const saveButton = document.getElementById("btn-gme-rps");
+    saveButton.disabled = true;
+    saveButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    `;
+
+    const server_id = document.getElementById("server-id").value;
+
+    const data = [
+        { name: "rps", value: document.getElementById("rps-toggle").checked ? 1 : 0 },
+    ];
+
+    fetch("/save-config", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ server_id, data }),
+    })
+        .then(response => response.json())
+        .then(response => {
+            if (response.success) {
+                console.log(response.message);
+            } else {
+                alert("Failed to save changes.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        })
+        .finally(() => {
+            // Revert the button back to its original state
+            setTimeout(() => {
+                saveButton.disabled = false;
+                saveButton.innerHTML = "Save Changes";
+            }, 1000);
+        });
+});
