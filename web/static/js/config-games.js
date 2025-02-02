@@ -214,7 +214,7 @@ document.getElementById("btn-gme-rps").addEventListener("click", () => {
         });
 });
 
-//BUTTON SAVE RPS
+//BUTTON SAVE HEIGHTBALL
 document.getElementById("btn-gme-hball").addEventListener("click", () => {
     const saveButton = document.getElementById("btn-gme-hball");
     saveButton.disabled = true;
@@ -226,6 +226,50 @@ document.getElementById("btn-gme-hball").addEventListener("click", () => {
 
     const data = [
         { name: "hball", value: document.getElementById("hball-toggle").checked ? 1 : 0 },
+    ];
+
+    fetch("/save-config", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ server_id, data }),
+    })
+        .then(response => response.json())
+        .then(response => {
+            if (response.success) {
+                console.log(response.message);
+            } else {
+                alert("Failed to save changes.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        })
+        .finally(() => {
+            // Revert the button back to its original state
+            setTimeout(() => {
+                saveButton.disabled = false;
+                saveButton.innerHTML = "Save Changes";
+            }, 1000);
+        });
+});
+
+//BUTTON SAVE BET
+document.getElementById("btn-gme-bet").addEventListener("click", () => {
+    const saveButton = document.getElementById("btn-gme-bet");
+    saveButton.disabled = true;
+    saveButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    `;
+
+    const server_id = document.getElementById("server-id").value;
+
+    const data = [
+        { name: "bet", value: document.getElementById("bet-toggle").checked ? 1 : 0 },
+        { name: "bet_limit", value: document.getElementById("bet-limit-toggle").checked ? 1 : 0 },
+        { name: "bet_limit_value", value: document.getElementById("bet-limit-input").value },
     ];
 
     fetch("/save-config", {
