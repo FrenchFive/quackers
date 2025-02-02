@@ -234,15 +234,59 @@ document.getElementById("btn-eco-eco").addEventListener("click", () => {
     const data = [
         { name: "eco", value: document.getElementById("coin-toggle").checked ? 1 : 0 },
         { name: "eco_pss", value: document.getElementById("passive-toggle").checked ? 1 : 0 },
-        { name: "eco_pss_msg", value: document.getElementById("dm-toggle").checked ? 1 : 0 },
-        { name: "eco_pss_msg_value", value: document.getElementById("dm-toggle").value },
-        { name: "eco_pss_ch", value: document.getElementById("dm-toggle").checked ? 1 : 0 },
-        { name: "eco_pss_ch_value", value: document.getElementById("dm-toggle").value },
-        { name: "eco_pss_ch_hour", value: document.getElementById("dm-toggle").value },
-        { name: "eco_pss_ch_afk", value: document.getElementById("dm-toggle").checked ? 1 : 0 },
-        { name: "eco_pss_ch_afk_id", value: document.getElementById("dm-toggle").value },
+        { name: "eco_pss_msg", value: document.getElementById("pss-msg-toggle").checked ? 1 : 0 },
+        { name: "eco_pss_msg_value", value: document.getElementById("pss-msg-input").value },
+        { name: "eco_pss_ch", value: document.getElementById("pss-vc-toggle").checked ? 1 : 0 },
+        { name: "eco_pss_ch_value", value: document.getElementById("pss-vconn-input").value },
+        { name: "eco_pss_ch_hour", value: document.getElementById("pss-vch-input").value },
+        { name: "eco_pss_ch_afk", value: document.getElementById("afk-toggle").checked ? 1 : 0 },
+        { name: "eco_pss_ch_afk_id", value: document.getElementById("afk-channel").value },
         { name: "eco_pss_cmd", value: document.getElementById("pss-cmd-toggle").checked ? 1 : 0 },
         { name: "eco_pss_cmd_value", value: document.getElementById("pss-cmd-input").value },
+    ];
+
+    fetch("/save-config", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ server_id, data }),
+    })
+        .then(response => response.json())
+        .then(response => {
+            if (response.success) {
+                console.log(response.message);
+            } else {
+                alert("Failed to save changes.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred. Please try again.");
+        })
+        .finally(() => {
+            // Revert the button back to its original state
+            setTimeout(() => {
+                saveButton.disabled = false;
+                saveButton.innerHTML = "Save Changes";
+            }, 1000);
+        });
+});
+
+//BUTTON SAVE BANK
+document.getElementById("btn-eco-bnk").addEventListener("click", () => {
+    const saveButton = document.getElementById("btn-eco-bnk");
+    saveButton.disabled = true;
+    saveButton.innerHTML = `
+        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+    `;
+
+    const server_id = document.getElementById("server-id").value;
+
+    const data = [
+        { name: "bnk", value: document.getElementById("bank-toggle").checked ? 1 : 0 },
+        { name: "bnk_itrs", value: document.getElementById("bank-itrs").checked ? 1 : 0 },
+        { name: "bnk_itrs_value", value: document.getElementById("bank-itrs-input").value },
     ];
 
     fetch("/save-config", {
