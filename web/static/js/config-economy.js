@@ -233,14 +233,14 @@ document.getElementById("btn-eco-eco").addEventListener("click", () => {
 
     const data = [
         { name: "eco", value: document.getElementById("coin-toggle").checked ? 1 : 0 },
-        { name: "eco_pss", value: document.getElementById("passive-toggle").value },
+        { name: "eco_pss", value: document.getElementById("passive-toggle").checked ? 1 : 0 },
         { name: "eco_pss_msg", value: document.getElementById("dm-toggle").checked ? 1 : 0 },
         { name: "eco_pss_msg_value", value: document.getElementById("dm-toggle").value },
         { name: "eco_pss_ch", value: document.getElementById("dm-toggle").checked ? 1 : 0 },
         { name: "eco_pss_ch_value", value: document.getElementById("dm-toggle").value },
         { name: "eco_pss_ch_hour", value: document.getElementById("dm-toggle").value },
-        { name: "eco_pss_ch_akf", value: document.getElementById("dm-toggle").checked ? 1 : 0 },
-        { name: "eco_pss_ch_akf_id", value: document.getElementById("dm-toggle").value },
+        { name: "eco_pss_ch_afk", value: document.getElementById("dm-toggle").checked ? 1 : 0 },
+        { name: "eco_pss_ch_afk_id", value: document.getElementById("dm-toggle").value },
         { name: "eco_pss_cmd", value: document.getElementById("pss-cmd-toggle").checked ? 1 : 0 },
         { name: "eco_pss_cmd_value", value: document.getElementById("pss-cmd-input").value },
     ];
