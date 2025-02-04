@@ -54,123 +54,51 @@ Before starting, ensure you have the following installed:
 2. [Git](https://git-scm.com/downloads).
 3. A terminal or command-line interface.
 
+Python Modules listed into : ```requirements.md```
 ---
 
 ### INSTALLATION STEPS:
 
-#### 1. Clone the Repository
-First, clone the repository to your local machine using Git:
+## 📌 Quick Setup
 
+### 1️⃣ Clone the Repository
 ```bash
 git clone https://github.com/FrenchFive/quackers.git
-```
-
-Navigate into the project directory:
-
-```bash
 cd quackers
 ```
 
-#### 2. Create a Virtual Environment (Optional but Recommended)
-Create a virtual environment to isolate dependencies:
-
-> [!TIP]
-> It is not necessary but **strongly** recommended.
-> It allows the use of librairies in a specific configuration, meaning not breaking other code on other projects.
-
+### 2️⃣ Install Dependencies
+#### 🐍 Using Virtual Environment (Recommended)
 ```bash
 python3 -m venv .venv
-```
-
-Activate the virtual environment:
-
-- **Windows**:
-  ```bash
-  .venv\Scripts\activate
-  ```
-- **Mac/Linux**:
-  ```bash
-  source .venv/bin/activate
-  ```
-
-#### 3. Install Dependencies
-Install the required Python libraries listed in `requirements.txt`:
-
-```bash
+source .venv/bin/activate  # For Windows use: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
----
-
-### RUNNING THE BOT:
-
-#### 1. Configure the `.env` File
-Quackers uses a file named `.env` to store all secret keys. This file should not be shared.
-
-Example structure for `.env`:
-
-```txt
-KEY_OPENAI=sk-proj-1234567890abcdefg
-KEY_DISCORD=1234567890abcdefg
+### 3️⃣ Configure Environment Variables
+Create a `.env` file with the necessary API keys:
+```ini
+KEY_OPENAI=your_openai_key
+KEY_DISCORD=your_discord_bot_token
+DISCORD_CLIENT_ID=your_client_id
+DISCORD_CLIENT_SECRET=your_client_secret
+DISCORD_REDIRECT_URI=http://127.0.0.1:5000/callback
+FLASK_SECRET_KEY=your_secret_key
 ```
 
-- Generate an **OpenAI API Key** [here](https://platform.openai.com/settings).
-- Get your **Discord Bot Token** by navigating to the [Discord Developer Portal](https://discord.com/developers/docs/intro) and enabling necessary bot permissions.
-
-A template of the file is available : `template.env`to help you create your `.env` file.
-
----
-
-#### 2. Start the Bot
-Run the bot script:
-
+### 4️⃣ Start the Bot
 ```bash
 python backend/src/main.py
 ```
 
-For additional support, open an issue in the [GitHub repository](https://github.com/FrenchFive/quackers/issues).
-
----
-
-#### 3. Configure the server to monitor
-
-Once the bot is launched and added to your discord channel, excecute the following /command in discord ```/admin-scan```
-
-Answer all questions asked to personnalize your experience
-
-```
-Admin Role : The only role allowed to use "admin_..." /commands (except for "/admin-scan")
-Newbie Role : The role assigned to New Members - allowing them access to "/presentation"
-AFK Voice Channel : Voice Channel managed by discord - poeple going to this channel wont receive coins
-General Channel : The main text channel of the server
-Debugging Channel : Channel used to debug for dev 
-Welcome Channel : Channel where Quackers will send Welcome Messages and Presentations from Members
-Admin Info Channel : Channel used to share sensitive information to admin
+### 5️⃣ Start the Flask Server for Web UI
+```bash
+python web/main.py
 ```
 
-For dev only - it is possible to access work-in-progress functions by modifying the `main.py`
-<br><sub>`/admin-scan function displays the ID of the current server`</sub>
-```python
-# Server IDs
-serverid = qdb.get_all_server_ids()
-testid = [1159282148042350642] #server id for W.I.P functionnalities
-``` 
-It should match the server your [Server ID](https://support.discord.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID)
+## 📖 Detailed Installation Guide
+For more detailed installation steps, troubleshooting tips, and advanced configuration, refer to the **[Installation Guide](./docs/installation.md)**.
 
-
-> [!NOTE]
-> It is necessary to RESTART the bot once the /admin-scan has been done.
-> This way the server will be added to the list of servers to use the commands.
-
----
-
-#### 4. Good Practices
-
-It is strongly recommended to go in DISCORD into :
-Server SETTINGS // Integrations // Quackers
-
-And "Add Derogations" to all `/admin_...` commands 
-And not allow @everyone to use them
 
 ---
 
