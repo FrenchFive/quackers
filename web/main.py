@@ -121,9 +121,11 @@ def callback():
 
     return redirect('/')
 
-@app.route('/servers')
+@app.route('/servers', methods=['GET', 'POST'])
 def servers():
     check_access_token()
+
+    error = session.pop("error_message", None)
     
     access_token = session.get("access_token")
     headers = {"Authorization": f"Bearer {access_token}"}
@@ -158,11 +160,13 @@ def servers():
 
     user_servers = sorted(user_servers, key=lambda x: not x['bot_on_server'])
 
-    return render_template('server.html', servers=user_servers, clientid=CLIENT_ID)
+    return render_template('server.html', servers=user_servers, clientid=CLIENT_ID, error=error)
 
 @app.route('/config/<int:server_id>')
 def config(server_id):
-    if db.server_check(server_id)!=True:
+    sv_check = db.server_check(server_id, get_server_info(server_id)["name"])
+    if sv_check !=None:
+        session["error_message"] = sv_check
         return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
@@ -171,7 +175,9 @@ def config(server_id):
 
 @app.route('/config-welcome/<int:server_id>')
 def config_welcome(server_id):
-    if db.server_check(server_id)!=True:
+    sv_check = db.server_check(server_id, get_server_info(server_id)["name"])
+    if sv_check !=None:
+        session["error_message"] = sv_check
         return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
@@ -181,7 +187,9 @@ def config_welcome(server_id):
 
 @app.route('/config-economy/<int:server_id>')
 def config_economy(server_id):
-    if db.server_check(server_id)!=True:
+    sv_check = db.server_check(server_id, get_server_info(server_id)["name"])
+    if sv_check !=None:
+        session["error_message"] = sv_check
         return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
@@ -190,7 +198,9 @@ def config_economy(server_id):
 
 @app.route('/config-games/<int:server_id>')
 def config_games(server_id):
-    if db.server_check(server_id)!=True:
+    sv_check = db.server_check(server_id, get_server_info(server_id)["name"])
+    if sv_check !=None:
+        session["error_message"] = sv_check
         return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
@@ -199,7 +209,9 @@ def config_games(server_id):
 
 @app.route('/config-ai/<int:server_id>')
 def config_ai(server_id):
-    if db.server_check(server_id)!=True:
+    sv_check = db.server_check(server_id, get_server_info(server_id)["name"])
+    if sv_check !=None:
+        session["error_message"] = sv_check
         return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
