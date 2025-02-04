@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS "servers" (
     "ai_img_pay_value" INTEGER DEFAULT 100
 );
 ''')
+CONNECTION.commit()
 
 #SERVERS
 def get_all_server_ids():
