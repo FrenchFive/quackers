@@ -95,7 +95,6 @@ CREATE TABLE IF NOT EXISTS "servers" (
     "ai_img_pay_value" INTEGER DEFAULT 100
 );
 ''')
-CONNECTION.commit()
 
 #SERVERS
 def get_all_server_ids():
@@ -107,13 +106,6 @@ def get_all_server_ids():
     server_ids = [row[0] for row in rows]
     
     return server_ids
-
-def add_server(guild, name):
-    if guild in get_all_server_ids():
-        return
-    CURSOR.execute('INSERT INTO servers (server_id, server_name) VALUES(?, ?)', (guild, name))
-    CONNECTION.commit()
-    qlogs.info(f'--QDB // ADDED SERVER : {name} :: {guild}')
 
 def servers_table_exists(guild):
     CURSOR.execute(f'''CREATE TABLE IF NOT EXISTS "{guild}" (
@@ -251,20 +243,13 @@ def daily(guild, name):
         amount_min = get_server_info(guild, 'dly_from_value')
         amount_max = get_server_info(guild, 'dly_to_value')
         max_streak = 20
-        amount_min = get_server_info(guild, 'dly_from_value')
-        amount_max = get_server_info(guild, 'dly_to_value')
-        max_streak = 20
         if daily == (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'):
             streak += 1
             if streak > max_streak and get_server_info(guild, 'dly_random') == True:
                 amount = random.randint(amount_max, amount_max * 1.5)
-            if streak > max_streak and get_server_info(guild, 'dly_random') == True:
-                amount = random.randint(amount_max, amount_max * 1.5)
             else:
                 amount = amount_min + (streak - 1) * (amount_max - amount_min) / (max_streak - 1)
-                amount = amount_min + (streak - 1) * (amount_max - amount_min) / (max_streak - 1)
         else:
-            amount = amount_min
             amount = amount_min
             streak = 0
 
@@ -283,9 +268,6 @@ def daily(guild, name):
 def send(guild, fname, dname, amount):
     if amount<0:
         return('The amount must be higher than 1 <:quackCoin:1124255606782578698>.')
-    if get_server_info(guild, 'snd_limit') == True:
-        if amount > get_server_info(guild, 'snd_limit_value'):
-            amount = get_server_info(guild, 'snd_limit_value')
     if get_server_info(guild, 'snd_limit') == True:
         if amount > get_server_info(guild, 'snd_limit_value'):
             amount = get_server_info(guild, 'snd_limit_value')
@@ -398,7 +380,6 @@ def voicestalled(guild, name):
         if secelapsed > 3600:
             hours = divmod(secelapsed, 3600)[0]
             amount = get_server_info(guild, "eco_pss_ch_hour") * hours
-            amount = get_server_info(guild, "eco_pss_ch_hour") * hours
             add(guild, name, amount)
             #ADD HOURS TO DB
             CURSOR.execute(f"SELECT voiceh FROM '{guild}' WHERE name = ?",(name,))
@@ -481,7 +462,6 @@ def clear_stats(guild):
 
 def backup_db():
     bckup_path = os.path.join(ROOT_DIR, "db/backup/")
-    bckup_file = os.path.join(bckup_path, "bckup_quackers.db")
     bckup_file = os.path.join(bckup_path, "bckup_quackers.db")
 
     os.makedirs(bckup_path, exist_ok=True)
