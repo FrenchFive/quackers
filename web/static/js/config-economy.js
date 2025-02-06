@@ -223,6 +223,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+//DISABLE Daily Limit
+document.addEventListener('DOMContentLoaded', () => {
+    const toggle = document.getElementById('dly-limit-toggle');
+    const inputField = document.getElementById('dly-limit-input');
+
+    toggle.addEventListener('change', () => {
+        if (toggle.checked) {
+            inputField.disabled = false;
+        } else {
+            inputField.disabled = true;
+        }
+    });
+
+    // Initial check
+    if (!toggle.checked) {
+        inputField.disabled = true;
+    }
+});
+
 //BUTTON SAVE ECO
 document.getElementById("btn-eco-eco").addEventListener("click", () => {
     const data = [
@@ -274,9 +293,10 @@ document.getElementById("btn-eco-snd").addEventListener("click", () => {
 document.getElementById("btn-eco-dly").addEventListener("click", () => {
     const data = [
         { name: "dly", value: document.getElementById("daily-toggle").checked ? 1 : 0 },
-        { name: "dly_from_value", value: document.getElementById("dly-from-input").value },
-        { name: "dly_to_value", value: document.getElementById("dly-to-input").value },
-        { name: "dly_random", value: document.getElementById("dly-random").checked ? 1 : 0 },
+        { name: "dly_start_value", value: document.getElementById("dly-start-input").value },
+        { name: "dly_itrs_value", value: document.getElementById("dly-itrs-input").value },
+        { name: "dly_limit", value: document.getElementById("dly-limit-toggle").checked ? 1 : 0 },
+        { name: "dly_limit_value", value: document.getElementById("dly-limit-input").value },
     ];
     saveConfig(
         "btn-eco-dly",

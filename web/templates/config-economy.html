@@ -211,21 +211,24 @@
                             Amount of money sent by the daily:
                         </label>
                         <div class="input-group mb-3">
-                            <span class="input-group-text" id="basic-addon1">From</span>
-                            <input id="dly-from-input" type="number" value="{{ data['dly_from_value'] }}" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
+                            <span class="input-group-text" id="basic-addon1">Base Amount</span>
+                            <input id="dly-start-input" type="number" value="{{ data['dly_start_value'] }}" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
                         </div>
                         <div class="input-group mb-3">
-                            <span class="input-group-text" id="basic-addon1">To</span>
-                            <input id="dly-to-input" type="number" value="{{ data['dly_to_value'] }}" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
+                            <span class="input-group-text" id="basic-addon1">Increment Every Day</span>
+                            <input id="dly-itrs-input" type="number" value="{{ data['dly_itrs_value'] }}" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
                         </div>
                         <label for="percentage-of-growth" class="form-label" style="margin-bottom: 1;">
-                            Randomize once once reached the limit:
+                            Have a limit of maximum amount gained:
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="dly-random" {% if data['dly_random'] == 1 %} checked {% endif %}>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="dly-limit-toggle" {% if data['dly_limit'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="dly-limit-toggle">Active</label>
                         </div>
-                          
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">Limit</span>
+                            <input id="dly-limit-input" type="number" value="{{ data['dly_limit_value'] }}" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
+                        </div>
                     </div>
                 </form>
             </div>

@@ -73,9 +73,10 @@ CREATE TABLE IF NOT EXISTS "servers" (
     "snd_limit_value" INTEGER DEFAULT 100,
 
     "dly" BOOLEAN DEFAULT 0,
-    "dly_from_value" INTEGER DEFAULT 100,
-    "dly_to_value" INTEGER DEFAULT 250,
-    "dly_random" BOOLEAN DEFAULT 1,
+    "dly_start_value" INTEGER DEFAULT 100,
+    "dly_itrs_value" INTEGER DEFAULT 25,
+    "dly_limit" BOOLEAN DEFAULT 0,
+    "dly_limit_value" INTEGER DEFAULT 1000,
 
     "game" BOOLEAN DEFAULT 0,
     "game_limit" BOOLEAN DEFAULT 1,
@@ -241,18 +242,20 @@ def daily(guild, name):
     streak = data[2]
 
     if daily != date:
-        amount_min = get_server_info(guild, 'dly_from_value')
-        amount_max = get_server_info(guild, 'dly_to_value')
-        max_streak = 20
+        amount_min = get_server_info(guild, 'dly_start_value')
         if daily == (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'):
             streak += 1
-            if streak > max_streak and get_server_info(guild, 'dly_random') == True:
-                amount = random.randint(amount_max, amount_max * 1.5)
-            else:
-                amount = amount_min + (streak - 1) * (amount_max - amount_min) / (max_streak - 1)
+            amount = amount_min + (streak * get_server_info(guild, 'dly_itrs_value'))
+        elif daily == (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d') and streak >= 15:
+            streak -= 2
+            amount = amount_min + (streak * get_server_info(guild, 'dly_itrs_value'))
         else:
             amount = amount_min
             streak = 0
+        
+        if get_server_info(guild, 'dly_limit') == True:
+            if amount > get_server_info(guild, 'dly_limit_value'):
+                amount = get_server_info(guild, 'dly_limit_value')
 
         coins += int((amount))
 
@@ -261,6 +264,8 @@ def daily(guild, name):
         qlogs.info(f'--QDB // DAILY : {name} : {coins}')
         if streak == 0:
             return(f'Successfully added {int((amount))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins')
+        elif streak < data[2]:
+            return(f'Successfully added {int((amount))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins // STREAK : {streak} // STREAK SAVED')
         else:
             return(f'Successfully added {int((amount))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins // STREAK : {streak}')
     else:
