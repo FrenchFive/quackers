@@ -491,13 +491,13 @@ def sync_table(table_name, expected_schema_str):
 
     existing_schema = {row[1]: row[2] for row in CURSOR.fetchall()} 
     
-    if existing_schema != expected_schema:
+    if set(existing_schema.keys()) != set(expected_schema.keys()):
         # Rename old table
         temp_name = f"{table_name}_old"
         CURSOR.execute(f"ALTER TABLE {table_name} RENAME TO {temp_name}")
         
         # Create new table with correct schema
-        create_stmt = f"CREATE TABLE {table_name} {expected_schema_str}"
+        create_stmt = f"CREATE TABLE {table_name} ({expected_schema_str})"
         CURSOR.execute(create_stmt)
         
         # Find matching columns
@@ -510,12 +510,10 @@ def sync_table(table_name, expected_schema_str):
         CURSOR.execute(f"DROP TABLE {temp_name}")
     
     CONNECTION.commit()
-    CONNECTION.close()
 
 def sync_db():
     CURSOR.execute("SELECT name FROM sqlite_master WHERE type='table'")
     tables = [row[0] for row in CURSOR.fetchall()]
-    CONNECTION.close()
     for table in tables:
         if table == "servers":
             sync_table(table, DB_STRUCTURE_SERVER)
