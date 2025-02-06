@@ -96,7 +96,7 @@ DB_STRUCTURE_SERVER = '''
 '''
 
 DB_STRUCTURE_MEMBERS = '''
-"id" INTEGER UNIQUE, 
+"id" INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
 "name" TEXT, 
 "coins" INTEGER, 
 "daily" TEXT, 
@@ -132,7 +132,6 @@ def get_all_server_ids():
 def servers_table_exists(guild):
     CURSOR.execute(f'''CREATE TABLE IF NOT EXISTS "{guild}" (
         {DB_STRUCTURE_MEMBERS}
-        PRIMARY KEY("id" AUTOINCREMENT)
     );''')
     CONNECTION.commit()
 
@@ -475,6 +474,55 @@ def clear_stats(guild):
     STATS_CURSOR.execute(f"DROP TABLE '{guild}'")
     STATS_CONNECTION.commit()
 
+#DB SYNC and BACKUP
+
+def parse_schema(schema_str):
+    schema = {}
+    for line in schema_str.strip().split(',\n'):
+        parts = line.strip().split(' ', 1)
+        if len(parts) == 2:
+            schema[parts[0].strip('"')] = parts[1]
+    return schema
+
+def sync_table(table_name, expected_schema_str):
+    expected_schema = parse_schema(expected_schema_str)
+    
+    CURSOR.execute(f"PRAGMA table_info({table_name})")
+
+    existing_schema = {row[1]: row[2] for row in CURSOR.fetchall()} 
+    
+    if existing_schema != expected_schema:
+        # Rename old table
+        temp_name = f"{table_name}_old"
+        CURSOR.execute(f"ALTER TABLE {table_name} RENAME TO {temp_name}")
+        
+        # Create new table with correct schema
+        create_stmt = f"CREATE TABLE {table_name} {expected_schema_str}"
+        CURSOR.execute(create_stmt)
+        
+        # Find matching columns
+        matching_columns = set(existing_schema.keys()) & set(expected_schema.keys())
+        if matching_columns:
+            columns_str = ", ".join(matching_columns)
+            CURSOR.execute(f"INSERT INTO {table_name} ({columns_str}) SELECT {columns_str} FROM {temp_name}")
+        
+        # Drop old table
+        CURSOR.execute(f"DROP TABLE {temp_name}")
+    
+    CONNECTION.commit()
+    CONNECTION.close()
+
+def sync_db():
+    CURSOR.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    tables = [row[0] for row in CURSOR.fetchall()]
+    CONNECTION.close()
+    for table in tables:
+        if table == "servers":
+            sync_table(table, DB_STRUCTURE_SERVER)
+        else:
+            sync_table(table, DB_STRUCTURE_MEMBERS)
+    
+
 def backup_db():
     bckup_path = os.path.join(ROOT_DIR, "db/backup/")
     bckup_file = os.path.join(bckup_path, "bckup_quackers.db")
@@ -483,3 +531,4 @@ def backup_db():
 
     shutil.copy(DB_PATH, bckup_file)
     qlogs.info(f"BACKUP OF THE DATABASE")
+
