@@ -19,81 +19,101 @@ CURSOR = CONNECTION.cursor()
 STATS_CONNECTION = sqlite3.connect(STATS_PATH)
 STATS_CURSOR = STATS_CONNECTION.cursor()
 
-CURSOR.execute('''
+DB_STRUCTURE_SERVER = '''
+"id" INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
+"server_id" INTEGER UNIQUE NOT NULL, 
+"server_name" TEXT NOT NULL, 
+"lang" TEXT DEFAULT 'eng',
+
+"admin_role_id" INTEGER DEFAULT 0,
+"admin_ch_id" INTEGER DEFAULT 0,
+"gnrl_ch_id" INTEGER DEFAULT 0,
+"dbg_ch" BOOLEAN DEFAULT 0,
+"dbg_ch_id" INTEGER DEFAULT 0,
+"bot_ch_id" INTEGER DEFAULT 0,
+
+"wlc" BOOLEAN DEFAULT 0,
+"wlc_ch_id" INTEGER DEFAULT 0,
+"wlc_msg" BOOLEAN DEFAULT 0,
+"wlc_msg_content" TEXT DEFAULT '',
+"wlc_rct" BOOLEAN DEFAULT 0,
+"wlc_rct_cstm" BOOLEAN DEFAULT 1,
+
+"gdb" BOOLEAN DEFAULT 0,
+"gdb_ch_id" INTEGER DEFAULT 0,
+"gdb_msg" BOOLEAN DEFAULT 0,
+"gdb_msg_content" TEXT DEFAULT '',
+
+"prst" BOOLEAN DEFAULT 0,
+"prst_ch_id" INTEGER DEFAULT 0,
+"prst_role" INTEGER DEFAULT 0,
+
+"dm" BOOLEAN DEFAULT 0,
+"dm_msg_content" TEXT DEFAULT '',
+
+"eco" BOOLEAN DEFAULT 0,
+"eco_pss" BOOLEAN DEFAULT 1,
+"eco_pss_msg" BOOLEAN DEFAULT 1,
+"eco_pss_msg_value" INTEGER DEFAULT 1,
+"eco_pss_ch" BOOLEAN DEFAULT 1,
+"eco_pss_ch_value" INTEGER DEFAULT 15,
+"eco_pss_ch_hour" INTEGER DEFAULT 50,
+"eco_pss_ch_afk" BOOLEAN DEFAULT 0,
+"eco_pss_ch_afk_id" INTEGER DEFAULT 0,
+"eco_pss_cmd" BOOLEAN DEFAULT 1,
+"eco_pss_cmd_value" INTEGER DEFAULT 5,
+
+"bnk" BOOLEAN DEFAULT 0,
+"bnk_itrs" BOOLEAN DEFAULT 1,
+"bnk_itrs_value" INTEGER DEFAULT 30,
+
+"snd" BOOLEAN DEFAULT 0,
+"snd_limit" BOOLEAN DEFAULT 0,
+"snd_limit_value" INTEGER DEFAULT 100,
+
+"dly" BOOLEAN DEFAULT 0,
+"dly_start_value" INTEGER DEFAULT 100,
+"dly_itrs_value" INTEGER DEFAULT 25,
+"dly_limit" BOOLEAN DEFAULT 0,
+"dly_limit_value" INTEGER DEFAULT 1000,
+
+"game" BOOLEAN DEFAULT 0,
+"game_limit" BOOLEAN DEFAULT 1,
+"game_limit_value" INTEGER DEFAULT 100,
+
+"dices" BOOLEAN DEFAULT 0,
+"rps" BOOLEAN DEFAULT 0,
+"hball" BOOLEAN DEFAULT 0,
+"bet" BOOLEAN DEFAULT 0,
+"bet_limit" BOOLEAN DEFAULT 0,
+"bet_limit_value" INTEGER DEFAULT 1000,
+"roll" BOOLEAN DEFAULT 0,
+
+"ai_chat" BOOLEAN DEFAULT 0,
+"ai_img" BOOLEAN DEFAULT 0,
+"ai_img_pay" BOOLEAN DEFAULT 1,
+"ai_img_pay_value" INTEGER DEFAULT 100,
+'''
+
+DB_STRUCTURE_MEMBERS = '''
+"id" INTEGER UNIQUE, 
+"name" TEXT, 
+"coins" INTEGER, 
+"daily" TEXT, 
+"quackers" INTEGER, 
+"mess" INTEGER, 
+"created" TEXT, 
+"streak" INTEGER DEFAULT 0, 
+"epvoicet" INTEGER DEFAULT 0, 
+"voiceh" INTEGER DEFAULT 0, 
+"luck" INTEGER DEFAULT 0, 
+"bank" INTEGER DEFAULT 0,
+'''
+
+
+CURSOR.execute(f'''
 CREATE TABLE IF NOT EXISTS "servers" (
-    "id" INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
-    "server_id" INTEGER UNIQUE NOT NULL, 
-    "server_name" TEXT NOT NULL, 
-    "lang" TEXT DEFAULT 'eng',
-    
-    "admin_role_id" INTEGER DEFAULT 0,
-    "admin_ch_id" INTEGER DEFAULT 0,
-    "gnrl_ch_id" INTEGER DEFAULT 0,
-    "dbg_ch" BOOLEAN DEFAULT 0,
-    "dbg_ch_id" INTEGER DEFAULT 0,
-    "bot_ch_id" INTEGER DEFAULT 0,
-
-    "wlc" BOOLEAN DEFAULT 0,
-    "wlc_ch_id" INTEGER DEFAULT 0,
-    "wlc_msg" BOOLEAN DEFAULT 0,
-    "wlc_msg_content" TEXT DEFAULT '',
-    "wlc_rct" BOOLEAN DEFAULT 0,
-    "wlc_rct_cstm" BOOLEAN DEFAULT 1,
-
-    "gdb" BOOLEAN DEFAULT 0,
-    "gdb_ch_id" INTEGER DEFAULT 0,
-    "gdb_msg" BOOLEAN DEFAULT 0,
-    "gdb_msg_content" TEXT DEFAULT '',
-
-    "prst" BOOLEAN DEFAULT 0,
-    "prst_ch_id" INTEGER DEFAULT 0,
-    "prst_role" INTEGER DEFAULT 0,
-
-    "dm" BOOLEAN DEFAULT 0,
-    "dm_msg_content" TEXT DEFAULT '',
-
-    "eco" BOOLEAN DEFAULT 0,
-    "eco_pss" BOOLEAN DEFAULT 1,
-    "eco_pss_msg" BOOLEAN DEFAULT 1,
-    "eco_pss_msg_value" INTEGER DEFAULT 1,
-    "eco_pss_ch" BOOLEAN DEFAULT 1,
-    "eco_pss_ch_value" INTEGER DEFAULT 15,
-    "eco_pss_ch_hour" INTEGER DEFAULT 50,
-    "eco_pss_ch_afk" BOOLEAN DEFAULT 0,
-    "eco_pss_ch_afk_id" INTEGER DEFAULT 0,
-    "eco_pss_cmd" BOOLEAN DEFAULT 1,
-    "eco_pss_cmd_value" INTEGER DEFAULT 5,
-
-    "bnk" BOOLEAN DEFAULT 0,
-    "bnk_itrs" BOOLEAN DEFAULT 1,
-    "bnk_itrs_value" INTEGER DEFAULT 30,
-
-    "snd" BOOLEAN DEFAULT 0,
-    "snd_limit" BOOLEAN DEFAULT 0,
-    "snd_limit_value" INTEGER DEFAULT 100,
-
-    "dly" BOOLEAN DEFAULT 0,
-    "dly_start_value" INTEGER DEFAULT 100,
-    "dly_itrs_value" INTEGER DEFAULT 25,
-    "dly_limit" BOOLEAN DEFAULT 0,
-    "dly_limit_value" INTEGER DEFAULT 1000,
-
-    "game" BOOLEAN DEFAULT 0,
-    "game_limit" BOOLEAN DEFAULT 1,
-    "game_limit_value" INTEGER DEFAULT 100,
-
-    "dices" BOOLEAN DEFAULT 0,
-    "rps" BOOLEAN DEFAULT 0,
-    "hball" BOOLEAN DEFAULT 0,
-    "bet" BOOLEAN DEFAULT 0,
-    "bet_limit" BOOLEAN DEFAULT 0,
-    "bet_limit_value" INTEGER DEFAULT 1000,
-    "roll" BOOLEAN DEFAULT 0,
-
-    "ai_chat" BOOLEAN DEFAULT 0,
-    "ai_img" BOOLEAN DEFAULT 0,
-    "ai_img_pay" BOOLEAN DEFAULT 1,
-    "ai_img_pay_value" INTEGER DEFAULT 100
+    {DB_STRUCTURE_SERVER}
 );
 ''')
 CONNECTION.commit()
@@ -111,18 +131,7 @@ def get_all_server_ids():
 
 def servers_table_exists(guild):
     CURSOR.execute(f'''CREATE TABLE IF NOT EXISTS "{guild}" (
-        "id" INTEGER UNIQUE, 
-        "name" TEXT, 
-        "coins" INTEGER, 
-        "daily" TEXT, 
-        "quackers" INTEGER, 
-        "mess" INTEGER, 
-        "created" TEXT, 
-        "streak" INTEGER DEFAULT 0, 
-        "epvoicet" INTEGER DEFAULT 0, 
-        "voiceh" INTEGER DEFAULT 0, 
-        "luck" INTEGER DEFAULT 0, 
-        "bank" INTEGER DEFAULT 0, 
+        {DB_STRUCTURE_MEMBERS}
         PRIMARY KEY("id" AUTOINCREMENT)
     );''')
     CONNECTION.commit()
