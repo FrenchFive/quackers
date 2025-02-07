@@ -499,11 +499,9 @@ def sync_table(table_name, expected_schema_str):
     existing_schema = {row[1]: row[2] for row in CURSOR.fetchall()} 
 
     print(f"TABLE: {table_name}")
-    print(set(existing_schema.keys()))
-    print(set(expected_schema.keys()))
 
     if set(existing_schema.keys()) != set(expected_schema.keys()):
-        print("-- TRANSFERING TABLE --")
+        print(f"-- TRANSFERING TABLE : {table_name} --")
 
         # Rename old table
         temp_name = f"{table_name}_old"
