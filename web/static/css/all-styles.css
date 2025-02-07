@@ -8,6 +8,11 @@
     src: url(../data/fonts/thunder.ttf);
 }
 
+:root {
+    --primary-color: #0d6efd; /* Bootstrap primary color */
+    --secondary-color: #6c757d; /* Bootstrap secondary color */
+}
+
 /* Disabling txt Selection */
 body {
     user-select: none; /* Standard property */
@@ -167,7 +172,7 @@ img.user-avatar:hover {
 .centered-text {
     display: grid;
     place-items: center; /* Centre horizontalement et verticalement */
-    height: 100vh; /* Prend toute la hauteur de la fenêtre */
+    height: 70vh; /* Prend toute la hauteur de la fenêtre */
     text-align: center; /* Centre le texte à l'intérieur de l'élément */
 }
 
@@ -178,7 +183,7 @@ img.user-avatar:hover {
 /* Section d'informations */
 .info-section {
     background-color: rgb(24, 25, 28); /* Couleur de fond claire pour la section */
-    padding: 40px 20px; /* Ajout de padding autour des informations */
+    padding: 0px 20px; /* Ajout de padding autour des informations */
     margin-top: 50px; /* Un peu d'espace au-dessus de la section */
     text-align: center; /* Centrer le texte */
 }
@@ -211,4 +216,8 @@ body {
     font-family: 'Quackers2', sans-serif;
     letter-spacing: 0.5px;
     font-size: 30pt;
+}
+
+.svgico:hover svg {
+    fill: white;
 }
