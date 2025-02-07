@@ -46,6 +46,8 @@ testid = [1159282148042350642]
 for guild in serverid:
     qdb.servers_table_exists(guild)
 
+qdb.sync_db()
+
 def serv_list(li):
     if len(li) == 0:
         return [0]

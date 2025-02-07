@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluid Blobs Background</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #111;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        .background {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,0,150,0.8) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            opacity: 0.8;
+            filter: blur(80px);
+            animation: moveBlobs 10s infinite alternate ease-in-out;
+        }
+
+        @keyframes moveBlobs {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            50% {
+                transform: translate(50px, -60px) scale(1.2);
+            }
+            100% {
+                transform: translate(-50px, 60px) scale(0.9);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <h1>Fluid Motion Background</h1>
+
+    <script>
+        const background = document.querySelector('.background');
+
+        function createBlob(color) {
+            const blob = document.createElement('div');
+            blob.classList.add('blob');
+            blob.style.background = `radial-gradient(circle, ${color} 0%, rgba(0,0,0,0) 70%)`;
+            blob.style.top = `${Math.random() * 100}vh`;
+            blob.style.left = `${Math.random() * 100}vw`;
+            blob.style.animationDuration = `${Math.random() * 5 + 5}s`;
+            background.appendChild(blob);
+        }
+
+        const colors = ['rgba(255,0,150,0.8)', 'rgba(0,150,255,0.8)', 'rgba(0,255,150,0.8)'];
+        colors.forEach(color => createBlob(color));
+    </script>
+</body>
+</html>

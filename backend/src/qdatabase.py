@@ -19,80 +19,101 @@ CURSOR = CONNECTION.cursor()
 STATS_CONNECTION = sqlite3.connect(STATS_PATH)
 STATS_CURSOR = STATS_CONNECTION.cursor()
 
-CURSOR.execute('''
+DB_STRUCTURE_SERVER = '''
+"id" INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
+"server_id" INTEGER UNIQUE NOT NULL, 
+"server_name" TEXT NOT NULL, 
+"lang" TEXT DEFAULT 'eng',
+
+"admin_role_id" INTEGER DEFAULT 0,
+"admin_ch_id" INTEGER DEFAULT 0,
+"gnrl_ch_id" INTEGER DEFAULT 0,
+"dbg_ch" BOOLEAN DEFAULT 0,
+"dbg_ch_id" INTEGER DEFAULT 0,
+"bot_ch_id" INTEGER DEFAULT 0,
+
+"wlc" BOOLEAN DEFAULT 0,
+"wlc_ch_id" INTEGER DEFAULT 0,
+"wlc_msg" BOOLEAN DEFAULT 0,
+"wlc_msg_content" TEXT DEFAULT '',
+"wlc_rct" BOOLEAN DEFAULT 0,
+"wlc_rct_cstm" BOOLEAN DEFAULT 1,
+
+"gdb" BOOLEAN DEFAULT 0,
+"gdb_ch_id" INTEGER DEFAULT 0,
+"gdb_msg" BOOLEAN DEFAULT 0,
+"gdb_msg_content" TEXT DEFAULT '',
+
+"prst" BOOLEAN DEFAULT 0,
+"prst_ch_id" INTEGER DEFAULT 0,
+"prst_role" INTEGER DEFAULT 0,
+
+"dm" BOOLEAN DEFAULT 0,
+"dm_msg_content" TEXT DEFAULT '',
+
+"eco" BOOLEAN DEFAULT 0,
+"eco_pss" BOOLEAN DEFAULT 1,
+"eco_pss_msg" BOOLEAN DEFAULT 1,
+"eco_pss_msg_value" INTEGER DEFAULT 1,
+"eco_pss_ch" BOOLEAN DEFAULT 1,
+"eco_pss_ch_value" INTEGER DEFAULT 15,
+"eco_pss_ch_hour" INTEGER DEFAULT 50,
+"eco_pss_ch_afk" BOOLEAN DEFAULT 0,
+"eco_pss_ch_afk_id" INTEGER DEFAULT 0,
+"eco_pss_cmd" BOOLEAN DEFAULT 1,
+"eco_pss_cmd_value" INTEGER DEFAULT 5,
+
+"bnk" BOOLEAN DEFAULT 0,
+"bnk_itrs" BOOLEAN DEFAULT 1,
+"bnk_itrs_value" INTEGER DEFAULT 30,
+
+"snd" BOOLEAN DEFAULT 0,
+"snd_limit" BOOLEAN DEFAULT 0,
+"snd_limit_value" INTEGER DEFAULT 100,
+
+"dly" BOOLEAN DEFAULT 0,
+"dly_start_value" INTEGER DEFAULT 100,
+"dly_itrs_value" INTEGER DEFAULT 25,
+"dly_limit" BOOLEAN DEFAULT 0,
+"dly_limit_value" INTEGER DEFAULT 1000,
+
+"game" BOOLEAN DEFAULT 0,
+"game_limit" BOOLEAN DEFAULT 1,
+"game_limit_value" INTEGER DEFAULT 100,
+
+"dices" BOOLEAN DEFAULT 0,
+"rps" BOOLEAN DEFAULT 0,
+"hball" BOOLEAN DEFAULT 0,
+"bet" BOOLEAN DEFAULT 0,
+"bet_limit" BOOLEAN DEFAULT 0,
+"bet_limit_value" INTEGER DEFAULT 1000,
+"roll" BOOLEAN DEFAULT 0,
+
+"ai_chat" BOOLEAN DEFAULT 0,
+"ai_img" BOOLEAN DEFAULT 0,
+"ai_img_pay" BOOLEAN DEFAULT 1,
+"ai_img_pay_value" INTEGER DEFAULT 100,
+'''
+
+DB_STRUCTURE_MEMBERS = '''
+"id" INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+"name" TEXT, 
+"coins" INTEGER, 
+"daily" TEXT, 
+"quackers" INTEGER, 
+"mess" INTEGER, 
+"created" TEXT, 
+"streak" INTEGER DEFAULT 0, 
+"epvoicet" INTEGER DEFAULT 0, 
+"voiceh" INTEGER DEFAULT 0, 
+"luck" INTEGER DEFAULT 0, 
+"bank" INTEGER DEFAULT 0,
+'''
+
+
+CURSOR.execute(f'''
 CREATE TABLE IF NOT EXISTS "servers" (
-    "id" INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
-    "server_id" INTEGER UNIQUE NOT NULL, 
-    "server_name" TEXT NOT NULL, 
-    "lang" TEXT DEFAULT 'eng',
-    
-    "admin_role_id" INTEGER DEFAULT 0,
-    "admin_ch_id" INTEGER DEFAULT 0,
-    "gnrl_ch_id" INTEGER DEFAULT 0,
-    "dbg_ch" BOOLEAN DEFAULT 0,
-    "dbg_ch_id" INTEGER DEFAULT 0,
-    "bot_ch_id" INTEGER DEFAULT 0,
-
-    "wlc" BOOLEAN DEFAULT 0,
-    "wlc_ch_id" INTEGER DEFAULT 0,
-    "wlc_msg" BOOLEAN DEFAULT 0,
-    "wlc_msg_content" TEXT DEFAULT '',
-    "wlc_rct" BOOLEAN DEFAULT 0,
-    "wlc_rct_cstm" BOOLEAN DEFAULT 1,
-
-    "gdb" BOOLEAN DEFAULT 0,
-    "gdb_ch_id" INTEGER DEFAULT 0,
-    "gdb_msg" BOOLEAN DEFAULT 0,
-    "gdb_msg_content" TEXT DEFAULT '',
-
-    "prst" BOOLEAN DEFAULT 0,
-    "prst_ch_id" INTEGER DEFAULT 0,
-    "prst_role" INTEGER DEFAULT 0,
-
-    "dm" BOOLEAN DEFAULT 0,
-    "dm_msg_content" TEXT DEFAULT '',
-
-    "eco" BOOLEAN DEFAULT 0,
-    "eco_pss" BOOLEAN DEFAULT 1,
-    "eco_pss_msg" BOOLEAN DEFAULT 1,
-    "eco_pss_msg_value" INTEGER DEFAULT 1,
-    "eco_pss_ch" BOOLEAN DEFAULT 1,
-    "eco_pss_ch_value" INTEGER DEFAULT 15,
-    "eco_pss_ch_hour" INTEGER DEFAULT 50,
-    "eco_pss_ch_afk" BOOLEAN DEFAULT 0,
-    "eco_pss_ch_afk_id" INTEGER DEFAULT 0,
-    "eco_pss_cmd" BOOLEAN DEFAULT 1,
-    "eco_pss_cmd_value" INTEGER DEFAULT 5,
-
-    "bnk" BOOLEAN DEFAULT 0,
-    "bnk_itrs" BOOLEAN DEFAULT 1,
-    "bnk_itrs_value" INTEGER DEFAULT 30,
-
-    "snd" BOOLEAN DEFAULT 0,
-    "snd_limit" BOOLEAN DEFAULT 0,
-    "snd_limit_value" INTEGER DEFAULT 100,
-
-    "dly" BOOLEAN DEFAULT 0,
-    "dly_from_value" INTEGER DEFAULT 100,
-    "dly_to_value" INTEGER DEFAULT 250,
-    "dly_random" BOOLEAN DEFAULT 1,
-
-    "game" BOOLEAN DEFAULT 0,
-    "game_limit" BOOLEAN DEFAULT 1,
-    "game_limit_value" INTEGER DEFAULT 100,
-
-    "dices" BOOLEAN DEFAULT 0,
-    "rps" BOOLEAN DEFAULT 0,
-    "hball" BOOLEAN DEFAULT 0,
-    "bet" BOOLEAN DEFAULT 0,
-    "bet_limit" BOOLEAN DEFAULT 0,
-    "bet_limit_value" INTEGER DEFAULT 1000,
-    "roll" BOOLEAN DEFAULT 0,
-
-    "ai_chat" BOOLEAN DEFAULT 0,
-    "ai_img" BOOLEAN DEFAULT 0,
-    "ai_img_pay" BOOLEAN DEFAULT 1,
-    "ai_img_pay_value" INTEGER DEFAULT 100
+    {DB_STRUCTURE_SERVER}
 );
 ''')
 CONNECTION.commit()
@@ -110,19 +131,7 @@ def get_all_server_ids():
 
 def servers_table_exists(guild):
     CURSOR.execute(f'''CREATE TABLE IF NOT EXISTS "{guild}" (
-        "id" INTEGER UNIQUE, 
-        "name" TEXT, 
-        "coins" INTEGER, 
-        "daily" TEXT, 
-        "quackers" INTEGER, 
-        "mess" INTEGER, 
-        "created" TEXT, 
-        "streak" INTEGER DEFAULT 0, 
-        "epvoicet" INTEGER DEFAULT 0, 
-        "voiceh" INTEGER DEFAULT 0, 
-        "luck" INTEGER DEFAULT 0, 
-        "bank" INTEGER DEFAULT 0, 
-        PRIMARY KEY("id" AUTOINCREMENT)
+        {DB_STRUCTURE_MEMBERS}
     );''')
     CONNECTION.commit()
 
@@ -241,18 +250,20 @@ def daily(guild, name):
     streak = data[2]
 
     if daily != date:
-        amount_min = get_server_info(guild, 'dly_from_value')
-        amount_max = get_server_info(guild, 'dly_to_value')
-        max_streak = 20
+        amount_min = get_server_info(guild, 'dly_start_value')
         if daily == (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'):
             streak += 1
-            if streak > max_streak and get_server_info(guild, 'dly_random') == True:
-                amount = random.randint(amount_max, amount_max * 1.5)
-            else:
-                amount = amount_min + (streak - 1) * (amount_max - amount_min) / (max_streak - 1)
+            amount = amount_min + (streak * get_server_info(guild, 'dly_itrs_value'))
+        elif daily == (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d') and streak >= 15:
+            streak -= 2
+            amount = amount_min + (streak * get_server_info(guild, 'dly_itrs_value'))
         else:
             amount = amount_min
             streak = 0
+        
+        if get_server_info(guild, 'dly_limit') == True:
+            if amount > get_server_info(guild, 'dly_limit_value'):
+                amount = get_server_info(guild, 'dly_limit_value')
 
         coins += int((amount))
 
@@ -261,6 +272,8 @@ def daily(guild, name):
         qlogs.info(f'--QDB // DAILY : {name} : {coins}')
         if streak == 0:
             return(f'Successfully added {int((amount))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins')
+        elif streak < data[2]:
+            return(f'Successfully added {int((amount))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins // STREAK : {streak} // STREAK SAVED')
         else:
             return(f'Successfully added {int((amount))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins // STREAK : {streak}')
     else:
@@ -461,6 +474,53 @@ def clear_stats(guild):
     STATS_CURSOR.execute(f"DROP TABLE '{guild}'")
     STATS_CONNECTION.commit()
 
+#DB SYNC and BACKUP
+
+def parse_schema(schema_str):
+    schema = {}
+    for line in schema_str.strip().split(',\n'):
+        parts = line.strip().split(' ', 1)
+        if len(parts) == 2:
+            schema[parts[0].strip('"')] = parts[1]
+    return schema
+
+def sync_table(table_name, expected_schema_str):
+    expected_schema = parse_schema(expected_schema_str)
+    
+    CURSOR.execute(f"PRAGMA table_info({table_name})")
+
+    existing_schema = {row[1]: row[2] for row in CURSOR.fetchall()} 
+    
+    if set(existing_schema.keys()) != set(expected_schema.keys()):
+        # Rename old table
+        temp_name = f"{table_name}_old"
+        CURSOR.execute(f"ALTER TABLE {table_name} RENAME TO {temp_name}")
+        
+        # Create new table with correct schema
+        create_stmt = f"CREATE TABLE {table_name} ({expected_schema_str})"
+        CURSOR.execute(create_stmt)
+        
+        # Find matching columns
+        matching_columns = set(existing_schema.keys()) & set(expected_schema.keys())
+        if matching_columns:
+            columns_str = ", ".join(matching_columns)
+            CURSOR.execute(f"INSERT INTO {table_name} ({columns_str}) SELECT {columns_str} FROM {temp_name}")
+        
+        # Drop old table
+        CURSOR.execute(f"DROP TABLE {temp_name}")
+    
+    CONNECTION.commit()
+
+def sync_db():
+    CURSOR.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    tables = [row[0] for row in CURSOR.fetchall()]
+    for table in tables:
+        if table == "servers":
+            sync_table(table, DB_STRUCTURE_SERVER)
+        else:
+            sync_table(table, DB_STRUCTURE_MEMBERS)
+    
+
 def backup_db():
     bckup_path = os.path.join(ROOT_DIR, "db/backup/")
     bckup_file = os.path.join(bckup_path, "bckup_quackers.db")
@@ -469,3 +529,4 @@ def backup_db():
 
     shutil.copy(DB_PATH, bckup_file)
     qlogs.info(f"BACKUP OF THE DATABASE")
+
