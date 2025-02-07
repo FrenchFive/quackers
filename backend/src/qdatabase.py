@@ -6,6 +6,7 @@ import json
 import time
 import random
 import shutil
+import re
 
 from consts import ROOT_DIR
 import qlogs
@@ -21,8 +22,8 @@ STATS_CURSOR = STATS_CONNECTION.cursor()
 
 DB_STRUCTURE_SERVER = '''
 "id" INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
-"server_id" INTEGER UNIQUE NOT NULL, 
-"server_name" TEXT NOT NULL, 
+"server_id" INTEGER UNIQUE, 
+"server_name" TEXT,
 "lang" TEXT DEFAULT 'eng',
 
 "admin_role_id" INTEGER DEFAULT 0,
@@ -92,7 +93,7 @@ DB_STRUCTURE_SERVER = '''
 "ai_chat" BOOLEAN DEFAULT 0,
 "ai_img" BOOLEAN DEFAULT 0,
 "ai_img_pay" BOOLEAN DEFAULT 1,
-"ai_img_pay_value" INTEGER DEFAULT 100,
+"ai_img_pay_value" INTEGER DEFAULT 100
 '''
 
 DB_STRUCTURE_MEMBERS = '''
@@ -107,7 +108,7 @@ DB_STRUCTURE_MEMBERS = '''
 "epvoicet" INTEGER DEFAULT 0, 
 "voiceh" INTEGER DEFAULT 0, 
 "luck" INTEGER DEFAULT 0, 
-"bank" INTEGER DEFAULT 0,
+"bank" INTEGER DEFAULT 0
 '''
 
 
@@ -478,33 +479,46 @@ def clear_stats(guild):
 
 def parse_schema(schema_str):
     schema = {}
-    for line in schema_str.strip().split(',\n'):
+
+    # Split by commas that are NOT inside quotes (to avoid breaking multi-word types)
+    schema_lines = re.split(r',\s*\n', schema_str.strip())
+
+    for line in schema_lines:
         parts = line.strip().split(' ', 1)
         if len(parts) == 2:
-            schema[parts[0].strip('"')] = parts[1]
+            column_name = parts[0].strip('"').strip()  # Remove quotes and spaces
+            column_type = parts[1].strip()  # Clean up column type
+            schema[column_name] = column_type
+
     return schema
 
 def sync_table(table_name, expected_schema_str):
     expected_schema = parse_schema(expected_schema_str)
     
-    CURSOR.execute(f"PRAGMA table_info({table_name})")
-
+    CURSOR.execute(f"PRAGMA table_info('{table_name}')")
     existing_schema = {row[1]: row[2] for row in CURSOR.fetchall()} 
-    
+
+    print(f"TABLE: {table_name}")
+    print(set(existing_schema.keys()))
+    print(set(expected_schema.keys()))
+
     if set(existing_schema.keys()) != set(expected_schema.keys()):
+        print("-- TRANSFERING TABLE --")
+
         # Rename old table
         temp_name = f"{table_name}_old"
-        CURSOR.execute(f"ALTER TABLE {table_name} RENAME TO {temp_name}")
+        CURSOR.execute(f"ALTER TABLE '{table_name}' RENAME TO '{temp_name}'")
         
         # Create new table with correct schema
-        create_stmt = f"CREATE TABLE {table_name} ({expected_schema_str})"
+        create_stmt = f"CREATE TABLE '{table_name}' ({expected_schema_str})"
         CURSOR.execute(create_stmt)
         
-        # Find matching columns
         matching_columns = set(existing_schema.keys()) & set(expected_schema.keys())
+
         if matching_columns:
             columns_str = ", ".join(matching_columns)
-            CURSOR.execute(f"INSERT INTO {table_name} ({columns_str}) SELECT {columns_str} FROM {temp_name}")
+            CURSOR.execute(f"INSERT INTO '{table_name}' ({columns_str}) SELECT {columns_str} FROM '{temp_name}'")
+
         
         # Drop old table
         CURSOR.execute(f"DROP TABLE {temp_name}")
@@ -512,7 +526,7 @@ def sync_table(table_name, expected_schema_str):
     CONNECTION.commit()
 
 def sync_db():
-    CURSOR.execute("SELECT name FROM sqlite_master WHERE type='table'")
+    CURSOR.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'") # Get all tables except the sqlite internal ones
     tables = [row[0] for row in CURSOR.fetchall()]
     for table in tables:
         if table == "servers":
