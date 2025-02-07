@@ -751,8 +751,10 @@ async def roll(
     else:
         emoji = ""
 
-    message = f"🎲 {interaction.user.name} rolled a {sides}-sided dice {number} times: {rolllist}"
-    message += f"\n{emoji}Total: **{sumroll+bonus}**{emoji}"
+    message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times: {rolllist}"
+    if bonus != 0:
+        message += f"\nBonus : [{bonus}]"
+    message += f"\n{emoji}Total : **{sumroll+bonus}**{emoji}"
     qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=1)
     await interaction.response.send_message(message)
