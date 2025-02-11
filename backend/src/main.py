@@ -725,6 +725,10 @@ async def roll(
     number: Optional[int] = SlashOption(
         required=False, 
         description="Number of dice to roll (default is 1)"
+    ),
+    bonus: Optional[int] = SlashOption(
+        required=False, 
+        description="Bonus Added to the Total"
     )
 ):
     qdb.user_in_db(interaction.guild.id, interaction.user)
@@ -741,6 +745,9 @@ async def roll(
     elif number <= 0:
         number = 1
 
+    if bonus is None:
+        bonus = 0
+
     for i in range(number):
         rolllist.append(random.randint(1, sides))
 
@@ -753,8 +760,10 @@ async def roll(
     else:
         emoji = ""
 
-    message = f"🎲 {interaction.user.name} rolled a {sides}-sided dice {number} times: {rolllist}"
-    message += f"\n{emoji}Total: **{sumroll}**{emoji}"
+    message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times: {rolllist}"
+    if bonus != 0:
+        message += f"\nBonus : [{bonus}]"
+    message += f"\n{emoji}Total : **{sumroll+bonus}**{emoji}"
     qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=1)
     await interaction.response.send_message(message)
