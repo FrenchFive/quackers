@@ -763,7 +763,7 @@ async def roll(
     #SENDING GIFs
     file = None
     if sides == 20 and number == 1:
-        file = os.path.join(DATA_DIR, f'/imgs/dices/roll.{random.randint(0,4)}.{sumroll-1}.gif')
+        file = os.path.join(DATA_DIR, f'/imgs/dices/roll.{random.randint(0,4)}.{sumroll-1}.webp')
 
     message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times: {rolllist}"
     if bonus != 0:
@@ -774,7 +774,11 @@ async def roll(
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=1)
 
     if file:
-        await interaction.response.send_message(message, file=nextcord.File(file))
+        mess = await interaction.response.send_message("", file=nextcord.File(file))
+        #wait for 5 seconds
+        await asyncio.sleep(5)
+        #edit the message to change the message content 
+        await mess.edit(content=message)
     else:
         await interaction.response.send_message(message)
 
