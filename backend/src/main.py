@@ -760,13 +760,23 @@ async def roll(
     else:
         emoji = ""
 
+    #SENDING GIFs
+    file = None
+    if sides == 20 and number == 1:
+        file = os.path.join(DATA_DIR, f'/imgs/dices/roll.{random.randint(0,4)}.{sumroll-1}.gif')
+
     message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times: {rolllist}"
     if bonus != 0:
         message += f"\nBonus : [{bonus}]"
     message += f"\n{emoji}Total : **{sumroll+bonus}**{emoji}"
+
     qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=1)
-    await interaction.response.send_message(message)
+
+    if file:
+        await interaction.response.send_message(message, file=nextcord.File(file))
+    else:
+        await interaction.response.send_message(message)
 
 
 # ADMIN
