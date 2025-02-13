@@ -715,7 +715,8 @@ async def bet_result(
         qgames.bet_result(interaction.guild.id, interaction.user.name, option)
         await interaction.response.send_message('MONEY SENT !!!')
 
-@bot.slash_command(name="roll", description="Roll a dice", guild_ids=serv_list(list(set(qdb.get_server_list("eco")) & set(qdb.get_server_list("roll")))))
+
+@bot.slash_command(name="roll", description="Roll a dice", guild_ids=serv_list(list(set(qdb.get_server_list("game")) & set(qdb.get_server_list("roll")))))
 async def roll(
         interaction: Interaction,
     sides: Optional[int] = SlashOption(
@@ -763,7 +764,7 @@ async def roll(
     #SENDING GIFs
     file = None
     if sides == 20 and number == 1:
-        file = os.path.join(DATA_DIR, f'/imgs/dices/roll.{random.randint(0,4)}.{sumroll-1}.webp')
+        file = os.path.join(DATA_DIR, f'{DATA_DIR}/imgs/dices/roll.{random.randint(0,4)}.{sumroll-1}.webp')
 
     message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times: {rolllist}"
     if bonus != 0:
@@ -775,10 +776,14 @@ async def roll(
 
     if file:
         mess = await interaction.response.send_message("", file=nextcord.File(file))
-        #wait for 5 seconds
-        await asyncio.sleep(5)
+        #wait for a while
+        await asyncio.sleep(8)
         #edit the message to change the message content 
         await mess.edit(content=message)
+        #await again 
+        await asyncio.sleep(5)
+        #delete the file from the message
+        await mess.edit(content=message, attachments=[])
     else:
         await interaction.response.send_message(message)
 
@@ -1013,6 +1018,13 @@ async def on_ready():
 
     for guild in bot.guilds:
         qdb.add_server(guild.id, guild.name)
+
+    await bot.sync_all_application_commands(
+        associate_known=True,
+        delete_unknown=True,
+        update_known=True,
+        register_new=True
+    )
 
 @bot.event
 async def on_guild_join(guild):

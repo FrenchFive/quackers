@@ -154,7 +154,7 @@ def get_server_list(param):
     result = CURSOR.fetchall()
     if result == None:
         return []
-    return result
+    return [row[0] for row in result]
 
 def get_server_name(guild):
     CURSOR.execute('SELECT server_name FROM servers WHERE server_id = ?', (guild,))
