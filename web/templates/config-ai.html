@@ -3,7 +3,7 @@
 {% block content %}
 <main class="flex-grow-1 p-4">
     <header class="mb-4">
-        <h1>AI</h1>
+        <h1 class="schabo">Ai</h1>
     </header>
     <section>
         <!-- Quackers Section -->
@@ -11,60 +11,60 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Quackers
                     <p>
-                        <span class="explanation-text">Explanation of the games</span>
+                        <span class="explanation-text">Quackers can interact with the members of the server if tagged</span>
                     </p>
                 </h5> 
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="ai-chat-toggle" {% if data['ai_chat'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="send-toggle">Active</label>
+                    </form>
                 </div>                                         
             </div>
             <div class="card-body" id="welcome-section">
                 <form>
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
+            <button id="btn-ai-chat" type="submit" class="btn button text-white">Save Changes</button>
         </div>
         <!-- Imagine Section -->
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Imagine
                     <p>
-                        <span class="explanation-text">Explanation of the goodbye message</span>
+                        <span class="explanation-text">Generate an Image using AI based on a prompt :: DALL-E-3 Model by OpenAI</span>
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="imagine-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="imagine-toggle" {% if data['ai_img'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="imagine-toggle">Active</label>
+                    </form>
                 </div>
             </div>
             <div class="card-body" id="imagine-section">
-                <form>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Key to API:</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
+                <form autocomplete="off">
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="percentage-of-growth" class="form-label" style="margin-bottom: 0;">
                             Coins payment
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="ai-img-pay" {% if data['ai_img_pay'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="ai-img-pay">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much costs an imagine:</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="ai-img-pay-value" type="number" value="{{ data['ai_img_pay_value'] }}" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">Quack coins</span>
                         </div>
                     </div>
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
+            <button id="btn-ai-img" type="submit" class="btn button text-white">Save Changes</button>
         </div>
     </section>
 </main>
-<script src="{{ url_for('static', filename='js/config-ai.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/config-ai.js') }}"></script>
 {% endblock %}

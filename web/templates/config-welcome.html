@@ -3,7 +3,7 @@
 {% block content %}
 <main class="flex-grow-1 p-4">
     <header class="mb-4">
-        <h1>Arrivals & Departures</h1>
+        <h1 class="schabo">Arrivals & Departures</h1>
     </header>
     <section>
         <!-- Welcome Message Section -->
@@ -11,48 +11,56 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Welcome Message
                     <p>
-                        <span class="explanation-text">Explanation of the welcome message</span>
+                        <span class="explanation-text">Quackers sends a welcome message to the new member</span>
                     </p>
                 </h5>
                                         
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="welcome-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="welcome-toggle" {% if data['wlc'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="welcome-toggle">Active</label>
+                    </form>
                 </div>              
             </div>
 
             <div class="card-body" id="welcome-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3">
                         <label for="welcome-channel" class="form-label">Welcome Channel</label>
                         <select id="welcome-channel" class="form-select">
                             {% for channel in server["text_channels"] %}
-                                <option>{{ channel.name }}</option>
+                                <option {% if data["wlc_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="welcome-message" class="form-label">Custom Message</label>
-                        <textarea id="welcome-message" class="form-control" rows="3">🎉 Welcome {memberName} 🎉</textarea>
+                        <label for="welcome-message" class="form-label" style="margin-bottom: 0; display: inline-block; width: auto;">
+                            Custom Message
+                        </label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input toggle-section" type="checkbox" id="wlc-cstm-msg-toggle" {% if data['wlc_msg'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="wlc-cstm-msg-toggle">Active</label>
+                        </div>
+                        <textarea id="wlc-cstm-msg-input" class="form-control" rows="3">{% if data['wlc_msg_content'] != "" %}{{ data['wlc_msg_content'] }}{% else %}🎉 Welcome {name} 🎉{% endif %}</textarea>
                     </div>
+                    
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-                        <label for="welcome-channel" class="form-label">
+                        <label for="general-channel" class="form-label" style="margin-bottom: 0;">
                             Bot Reaction
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction-toggle" {% if data['wlc_rct'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="bot-reaction-toggle">Active</label>
                         </div>
                         <div class="form-check form-switch" style="width: 100%;"> <!-- Force le second toggle à prendre toute la largeur -->
-                            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-                            <label class="form-check-label" for="flexSwitchCheckDefault" style="font-size: 15px;">Random emote from the server</label>
+                            <input class="form-check-input" type="checkbox" role="switch" id="bot-random-reaction-toggle" {% if data['wlc_rct_cstm'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="bot-random-reaction-toggle" style="font-size: 15px;">Random emote from the server</label>
                         </div>
                     </div>
                     
-                      
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
+            <button id="btn-wlc-wlc" type="button" class="btn button text-white">Save Changes</button>
         </div>
 
         <!-- Goodbye Message Section -->
@@ -60,31 +68,37 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Goodbye Message
                     <p>
-                        <span class="explanation-text">Explanation of the goodbye message</span>
+                        <span class="explanation-text">Quackers sends a goodbye message to warn the departure of a member</span>
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="goodbye-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="goodbye-toggle" {% if data['gdb'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="goodbye-toggle">Active</label>
+                    </form>
                 </div>
             </div>
             <div class="card-body" id="goodbye-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3">
                         <label for="goodbye-channel" class="form-label">Goodbye Channel</label>
                         <select id="goodbye-channel" class="form-select">
                             {% for channel in server["text_channels"] %}
-                                <option>{{ channel.name }}</option>
+                                <option {% if data["gdb_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="goodbye-message" class="form-label">Custom Message</label>
-                        <textarea id="goodbye-message" class="form-control" rows="3">👋 Goodbye {memberName} 👋</textarea>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input toggle-section" type="checkbox" id="gdb-msg-toggle" {% if data['gdb_msg'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="bot-reaction">Active</label>
+                        </div>
+                        <textarea id="gdb-msg-input" class="form-control" rows="3">{% if data['gdb_msg_content'] != "" %}{{ data['gdb_msg_content'] }}{% else %}👋 Goodbye {name} 👋{% endif %}</textarea>
                     </div>
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
+            <button id="btn-wlc-gdb" type="button" class="btn button text-white">Save Changes</button>
         </div>
 
             <!-- Presentation Message Section -->
@@ -92,61 +106,68 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Presentation Message
                     <p>
-                        <span class="explanation-text">Explanation of the presentation message</span>
+                        <span class="explanation-text">Quackers makes a personnalized message to presente the new member based on a small questionnary they would have previously answered</span>
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="presentation-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="presentation-toggle" {% if data['prst'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="presentation-toggle">Active</label>
+                    </form>
                 </div>
             </div>
             <div class="card-body" id="presentation-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3">
                         <label for="presentation-txt-channel" class="form-label">Presentation texte channel</label>
                         <select id="presentation-txt-channel" class="form-select">
                             {% for channel in server["text_channels"] %}
-                                <option>{{ channel.name }}</option>
+                                <option {% if data["prst_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
                     <div class="mb-3">
                         <label for="newbie-role" class="form-label">Newbie role</label>
+                        <div style="width: 100%; margin-top: 0;">
+                            <span class="explanation-text" style="margin-top: 0; display: block;">The newbie role is given to new members who haven't done their presentation yet</span>
+                        </div>  
                         <select id="newbie-role" class="form-select">
                             {% for role in server["roles"] %}
-                                <option>{{ role.name }}</option>
+                                <option {% if data["prst_role"]|int == role.id|int %} selected="selected" {% endif %} value="{{ role.id }}">{{ role.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
+            <button id="btn-wlc-prst" type="button" class="btn button text-white">Save Changes</button>
         </div>
         <!-- Direct Message Section -->
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Direct Message
                     <p>
-                        <span class="explanation-text">Explanation of the direct message</span>
+                        <span class="explanation-text">Quackers sends a welcome message to the new member in their private messages</span>
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="dm-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="dm-toggle"  {% if data['dm'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="dm-toggle">Active</label>
+                    </form>
                 </div>
             </div>
             <div class="card-body" id="dm-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3">
                         <label for="dm-message" class="form-label">Custom Message</label>
-                        <textarea id="dm-message" class="form-control" rows="3">What the user will receive once they join</textarea>
+                        <textarea id="dm-message" class="form-control" rows="3">{% if data['dm_msg_content'] != "" %}{{ data['dm_msg_content'] }}{% else %}{{ dm }}{% endif %}</textarea>
                     </div>
                     
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
+            <button id="btn-wlc-dm" type="submit" class="btn button text-white">Save Changes</button>
         </div>
     </section>
 </main>
-<script src="{{ url_for('static', filename='js/config-welcome.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/config-welcome.js') }}"></script>
 {% endblock %}

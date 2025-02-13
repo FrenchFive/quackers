@@ -3,7 +3,7 @@
 {% block content %}
 <main class="flex-grow-1 p-4">
     <header class="mb-4">
-        <h1>Economy</h1>
+        <h1 class="schabo">Economy</h1>
     </header>
     <section>
         <!-- Coins Section -->
@@ -11,52 +11,84 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Coins
                     <p>
-                        <span class="explanation-text">Explanation of the coins</span>
+                        <span class="explanation-text">Introduce an economy to your server thanks to the "quack coin"</span>
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="coin-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="coin-toggle" {% if data['eco'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="coin-toggle">Active</label>
+                    </form>
                 </div>                                         
             </div>
             <div class="card-body" id="coin-section">
-                <form>
-                    <div class="mb-3">
-                        <label for="welcome-channel" class="form-label">Passive income</label>
-                        <p>
-                            <span class="explanation-text">Explanation of the passive income</span>
-                        </p>
-                    </div>
+                <form autocomplete="off">
+                    <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <label for="welcome-channel" class="form-label" style="margin-bottom: 0;">
+                            Passive income
+                        </label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input toggle-section" type="checkbox" id="passive-toggle" {% if data['eco_pss'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="passive-toggle">Active</label>
+                        </div>
+                        <div style="width: 100%;">
+                            <span class="explanation-text" style="margin-top: 0; display: block;">Each message sent on the server makes the member earn a small amount of coins</span>
+                        </div>
+                    </div> 
+                    <div id="passive-block">
+                    <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <label for="welcome-channel" class="form-label" style="margin-bottom: 0;">
+                            Command income
+                        </label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input toggle-section" type="checkbox" id="pss-cmd-toggle" {% if data['eco_pss_cmd'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="pss-cmd-toggle">Active</label>
+                        </div>
+                        <div style="width: 100%;">
+                            <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per passive commands sent:</span>
+                        </div>
+                        <div class="input-group mb-3" style="width: 100%;">
+                            <input id="pss-cmd-input" type="number" value="{{ data['eco_pss_cmd_value'] }}" class="form-control" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <span class="form-control" id="basic-addon2">per command</span>
+                        </div>
+                    </div>  
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="welcome-channel" class="form-label" style="margin-bottom: 0;">
                             Messages income
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="pss-msg-toggle" {% if data['eco_pss_msg'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="pss-msg-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per messages sent:</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="pss-msg-input" type="number" value="{{ data['eco_pss_msg_value'] }}" class="form-control" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">per message</span>
                         </div>
                     </div>                              
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="welcome-channel" class="form-label" style="margin-bottom: 0;">
-                            Vocals income
+                            Voice channel income
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="pss-vc-toggle" {% if data['eco_pss_ch'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="pss-vc-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
-                            <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per messages sent:</span>
+                            <span class="explanation-text" style="margin-top: 0; display: block;">Connection Reward</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
-                            <span class="form-control" id="basic-addon2">per message</span>
+                            <input id="pss-vconn-input" type="number" value="{{ data['eco_pss_ch_value'] }}" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <span class="form-control" id="basic-addon2">per connection</span>
+                        </div>
+                        <div style="width: 100%;">
+                            <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per hour spent:</span>
+                        </div>
+                        <div class="input-group mb-3" style="width: 100%;">
+                            <input id="pss-vch-input" type="number" value="{{ data['eco_pss_ch_hour'] }}" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <span class="form-control" id="basic-addon2">per hour</span>
                         </div>
                     </div>
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
@@ -64,121 +96,146 @@
                             AFK Channel
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="afk-toggle" {% if data['eco_pss_ch_afk'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="afk-toggle">Active</label>
                         </div>
                         <div style="width: 100%;">
-                            <select id="welcome-channel" class="form-select">
+                            <select class="form-select" id="afk-channel">
                                 {% for channel in server["voice_channels"] %}
-                                    <option>{{ channel.name }}</option>
+                                    <option {% if data["eco_pss_ch_afk_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                                 {% endfor %}
                             </select>
                             
                         </div>
-                    </div>    
-                        
-                        
-
-                    <button type="submit" class="btn button text-white">Save Changes</button>
+                    </div>  
+                    </div>  
                 </form>
             </div>
+            <button id="btn-eco-eco" type="button" class="btn button text-white">Save Changes</button>
         </div>
         <!-- Bank Section -->
-        <div class="card mb-4" id="bank-block">
+        <div id="bank-block">
+        <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Bank
                     <p>
-                        <span class="explanation-text">Explanation of the bank</span>
+                        <span class="explanation-text">Allows the user to store coins to get interest</span>
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="bank-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="bank-toggle" {% if data['bnk'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="bank-toggle">Active</label>
+                    </form>
                 </div>                                         
             </div>
             <div class="card-body" id="bank-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="percentage-of-growth" class="form-label" style="margin-bottom: 0;">
                             Percentage of growth
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="bank-itrs" {% if data['bnk_itrs'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="bank-itrs">Active</label>
                         </div>
                         <div style="width: 100%;">
                             <span class="explanation-text" style="margin-top: 0; display: block;">How much earned per months:</span>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="bank-itrs-input" type="number" value="{{ data['bnk_itrs_value'] }}" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">%</span>
                         </div>
                     </div>
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
+            <button id="btn-eco-bnk" type="submit" class="btn button text-white">Save Changes</button>
+        </div>
         </div>
         <!-- Send Section -->
-        <div class="card mb-4" id="send-block">
+        <div id="send-block">
+        <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Send
                     <p>
-                        <span class="explanation-text">Explanation of the send</span>
+                        <span class="explanation-text">Allows users to send their economy to each other</span>
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" {% if data['snd'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="send-toggle">Active</label>
+                    </form>
                 </div>                                         
             </div>
             <div class="card-body" id="send-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="percentage-of-growth" class="form-label" style="margin-bottom: 1;">
                             Limit of maximum amount exchanged:
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="send-limit-toggle" {% if data['snd_limit'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="send-limit-toggle">Active</label>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="send-limit-input" type="number" value="{{ data['snd_limit_value'] }}" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">quack coins</span>
                         </div>
                     </div>
-                    <button type="submit" class="btn button text-white">Save Changes</button> 
                 </form>
             </div>
+            <button id="btn-eco-snd" type="submit" class="btn button text-white">Save Changes</button> 
+        </div>
         </div>
         <!-- Daily Section -->
-        <div class="card mb-4" id="daily-block">
+        <div id="daily-block">
+        <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Daily
                     <p>
-                        <span class="explanation-text">Explanation of the daily </span>
+                        <span class="explanation-text">Receive Daily Coins everyday</span>
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="daily-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="daily-toggle" {% if data['dly'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="daily-toggle">Active</label>
+                    </form>
                 </div>                                         
             </div>
             <div class="card-body" id="daily-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="percentage-of-growth" class="form-label" style="margin-bottom: 1;">
                             Amount of money sent by the daily:
                         </label>
-                        <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
-                            <span class="form-control" id="basic-addon2">per day</span>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">Base Amount</span>
+                            <input id="dly-start-input" type="number" value="{{ data['dly_start_value'] }}" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">Increment Every Day</span>
+                            <input id="dly-itrs-input" type="number" value="{{ data['dly_itrs_value'] }}" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
+                        </div>
+                        <label for="percentage-of-growth" class="form-label" style="margin-bottom: 1;">
+                            Have a limit of maximum amount gained:
+                        </label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input toggle-section" type="checkbox" id="dly-limit-toggle" {% if data['dly_limit'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="dly-limit-toggle">Active</label>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1">Limit</span>
+                            <input id="dly-limit-input" type="number" value="{{ data['dly_limit_value'] }}" class="form-control" placeholder="quack coins" aria-label="quack coins" aria-describedby="basic-addon1">
                         </div>
                     </div>
-                    <button type="submit" class="btn button text-white">Save Changes</button> 
                 </form>
             </div>
+            <button id="btn-eco-dly" type="submit" class="btn button text-white">Save Changes</button> 
+        </div>
         </div>
     </section>
 </main>
-<script src="{{ url_for('static', filename='js/config-economy.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/config-economy.js') }}"></script>
 {% endblock %}
