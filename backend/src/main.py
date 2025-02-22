@@ -753,11 +753,13 @@ async def roll(
         rolllist.append(random.randint(1, sides))
 
     sumroll = sum(rolllist)
-    
+    fail = False
+
     if sumroll == sides*number:
         emoji = emojili[0]
     elif sumroll == number:
         emoji = emojili[1]
+        fail = True
     else:
         emoji = ""
 
@@ -769,7 +771,12 @@ async def roll(
     message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times: {rolllist}"
     if bonus != 0:
         message += f"\nBonus : [{bonus}]"
-    message += f"\n{emoji}Total : **{sumroll+bonus}**{emoji}"
+    
+    if fail:
+        result = sumroll
+    else:
+        result = sumroll + bonus
+    message += f"\n{emoji}Total : **{result}**{emoji}"
 
     qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=1)
