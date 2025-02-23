@@ -448,7 +448,7 @@ class ImagineView(nextcord.ui.View):
         # Send the full prompt
         await interaction.followup.send(content=f"Full prompt: {self.prompt} by {interaction.user.name}")
 
-@bot.slash_command(name="imagine", description="Cost : 100.Qc - Image generation using AI", guild_ids= serv_list(qdb.get_server_list("ai_img")))
+@bot.slash_command(name="imagine", description="Cost QuackCoins - Image generation using AI", guild_ids= serv_list(qdb.get_server_list("ai_img")))
 async def imagine(interaction: nextcord.Interaction, prompt: str):
     qdb.user_in_db(interaction.guild.id, interaction.user)
 
@@ -474,6 +474,34 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
 
     view = ImagineView(interaction.user.name, prompt)
     await interaction.followup.send(content=message ,file=nextcord.File(img_path), view=view)
+
+@bot.slash_command(name="playsound_quack", description="Join your voice channel, play an MP3, then disconnect.", guild_ids=testid)
+async def playsound(interaction: nextcord.Interaction):
+    # Check if the user is connected to a voice channel
+    if not interaction.user.voice or not interaction.user.voice.channel:
+        await interaction.response.send_message("You need to be in a voice channel to use this command.", ephemeral=True)
+        return
+
+    voice_channel = interaction.user.voice.channel
+
+    voice_client = await voice_channel.connect()
+
+    # Path to your MP3 file (ensure FFmpeg is installed on your system)
+    audio_source = nextcord.FFmpegPCMAudio(f"{DATA_DIR}/sound/quack.mp3")
+    
+    # Play the audio if not already playing
+    if not voice_client.is_playing():
+        voice_client.play(audio_source)
+    
+    # Optionally, wait until the audio finishes playing
+    while voice_client.is_playing():
+        await asyncio.sleep(1)
+
+    # Disconnect from the voice channel once done
+    await voice_client.disconnect()
+
+    # Notify the user that the sound was played
+    await interaction.response.send_message("Sound played and disconnected from the voice channel.", ephemeral=True)
 
 
 # qgames
