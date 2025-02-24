@@ -93,7 +93,11 @@ DB_STRUCTURE_SERVER = '''
 "ai_chat" BOOLEAN DEFAULT 0,
 "ai_img" BOOLEAN DEFAULT 0,
 "ai_img_pay" BOOLEAN DEFAULT 1,
-"ai_img_pay_value" INTEGER DEFAULT 100
+"ai_img_pay_value" INTEGER DEFAULT 100,
+
+"sound" BOOLEAN DEFAULT 0,
+"s_quack" BOOLEAN DEFAULT 0,
+"s_quack_value" INTEGER DEFAULT 100
 '''
 
 DB_STRUCTURE_MEMBERS = '''

@@ -57,7 +57,8 @@ def serv_list(li):
 # COMMANDS
 @bot.slash_command(name="daily", description="Receive daily QuackCoins.", guild_ids = serv_list(list(set(qdb.get_server_list("dly")) & set(qdb.get_server_list("eco")))))
 async def daily(interaction: Interaction):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        return
     
     result = qdb.daily(interaction.guild.id, interaction.user.name)
     if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
@@ -69,8 +70,10 @@ async def daily(interaction: Interaction):
 
 @bot.slash_command(name="send", description="Send QuackCoins to someone.", guild_ids= serv_list(list(set(qdb.get_server_list("snd")) & set(qdb.get_server_list("eco")))))
 async def send(interaction: Interaction, amount: int, user: nextcord.Member):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
-    qdb.user_in_db(interaction.guild.id, user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        return
+    if qdb.user_in_db(interaction.guild.id, user) == 0:
+        return
 
     result = qdb.send(interaction.guild.id, interaction.user.name, user.name, amount)
     if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
@@ -82,9 +85,11 @@ async def send(interaction: Interaction, amount: int, user: nextcord.Member):
 
 @bot.slash_command(name="coins", description="Gives you your QuackCoins balance.", guild_ids=serv_list(qdb.get_server_list("eco")))
 async def coins(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        return
     if user:
-        qdb.user_in_db(interaction.guild.id, user)
+        if qdb.user_in_db(interaction.guild.id, user) == 0:
+            return
 
     if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
         qdb.add(interaction.guild.id, interaction.user.name, qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value"))
@@ -99,9 +104,11 @@ async def coins(interaction: Interaction, user: Optional[nextcord.Member] = Slas
 
 @bot.slash_command(name="info", description="Get an Image of your Quack Profile", guild_ids= serv_list(serverid))
 async def info(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        return
     if user:
-        qdb.user_in_db(interaction.guild.id, user)
+        if qdb.user_in_db(interaction.guild.id, user) == 0:
+            return
     
     if user is None:
         name = interaction.user.name
@@ -125,7 +132,8 @@ async def info(interaction: Interaction, user: Optional[nextcord.Member] = Slash
 
 @bot.slash_command(name="leaderboard", description="Display the Top.10 of the server", guild_ids= serv_list(qdb.get_server_list("eco")))
 async def leaderboard(interaction: Interaction):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        return
 
     intro = "HERE IS A LEADERBOARD OF THE CURRENT STATE OF THE QUACK COINS // \n"
     results = qdb.leaderboard(interaction.guild.id)
@@ -141,7 +149,8 @@ async def leaderboard(interaction: Interaction):
 
 @bot.slash_command(name="duck", description="Send a cute pic", guild_ids= serv_list(serverid))
 async def duck(interaction: Interaction):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        return
     
     response = requests.get("https://random-d.uk/api/v2/random").json()
     url = response["url"]
@@ -252,7 +261,8 @@ class PresentationModal(nextcord.ui.Modal):
 
 @bot.slash_command(name="presentation", description="Introduce yourself to the server!", guild_ids= serv_list(qdb.get_server_list("prst")))
 async def introduce(interaction: nextcord.Interaction):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        return
 
     guild = interaction.guild
     role_new = qdb.get_server_info(guild.id, "prst_role")
@@ -358,7 +368,9 @@ class BankView(nextcord.ui.View):
 
     @nextcord.ui.button(label="Deposit", style=nextcord.ButtonStyle.green)
     async def add_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        qdb.user_in_db(interaction.guild.id, interaction.user)
+        if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+            return
+        
         # Check if the user is the correct user
         if not await self.ensure_correct_user(interaction):
             return
@@ -368,7 +380,8 @@ class BankView(nextcord.ui.View):
 
     @nextcord.ui.button(label="Withdraw", style=nextcord.ButtonStyle.red)
     async def withdraw_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        qdb.user_in_db(interaction.guild.id, interaction.user)
+        if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+            return
         # Check if the user is the correct user
         if not await self.ensure_correct_user(interaction):
             return
@@ -378,7 +391,8 @@ class BankView(nextcord.ui.View):
 
 @bot.slash_command(name="bank", description="Interact with The Quackery Treasury", guild_ids= serv_list(list(set(qdb.get_server_list("bnk")) & set(qdb.get_server_list("eco")))))
 async def bank(interaction: nextcord.Interaction):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        return
     
     if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
         qdb.add(interaction.guild.id, interaction.user.name, qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value"))
@@ -450,7 +464,8 @@ class ImagineView(nextcord.ui.View):
 
 @bot.slash_command(name="imagine", description="Cost QuackCoins - Image generation using AI", guild_ids= serv_list(qdb.get_server_list("ai_img")))
 async def imagine(interaction: nextcord.Interaction, prompt: str):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        return
 
     await interaction.response.defer()  # Defer the response
 
@@ -477,16 +492,27 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
 
 @bot.slash_command(name="playsound_quack", description="Join your voice channel, play an MP3, then disconnect.", guild_ids=testid)
 async def playsound(interaction: nextcord.Interaction):
+    if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        return
+
     # Check if the user is connected to a voice channel
     if not interaction.user.voice or not interaction.user.voice.channel:
         await interaction.response.send_message("You need to be in a voice channel to use this command.", ephemeral=True)
         return
 
+    if qdb.get_server_info(interaction.guild.id, "s_quack_value")>0:
+        price = qdb.get_server_info(interaction.guild.id, "s_quack_value")
+
+        check = qdb.qcheck(interaction.guild.id, interaction.user.name, price)
+        if check != 0:
+            await interaction.response.send("Not enough QuackCoins", ephemeral=True)
+            return
+        qdb.add(interaction.guild.id, interaction.user.name, -price)
+
     voice_channel = interaction.user.voice.channel
 
     voice_client = await voice_channel.connect()
 
-    # Path to your MP3 file (ensure FFmpeg is installed on your system)
     audio_source = nextcord.FFmpegPCMAudio(f"{DATA_DIR}/sound/quack.mp3")
     
     # Play the audio if not already playing
@@ -507,7 +533,8 @@ async def playsound(interaction: nextcord.Interaction):
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids= serv_list(list(set(qdb.get_server_list("dices")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game")))))
 async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(required=False), roll: Optional[int] = SlashOption(required=False)):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        return
 
     bet = bet if bet else 100
     roll = roll if roll else 3
@@ -558,7 +585,8 @@ async def rps(
         choices={"scissors": 0, "paper": 1, "rock": 2, "lizard": 3, "spock": 4},
     ),
 ):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        return
 
     name = interaction.user.name
 
@@ -644,7 +672,8 @@ class ButtonMessage(nextcord.ui.View):
 
     @nextcord.ui.button(label=f"BET : A", style=nextcord.ButtonStyle.green)
     async def beta(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        qdb.user_in_db(interaction.guild.id, interaction.user)
+        if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+            return
 
         if qgames.bet_status(self.id) == "open" and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
             await interaction.response.send_modal(Betting(self.id, "A", interaction))
@@ -654,7 +683,8 @@ class ButtonMessage(nextcord.ui.View):
 
     @nextcord.ui.button(label="BET : B", style=nextcord.ButtonStyle.blurple)
     async def betb(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        qdb.user_in_db(interaction.guild.id, interaction.user)
+        if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+            return
 
         if qgames.bet_status(self.id) == "open" and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
             await interaction.response.send_modal(Betting(self.id, "B", interaction))
@@ -698,7 +728,8 @@ class Betting(nextcord.ui.Modal):
 
 @bot.slash_command(name="bet-create", description="Create a BET", guild_ids= serv_list(list(set(qdb.get_server_list("bet")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game")))))
 async def bet_create(interaction: nextcord.Interaction):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        return
 
     if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_modal(BetCreation())
@@ -709,7 +740,8 @@ async def bet_create(interaction: nextcord.Interaction):
 
 @bot.slash_command(name="bet-close", description="Close a BET, users won't be able to bet on it.", guild_ids= serv_list(list(set(qdb.get_server_list("bet")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game")))))
 async def bet_close(interaction: nextcord.Interaction):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        return
 
     if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
@@ -734,7 +766,8 @@ async def bet_result(
         choices={"A": 0, "B": 1},
     ),
 ):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        return
 
     if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
         await interaction.response.send_message('You do not have any bet going on', ephemeral=True)
@@ -759,7 +792,9 @@ async def roll(
         description="Bonus Added to the Total"
     )
 ):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        return
+    
     rolllist = []
     emojili = [" ✨ ", " 💩 "]
 
@@ -806,8 +841,10 @@ def is_admin(interaction: Interaction) -> bool:
 
 @bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids= serv_list(qdb.get_server_list("eco")))
 async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
-    qdb.user_in_db(interaction.guild.id, user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        return
+    if qdb.user_in_db(interaction.guild.id, user) == 0:
+        return
 
     if not is_admin(interaction):
         await interaction.response.send_message("You do not have permission to use this command.")
@@ -824,8 +861,10 @@ async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member
 
 @bot.slash_command(name="admin-remove", description="[ADMIN] remove QuackCoins from a User", guild_ids= serv_list(qdb.get_server_list("eco")))
 async def admin_remove(interaction: Interaction, amount: int, user: nextcord.Member):
-    qdb.user_in_db(interaction.guild.id, interaction.user)
-    qdb.user_in_db(interaction.guild.id, user)
+    if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        return
+    if qdb.user_in_db(interaction.guild.id, user) == 0:
+        return
 
     if not is_admin(interaction):
         await interaction.response.send_message("You do not have permission to use this command.")
@@ -1038,7 +1077,8 @@ async def on_message(ctx):
     if ctx.guild is None or ctx.author == bot.user:
         return
 
-    qdb.user_in_db(ctx.guild.id, ctx.author)
+    if qdb.user_in_db(ctx.guild.id, ctx.author) == 0:
+        return
 
     qdb.add_mess(ctx.guild.id, ctx.author.name)
     qdb.add_stat(guild=ctx.guild.id, user=ctx.author.name, type="MESS", amount=len(ctx.content))
@@ -1089,7 +1129,8 @@ def vc_disconnect(guild, member):
 @bot.event
 async def on_voice_state_update(member, before, after):
     guild = member.guild
-    qdb.user_in_db(guild.id, member)
+    if qdb.user_in_db(guild.id, member)==0:
+        return
 
     if before.channel is None and after.channel is not None:
         vc_connection(guild, member)
@@ -1111,7 +1152,8 @@ async def on_member_join(member):
 
     qlogs.info(f"{member.name} has joined the server :: {guild.name}")
     
-    qdb.user_in_db(guild.id, member)
+    if qdb.user_in_db(guild.id, member)==0:
+        return
     
     if qdb.get_server_info(guild.id, "wlc")==True:
         if qdb.get_server_info(guild.id, "wlc_msg")==True:
