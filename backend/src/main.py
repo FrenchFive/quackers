@@ -58,6 +58,7 @@ def serv_list(li):
 @bot.slash_command(name="daily", description="Receive daily QuackCoins.", guild_ids = serv_list(list(set(qdb.get_server_list("dly")) & set(qdb.get_server_list("eco")))))
 async def daily(interaction: Interaction):
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
     
     result = qdb.daily(interaction.guild.id, interaction.user.name)
@@ -71,8 +72,10 @@ async def daily(interaction: Interaction):
 @bot.slash_command(name="send", description="Send QuackCoins to someone.", guild_ids= serv_list(list(set(qdb.get_server_list("snd")) & set(qdb.get_server_list("eco")))))
 async def send(interaction: Interaction, amount: int, user: nextcord.Member):
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
     if qdb.user_in_db(interaction.guild.id, user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     result = qdb.send(interaction.guild.id, interaction.user.name, user.name, amount)
@@ -86,9 +89,11 @@ async def send(interaction: Interaction, amount: int, user: nextcord.Member):
 @bot.slash_command(name="coins", description="Gives you your QuackCoins balance.", guild_ids=serv_list(qdb.get_server_list("eco")))
 async def coins(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
     if user:
         if qdb.user_in_db(interaction.guild.id, user) == 0:
+            interaction.response.send_message("QUACKERS cannot interact with BOTs")
             return
 
     if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
@@ -105,9 +110,11 @@ async def coins(interaction: Interaction, user: Optional[nextcord.Member] = Slas
 @bot.slash_command(name="info", description="Get an Image of your Quack Profile", guild_ids= serv_list(serverid))
 async def info(interaction: Interaction, user: Optional[nextcord.Member] = SlashOption(required=False)):
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
     if user:
         if qdb.user_in_db(interaction.guild.id, user) == 0:
+            interaction.response.send_message("QUACKERS cannot interact with BOTs")
             return
     
     if user is None:
@@ -133,6 +140,7 @@ async def info(interaction: Interaction, user: Optional[nextcord.Member] = Slash
 @bot.slash_command(name="leaderboard", description="Display the Top.10 of the server", guild_ids= serv_list(qdb.get_server_list("eco")))
 async def leaderboard(interaction: Interaction):
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     intro = "HERE IS A LEADERBOARD OF THE CURRENT STATE OF THE QUACK COINS // \n"
@@ -150,6 +158,7 @@ async def leaderboard(interaction: Interaction):
 @bot.slash_command(name="duck", description="Send a cute pic", guild_ids= serv_list(serverid))
 async def duck(interaction: Interaction):
     if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
     
     response = requests.get("https://random-d.uk/api/v2/random").json()
@@ -262,6 +271,7 @@ class PresentationModal(nextcord.ui.Modal):
 @bot.slash_command(name="presentation", description="Introduce yourself to the server!", guild_ids= serv_list(qdb.get_server_list("prst")))
 async def introduce(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     guild = interaction.guild
@@ -369,6 +379,7 @@ class BankView(nextcord.ui.View):
     @nextcord.ui.button(label="Deposit", style=nextcord.ButtonStyle.green)
     async def add_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+            interaction.response.send_message("QUACKERS cannot interact with BOTs")
             return
         
         # Check if the user is the correct user
@@ -381,6 +392,7 @@ class BankView(nextcord.ui.View):
     @nextcord.ui.button(label="Withdraw", style=nextcord.ButtonStyle.red)
     async def withdraw_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+            interaction.response.send_message("QUACKERS cannot interact with BOTs")
             return
         # Check if the user is the correct user
         if not await self.ensure_correct_user(interaction):
@@ -392,6 +404,7 @@ class BankView(nextcord.ui.View):
 @bot.slash_command(name="bank", description="Interact with The Quackery Treasury", guild_ids= serv_list(list(set(qdb.get_server_list("bnk")) & set(qdb.get_server_list("eco")))))
 async def bank(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
     
     if qdb.get_server_info(interaction.guild.id, "eco_pss_cmd")==True:
@@ -465,6 +478,7 @@ class ImagineView(nextcord.ui.View):
 @bot.slash_command(name="imagine", description="Cost QuackCoins - Image generation using AI", guild_ids= serv_list(qdb.get_server_list("ai_img")))
 async def imagine(interaction: nextcord.Interaction, prompt: str):
     if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     await interaction.response.defer()  # Defer the response
@@ -493,6 +507,7 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
 @bot.slash_command(name="playsound_quack", description="Join your voice channel, play an MP3, then disconnect.", guild_ids=testid)
 async def playsound(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     # Check if the user is connected to a voice channel
@@ -534,6 +549,7 @@ async def playsound(interaction: nextcord.Interaction):
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids= serv_list(list(set(qdb.get_server_list("dices")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game")))))
 async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(required=False), roll: Optional[int] = SlashOption(required=False)):
     if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     bet = bet if bet else 100
@@ -586,6 +602,7 @@ async def rps(
     ),
 ):
     if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     name = interaction.user.name
@@ -673,6 +690,7 @@ class ButtonMessage(nextcord.ui.View):
     @nextcord.ui.button(label=f"BET : A", style=nextcord.ButtonStyle.green)
     async def beta(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+            interaction.response.send_message("QUACKERS cannot interact with BOTs")
             return
 
         if qgames.bet_status(self.id) == "open" and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
@@ -684,6 +702,7 @@ class ButtonMessage(nextcord.ui.View):
     @nextcord.ui.button(label="BET : B", style=nextcord.ButtonStyle.blurple)
     async def betb(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+            interaction.response.send_message("QUACKERS cannot interact with BOTs")
             return
 
         if qgames.bet_status(self.id) == "open" and qgames.bet_has_betted(interaction.user.name, self.id) == 0:
@@ -729,6 +748,7 @@ class Betting(nextcord.ui.Modal):
 @bot.slash_command(name="bet-create", description="Create a BET", guild_ids= serv_list(list(set(qdb.get_server_list("bet")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game")))))
 async def bet_create(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
@@ -741,6 +761,7 @@ async def bet_create(interaction: nextcord.Interaction):
 @bot.slash_command(name="bet-close", description="Close a BET, users won't be able to bet on it.", guild_ids= serv_list(list(set(qdb.get_server_list("bet")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game")))))
 async def bet_close(interaction: nextcord.Interaction):
     if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
@@ -767,6 +788,7 @@ async def bet_result(
     ),
 ):
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     if qgames.bet_has_a_bet_going_on(interaction.user.name) == 0:
@@ -793,6 +815,7 @@ async def roll(
     )
 ):
     if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
     
     rolllist = []
@@ -842,8 +865,10 @@ def is_admin(interaction: Interaction) -> bool:
 @bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids= serv_list(qdb.get_server_list("eco")))
 async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member):
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
     if qdb.user_in_db(interaction.guild.id, user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     if not is_admin(interaction):
@@ -862,8 +887,10 @@ async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member
 @bot.slash_command(name="admin-remove", description="[ADMIN] remove QuackCoins from a User", guild_ids= serv_list(qdb.get_server_list("eco")))
 async def admin_remove(interaction: Interaction, amount: int, user: nextcord.Member):
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
     if qdb.user_in_db(interaction.guild.id, user) == 0:
+        interaction.response.send_message("QUACKERS cannot interact with BOTs")
         return
 
     if not is_admin(interaction):
