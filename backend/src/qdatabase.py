@@ -146,7 +146,7 @@ def add_server(guild, name):
 
 def get_server_info(guild, info):
     CURSOR.execute(f'SELECT {info} FROM servers WHERE server_id = ?', (guild,))
-    result = CURSOR.fetchone()
+    result = CURSOR.fetchone()[0]
     return result
 
 def get_server_list(param):

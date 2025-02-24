@@ -1097,14 +1097,12 @@ async def on_voice_state_update(member, before, after):
     if after.channel is not None and before.channel is not None and before.channel.id == qdb.get_server_info(guild.id, "eco_pss_ch_afk_id") and qdb.get_server_info(guild.id, "eco_pss_ch_afk")==True:
         vc_connection(guild, member)
 
-    if before.channel is not None and after.channel.id == qdb.get_server_info(guild.id, "eco_pss_ch_afk_id") and qdb.get_server_info(guild.id, "eco_pss_ch_afk")==True:
-        vc_disconnect(guild, member)
-
     if before.channel is not None and after.channel is None:
-        if before.channel.id == qdb.get_server_info(guild.id, "eco_pss_ch_afk_id") and qdb.get_server_info(guild.id, "eco_pss_ch_afk")==True:
-            pass
-        else:
+        if after.channel is None:
             vc_disconnect(guild, member)
+        else:
+            if before.channel is not None and after.channel.id == qdb.get_server_info(guild.id, "eco_pss_ch_afk_id") and qdb.get_server_info(guild.id, "eco_pss_ch_afk")==True:
+                vc_disconnect(guild, member)
 
 #WELCOME and GOODBYE
 @bot.event
