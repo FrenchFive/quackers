@@ -751,6 +751,7 @@ async def roll(
 
     for i in range(number):
         rolllist.append(random.randint(1, sides))
+    rolllist.sort()
 
     sumroll = sum(rolllist)
     fail = False
