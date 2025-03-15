@@ -48,7 +48,7 @@ sound_files = [f.replace(".mp3","") for f in os.listdir(os.path.join(DATA_DIR,"s
 if len(sound_files) > 25:  # Discord only allows 25 choices
     print ("Too many sound files, limiting to 25")
     sound_files = sound_files[:25]
-print(f"Found sound files : {sound_files}")
+print(f"Found {len(sound_files)} sounds files : {sound_files}")
 
 #check each db for server ids
 for guild in serverid:
