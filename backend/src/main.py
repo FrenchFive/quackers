@@ -504,45 +504,39 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
     view = ImagineView(interaction.user.name, prompt)
     await interaction.followup.send(content=message ,file=nextcord.File(img_path), view=view)
 
-@bot.slash_command(name="playsound_quack", description="Join your voice channel, play an MP3, then disconnect.", guild_ids=testid)
-async def playsound(interaction: nextcord.Interaction):
-    if qdb.user_in_db(interaction.guild.id, interaction.user)==0:
-        await interaction.response.send_message("QUACKERS cannot interact with BOTs")
+@bot.slash_command(name="playsound", description="Select a voice channel to play an MP3, then disconnect.", guild_ids=testid)
+async def playsound(interaction: nextcord.Interaction, channel: nextcord.VoiceChannel):
+    if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
+        await interaction.response.send_message("QUACKERS cannot interact with BOTs", ephemeral=True)
         return
 
-    # Check if the user is connected to a voice channel
-    if not interaction.user.voice or not interaction.user.voice.channel:
-        await interaction.response.send_message("You need to be in a voice channel to use this command.", ephemeral=True)
-        return
-
-    if qdb.get_server_info(interaction.guild.id, "s_quack_value")>0:
+    if qdb.get_server_info(interaction.guild.id, "s_quack_value") > 0 and qdb.get_server_info(interaction.guild.id, "eco")==True:
         price = qdb.get_server_info(interaction.guild.id, "s_quack_value")
-
+        
         check = qdb.qcheck(interaction.guild.id, interaction.user.name, price)
         if check != 0:
             await interaction.response.send_message("Not enough QuackCoins", ephemeral=True)
             return
         qdb.add(interaction.guild.id, interaction.user.name, -price)
-
-    voice_channel = interaction.user.voice.channel
-
-    voice_client = await voice_channel.connect()
-
+    
+    # Connect to the selected voice channel
+    voice_client = await channel.connect()
+    
     audio_source = nextcord.FFmpegPCMAudio(f"{DATA_DIR}/sound/quack.mp3")
     
     # Play the audio if not already playing
     if not voice_client.is_playing():
         voice_client.play(audio_source)
     
-    # Optionally, wait until the audio finishes playing
+    # Wait until the audio finishes playing
     while voice_client.is_playing():
         await asyncio.sleep(1)
-
+    
     # Disconnect from the voice channel once done
     await voice_client.disconnect()
-
+    
     # Notify the user that the sound was played
-    await interaction.response.send_message("Sound played and disconnected from the voice channel.", ephemeral=True)
+    await interaction.response.send_message(f"Sound played in {channel.name} and disconnected.", ephemeral=True)
 
 
 # qgames
