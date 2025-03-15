@@ -44,6 +44,10 @@ testid = [1159282148042350642]
 
 # Sound files
 sound_files = [f.replace(".mp3","") for f in os.listdir(os.path.join(DATA_DIR,"sound")) if f.endswith(".mp3")]
+#Limiting to 25 sounds
+if len(sound_files) > 25:  # Discord only allows 25 choices
+    print ("Too many sound files, limiting to 25")
+    sound_files = sound_files[:25]
 print(f"Found sound files : {sound_files}")
 
 #check each db for server ids
@@ -522,8 +526,6 @@ async def playsound(
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
         await interaction.response.send_message("QUACKERS cannot interact with BOTs", ephemeral=True)
         return
-    
-    default_sound = "quack"
 
     if qdb.get_server_info(interaction.guild.id, "sound_pay_value") > 0 and qdb.get_server_info(interaction.guild.id, "eco") == True and qdb.get_server_info(interaction.guild.id, "sound_pay") == True:
         price = qdb.get_server_info(interaction.guild.id, "sound_pay_value")
@@ -534,7 +536,10 @@ async def playsound(
         qdb.add(interaction.guild.id, interaction.user.name, -price)
 
     # Use default sound if none is selected
-    selected_sound = sound if sound else default_sound
+    if sound:
+        selected_sound = sound
+    else:
+        selected_sound = random.choice(sound_files)
 
     # Connect to voice channel
     voice_client = await channel.connect()
