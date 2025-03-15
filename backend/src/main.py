@@ -526,6 +526,10 @@ async def playsound(
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
         await interaction.response.send_message("QUACKERS cannot interact with BOTs", ephemeral=True)
         return
+    
+    if len(sound_files) < 1:
+        await interaction.response.send_message("No sound files found", ephemeral=True)
+        return
 
     if qdb.get_server_info(interaction.guild.id, "sound_pay_value") > 0 and qdb.get_server_info(interaction.guild.id, "eco") == True and qdb.get_server_info(interaction.guild.id, "sound_pay") == True:
         price = qdb.get_server_info(interaction.guild.id, "sound_pay_value")
