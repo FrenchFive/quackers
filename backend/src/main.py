@@ -42,6 +42,10 @@ bot = commands.Bot(command_prefix='!', intents=nextcord.Intents.all())
 serverid = qdb.get_all_server_ids()
 testid = [1159282148042350642]
 
+# Sound files
+sound_files = [f.replace(".mp3","") for f in os.listdir(os.path.join(DATA_DIR,"sound")) if f.endswith(".mp3")]
+print(f"Found sound files : {sound_files}")
+
 #check each db for server ids
 for guild in serverid:
     qdb.servers_table_exists(guild)
@@ -505,38 +509,50 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
     await interaction.followup.send(content=message ,file=nextcord.File(img_path), view=view)
 
 @bot.slash_command(name="playsound", description="Select a voice channel to play an MP3, then disconnect.", guild_ids=testid)
-async def playsound(interaction: nextcord.Interaction, channel: nextcord.VoiceChannel):
+async def playsound(
+    interaction: Interaction,
+    channel: nextcord.VoiceChannel = SlashOption(description="Select the voice channel"),
+    sound: str = SlashOption(
+        name="sound",
+        description="Pick a sound to play",
+        choices=sound_files,  # Choices are automatically loaded at script startup
+        required=False,
+    )
+):
     if qdb.user_in_db(interaction.guild.id, interaction.user) == 0:
         await interaction.response.send_message("QUACKERS cannot interact with BOTs", ephemeral=True)
         return
+    
+    default_sound = "quack"
 
-    if qdb.get_server_info(interaction.guild.id, "s_quack_value") > 0 and qdb.get_server_info(interaction.guild.id, "eco")==True:
-        price = qdb.get_server_info(interaction.guild.id, "s_quack_value")
-        
+    if qdb.get_server_info(interaction.guild.id, "sound_pay_value") > 0 and qdb.get_server_info(interaction.guild.id, "eco") == True and qdb.get_server_info(interaction.guild.id, "sound_pay") == True:
+        price = qdb.get_server_info(interaction.guild.id, "sound_pay_value")
         check = qdb.qcheck(interaction.guild.id, interaction.user.name, price)
         if check != 0:
             await interaction.response.send_message("Not enough QuackCoins", ephemeral=True)
             return
         qdb.add(interaction.guild.id, interaction.user.name, -price)
-    
-    # Connect to the selected voice channel
+
+    # Use default sound if none is selected
+    selected_sound = sound if sound else default_sound
+
+    # Connect to voice channel
     voice_client = await channel.connect()
-    
-    audio_source = nextcord.FFmpegPCMAudio(f"{DATA_DIR}/sound/quack.mp3")
-    
-    # Play the audio if not already playing
+    file = os.path.join(DATA_DIR, "sound",f"{selected_sound}.mp3")
+    audio_source = nextcord.FFmpegPCMAudio(file)
+
     if not voice_client.is_playing():
         voice_client.play(audio_source)
-    
-    # Wait until the audio finishes playing
+
+    # Wait for the sound to finish playing
     while voice_client.is_playing():
         await asyncio.sleep(1)
-    
-    # Disconnect from the voice channel once done
+
+    # Disconnect from the voice channel
     await voice_client.disconnect()
-    
-    # Notify the user that the sound was played
-    await interaction.response.send_message(f"Sound played in {channel.name} and disconnected.", ephemeral=True)
+
+    # Notify the user
+    await interaction.response.send_message(f"🎶 **{selected_sound}** played in {channel.name} and disconnected.", ephemeral=True)
 
 
 # qgames
@@ -975,7 +991,6 @@ async def daily_update():
 @daily_update.before_loop
 async def before_daily_update():
     await bot.wait_until_ready()  # Wait until the bot is ready
-    qlogs.info("Waiting for BANK")
 
     # Calculate the time until the next midnight
     now = datetime.now()

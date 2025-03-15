@@ -96,8 +96,8 @@ DB_STRUCTURE_SERVER = '''
 "ai_img_pay_value" INTEGER DEFAULT 100,
 
 "sound" BOOLEAN DEFAULT 0,
-"s_quack" BOOLEAN DEFAULT 0,
-"s_quack_value" INTEGER DEFAULT 100
+"sound_pay" BOOLEAN DEFAULT 0,
+"sound_pay_value" INTEGER DEFAULT 100
 '''
 
 DB_STRUCTURE_MEMBERS = '''
