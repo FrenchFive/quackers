@@ -768,15 +768,23 @@ async def roll(
     if sides == 20 and number == 1:
         file = os.path.join(DATA_DIR, f'{DATA_DIR}/imgs/dices/roll.{random.randint(0,4)}.{sumroll-1}.webp')
 
-    message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times: {rolllist}"
-    if bonus != 0:
-        message += f"\nBonus : [{bonus}]"
+    if number <= 10:
+        message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times: {rolllist}"
+    else :
+        message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times."
+        message += f"\nMin : {min(rolllist)}"
+        message += f"\nMax : {max(rolllist)}"
+        message += f"\nMean : {sumroll/number}"
     
+    #SOMME
     if fail:
         result = sumroll
     else:
         result = sumroll + bonus
     message += f"\n{emoji}Total : **{result}**{emoji}"
+
+    if bonus != 0:
+        message += f"\nBonus : [{bonus}]"
 
     qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=1)
