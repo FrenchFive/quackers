@@ -1133,7 +1133,7 @@ async def on_message(ctx):
     #COIFFEUR
     pattern = re.compile(r"(?:^|\s)[qQ]+[uU]+[oO]+[iI]+[!? ]*$")
     feurlist = ["...feur","FEUR","FEUR !!!","feur","FEUUUUUR","coubeh!","kwak"]
-    if bool(pattern.search(ctx.content)) == True and random.randint(0, 100) < 30:
+    if bool(pattern.search(ctx.content)) == True and random.randint(0, 100) < 50 and qdb.get_server_info(ctx.guild.id, "fun_coiffeur")==True:
         await ctx.channel.send(random.choice(feurlist))
 
     if qdb.get_server_info(ctx.guild.id, "ai_chat") and bot.user.mentioned_in(ctx)==True:
