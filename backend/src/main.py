@@ -512,7 +512,7 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
     view = ImagineView(interaction.user.name, prompt)
     await interaction.followup.send(content=message ,file=nextcord.File(img_path), view=view)
 
-@bot.slash_command(name="playsound", description="Select a voice channel to play an MP3, then disconnect.", guild_ids=testid)
+@bot.slash_command(name="playsound", description="Select a voice channel to play an MP3, then disconnect.", guild_ids=serv_list(qdb.get_server_list("sound")))
 async def playsound(
     interaction: Interaction,
     channel: nextcord.VoiceChannel = SlashOption(description="Select the voice channel"),
