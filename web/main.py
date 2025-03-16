@@ -207,6 +207,18 @@ def config_games(server_id):
     data = db.get_server_info(server_id)
     return render_template('config-games.html', server=server, data=data)
 
+@app.route('/config-fun/<int:server_id>')
+def config_fun(server_id):
+    sv_check = db.server_check(server_id, get_server_info(server_id)["name"])
+    if sv_check !=None:
+        session["error_message"] = sv_check
+        return redirect('/servers')
+    check_access_token()
+    server = get_server_info(server_id)
+    print(server)
+    data = db.get_server_info(server_id)
+    return render_template('config-fun.html', server=server, data=data)
+
 @app.route('/config-ai/<int:server_id>')
 def config_ai(server_id):
     sv_check = db.server_check(server_id, get_server_info(server_id)["name"])

@@ -95,6 +95,8 @@ DB_STRUCTURE_SERVER = '''
 "ai_img_pay" BOOLEAN DEFAULT 1,
 "ai_img_pay_value" INTEGER DEFAULT 100,
 
+"fun_coiffeur" BOOLEAN DEFAULT 0,
+
 "sound" BOOLEAN DEFAULT 0,
 "sound_pay" BOOLEAN DEFAULT 1,
 "sound_pay_value" INTEGER DEFAULT 100
