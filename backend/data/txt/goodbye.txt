@@ -1,0 +1,10 @@
+Adieu, {name}! Que tes prochaines aventures soient aussi éclatantes qu'un vol de canards au soleil!  
+Quackwell, {name}! Puisses-tu toujours trouver de nouvelles mares à explorer.  
+{name}, que le vent porte tes ailes vers de nouveaux horizons inspirants!  
+Au revoir, {name}! La mare ne sera plus la même sans toi.  
+Bon vol, {name}! Que tes quacks résonnent fort partout où tu iras.  
+{name}, merci pour les éclaboussures de créativité. On te dit au revoir à contre-cœur!  
+A bientôt, {name}! Continue à briller et à quacker où que tu sois.  
+{name}, bon vent et mille plumes pour tes nouveaux défis!  
+Quackbye, {name}! Que ton départ soit le début d’une nouvelle envolée extraordinaire!  
+{name}, garde ton bec pointé vers l’avenir. Au plaisir de te revoir dans notre ciel partagé!

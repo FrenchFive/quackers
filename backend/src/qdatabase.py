@@ -6,6 +6,7 @@ import json
 import time
 import random
 import shutil
+import re
 
 from consts import ROOT_DIR
 import qlogs
@@ -19,41 +20,106 @@ CURSOR = CONNECTION.cursor()
 STATS_CONNECTION = sqlite3.connect(STATS_PATH)
 STATS_CURSOR = STATS_CONNECTION.cursor()
 
-CURSOR.execute('''CREATE TABLE IF NOT EXISTS "servers" (
-    "id" INTEGER UNIQUE, 
-    "server_id" INTEGER UNIQUE, 
-    "server_name" TEXT, 
-    "vc_afk" TEXT, 
-    "channel_welcome" INTEGER, 
-    "channel_info" INTEGER, 
-    "channel_test" INTEGER, 
-    "channel_general" INTEGER,
-    "channel_bot" INTEGER,
-    "role_newbie" TEXT, 
-    "role_admin" TEXT,
-    PRIMARY KEY("id" AUTOINCREMENT)
-);''')
+DB_STRUCTURE_SERVER = '''
+"id" INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE, 
+"server_id" INTEGER UNIQUE, 
+"server_name" TEXT,
+"lang" TEXT DEFAULT 'eng',
+
+"admin_role_id" INTEGER DEFAULT 0,
+"admin_ch_id" INTEGER DEFAULT 0,
+"gnrl_ch_id" INTEGER DEFAULT 0,
+"dbg_ch" BOOLEAN DEFAULT 0,
+"dbg_ch_id" INTEGER DEFAULT 0,
+"bot_ch_id" INTEGER DEFAULT 0,
+
+"wlc" BOOLEAN DEFAULT 0,
+"wlc_ch_id" INTEGER DEFAULT 0,
+"wlc_msg" BOOLEAN DEFAULT 0,
+"wlc_msg_content" TEXT DEFAULT '',
+"wlc_rct" BOOLEAN DEFAULT 0,
+"wlc_rct_cstm" BOOLEAN DEFAULT 1,
+
+"gdb" BOOLEAN DEFAULT 0,
+"gdb_ch_id" INTEGER DEFAULT 0,
+"gdb_msg" BOOLEAN DEFAULT 0,
+"gdb_msg_content" TEXT DEFAULT '',
+
+"prst" BOOLEAN DEFAULT 0,
+"prst_ch_id" INTEGER DEFAULT 0,
+"prst_role" INTEGER DEFAULT 0,
+
+"dm" BOOLEAN DEFAULT 0,
+"dm_msg_content" TEXT DEFAULT '',
+
+"eco" BOOLEAN DEFAULT 0,
+"eco_pss" BOOLEAN DEFAULT 1,
+"eco_pss_msg" BOOLEAN DEFAULT 1,
+"eco_pss_msg_value" INTEGER DEFAULT 1,
+"eco_pss_ch" BOOLEAN DEFAULT 1,
+"eco_pss_ch_value" INTEGER DEFAULT 15,
+"eco_pss_ch_hour" INTEGER DEFAULT 50,
+"eco_pss_ch_afk" BOOLEAN DEFAULT 0,
+"eco_pss_ch_afk_id" INTEGER DEFAULT 0,
+"eco_pss_cmd" BOOLEAN DEFAULT 1,
+"eco_pss_cmd_value" INTEGER DEFAULT 5,
+
+"bnk" BOOLEAN DEFAULT 0,
+"bnk_itrs" BOOLEAN DEFAULT 1,
+"bnk_itrs_value" INTEGER DEFAULT 30,
+
+"snd" BOOLEAN DEFAULT 0,
+"snd_limit" BOOLEAN DEFAULT 0,
+"snd_limit_value" INTEGER DEFAULT 100,
+
+"dly" BOOLEAN DEFAULT 0,
+"dly_start_value" INTEGER DEFAULT 100,
+"dly_itrs_value" INTEGER DEFAULT 25,
+"dly_limit" BOOLEAN DEFAULT 0,
+"dly_limit_value" INTEGER DEFAULT 1000,
+
+"game" BOOLEAN DEFAULT 0,
+"game_limit" BOOLEAN DEFAULT 1,
+"game_limit_value" INTEGER DEFAULT 100,
+
+"dices" BOOLEAN DEFAULT 0,
+"rps" BOOLEAN DEFAULT 0,
+"hball" BOOLEAN DEFAULT 0,
+"bet" BOOLEAN DEFAULT 0,
+"bet_limit" BOOLEAN DEFAULT 0,
+"bet_limit_value" INTEGER DEFAULT 1000,
+"roll" BOOLEAN DEFAULT 0,
+
+"ai_chat" BOOLEAN DEFAULT 0,
+"ai_img" BOOLEAN DEFAULT 0,
+"ai_img_pay" BOOLEAN DEFAULT 1,
+"ai_img_pay_value" INTEGER DEFAULT 100
+'''
+
+DB_STRUCTURE_MEMBERS = '''
+"id" INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+"name" TEXT, 
+"coins" INTEGER, 
+"daily" TEXT, 
+"quackers" INTEGER, 
+"mess" INTEGER, 
+"created" TEXT, 
+"streak" INTEGER DEFAULT 0, 
+"epvoicet" INTEGER DEFAULT 0, 
+"voiceh" INTEGER DEFAULT 0, 
+"luck" INTEGER DEFAULT 0, 
+"bank" INTEGER DEFAULT 0
+'''
+
+
+CURSOR.execute(f'''
+CREATE TABLE IF NOT EXISTS "servers" (
+    {DB_STRUCTURE_SERVER}
+);
+''')
+CONNECTION.commit()
 
 #SERVERS
-def add_or_update_server(server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, channel_bot_id, role_newbie_name, role_admin_name):
-    
-    # Check if the server already exists in the database
-    CURSOR.execute('SELECT * FROM servers WHERE server_id = ?', (server_id,))
-    existing_server = CURSOR.fetchone()
-
-    if existing_server:
-        # Update the existing server information
-        CURSOR.execute('''UPDATE servers SET server_name = ?, vc_afk = ?, channel_welcome = ?, channel_info = ?, channel_test = ?, channel_general = ?, channel_bot = ?, role_newbie = ?, role_admin = ? WHERE server_id = ?''',
-                        (server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, channel_bot_id, role_newbie_name, role_admin_name, server_id))
-        qlogs.info(f'--QDB // UPDATED SERVER: {server_name} (ID: {server_id})')
-    else:
-        # Add a new server entry
-        CURSOR.execute('''INSERT INTO servers (server_id, server_name, vc_afk, channel_welcome, channel_info, channel_test, channel_general, channel_bot, role_newbie, role_admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                        (server_id, server_name, vc_afk, channel_welcome_id, channel_info_id, channel_test_id, channel_general_id, channel_bot_id, role_newbie_name, role_admin_name))
-        qlogs.info(f'--QDB // ADDED SERVER: {server_name} (ID: {server_id})')
-
-    CONNECTION.commit()
-
 def get_all_server_ids():
     # Query the database for all server IDs
     CURSOR.execute('SELECT server_id FROM servers')
@@ -66,61 +132,34 @@ def get_all_server_ids():
 
 def servers_table_exists(guild):
     CURSOR.execute(f'''CREATE TABLE IF NOT EXISTS "{guild}" (
-        "id" INTEGER UNIQUE, 
-        "name" TEXT, 
-        "coins" INTEGER, 
-        "daily" TEXT, 
-        "quackers" INTEGER, 
-        "mess" INTEGER, 
-        "created" TEXT, 
-        "streak" INTEGER DEFAULT 0, 
-        "epvoicet" INTEGER DEFAULT 0, 
-        "voiceh" INTEGER DEFAULT 0, 
-        "luck" INTEGER DEFAULT 0, 
-        "bank" INTEGER DEFAULT 0, 
-        PRIMARY KEY("id" AUTOINCREMENT)
+        {DB_STRUCTURE_MEMBERS}
     );''')
     CONNECTION.commit()
 
-def get_vc_afk(guild_id):
-    CURSOR.execute('SELECT vc_afk FROM servers WHERE server_id = ?', (guild_id,))
-    result = CURSOR.fetchone()
-    return result[0] if result else None
+def add_server(guild, name):
+    if guild in get_all_server_ids():
+        return
+    CURSOR.execute('INSERT INTO servers (server_id, server_name) VALUES(?, ?)', (guild, name))
+    CONNECTION.commit()
+    qlogs.info(f'--QDB // ADDED SERVER : {name} :: {guild}')
+    servers_table_exists(guild)
 
-def get_ch_welcome(guild_id):
-    CURSOR.execute('SELECT channel_welcome FROM servers WHERE server_id = ?', (guild_id,))
+def get_server_info(guild, info):
+    CURSOR.execute(f'SELECT {info} FROM servers WHERE server_id = ?', (guild,))
     result = CURSOR.fetchone()
-    return result[0] if result else None
+    return result
 
-def get_ch_info(guild_id):
-    CURSOR.execute('SELECT channel_info FROM servers WHERE server_id = ?', (guild_id,))
-    result = CURSOR.fetchone()
-    return result[0] if result else None
+def get_server_list(param):
+    CURSOR.execute(f'SELECT server_id FROM servers WHERE {param} = 1')
+    result = CURSOR.fetchall()
+    if result == None:
+        return []
+    return [row[0] for row in result]
 
-def get_ch_test(guild_id):
-    CURSOR.execute('SELECT channel_test FROM servers WHERE server_id = ?', (guild_id,))
+def get_server_name(guild):
+    CURSOR.execute('SELECT server_name FROM servers WHERE server_id = ?', (guild,))
     result = CURSOR.fetchone()
-    return result[0] if result else None
-
-def get_ch_general(guild_id):
-    CURSOR.execute('SELECT channel_general FROM servers WHERE server_id = ?', (guild_id,))
-    result = CURSOR.fetchone()
-    return result[0] if result else None
-
-def get_role_newbie(guild_id):
-    CURSOR.execute('SELECT role_newbie FROM servers WHERE server_id = ?', (guild_id,))
-    result = CURSOR.fetchone()
-    return result[0] if result else None
-
-def get_role_admin(guild_id):
-    CURSOR.execute('SELECT role_admin FROM servers WHERE server_id = ?', (guild_id,))
-    result = CURSOR.fetchone()
-    return result[0] if result else None
-
-def get_emoji_list(guild_id):
-    CURSOR.execute('SELECT emoji_list FROM servers WHERE server_id = ?', (guild_id,))
-    result = CURSOR.fetchone()
-    return json.loads(result[0]) if result else None
+    return result
 
 #MEMBERS
 def user_in_db(guild, member):
@@ -182,7 +221,10 @@ def luck(guild, name, amount):
 def add_mess(guild, name):
     CURSOR.execute(f"SELECT mess FROM '{guild}' WHERE name = ?",(name,))
     data = CURSOR.fetchall()
-    mess = data[0][0]
+    if data:
+        mess = data[0][0]
+    else:
+        mess = 0
 
     mess += 1
 
@@ -209,17 +251,20 @@ def daily(guild, name):
     streak = data[2]
 
     if daily != date:
-        amount = 100
+        amount_min = get_server_info(guild, 'dly_start_value')
         if daily == (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d'):
             streak += 1
-            if streak > 20:
-                amount = random.randint(250, 350)
-            else:
-                mult = 1 + (streak - 1) * (2.5 - 1) / (20 - 1)
-                amount *= mult
-            
+            amount = amount_min + (streak * get_server_info(guild, 'dly_itrs_value'))
+        elif daily == (datetime.now() - timedelta(days=2)).strftime('%Y-%m-%d') and streak >= 15:
+            streak -= 2
+            amount = amount_min + (streak * get_server_info(guild, 'dly_itrs_value'))
         else:
+            amount = amount_min
             streak = 0
+        
+        if get_server_info(guild, 'dly_limit') == True:
+            if amount > get_server_info(guild, 'dly_limit_value'):
+                amount = get_server_info(guild, 'dly_limit_value')
 
         coins += int((amount))
 
@@ -228,6 +273,8 @@ def daily(guild, name):
         qlogs.info(f'--QDB // DAILY : {name} : {coins}')
         if streak == 0:
             return(f'Successfully added {int((amount))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins')
+        elif streak < data[2]:
+            return(f'Successfully added {int((amount))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins // STREAK : {streak} // STREAK SAVED')
         else:
             return(f'Successfully added {int((amount))} <:quackCoin:1124255606782578698> to {name} balance, total : {coins} QuackCoins // STREAK : {streak}')
     else:
@@ -236,6 +283,9 @@ def daily(guild, name):
 def send(guild, fname, dname, amount):
     if amount<0:
         return('The amount must be higher than 1 <:quackCoin:1124255606782578698>.')
+    if get_server_info(guild, 'snd_limit') == True:
+        if amount > get_server_info(guild, 'snd_limit_value'):
+            amount = get_server_info(guild, 'snd_limit_value')
     CURSOR.execute(f"SELECT coins FROM '{guild}' WHERE name = ?",(fname,))
     data = CURSOR.fetchall()
     fcoin = data[0][0]
@@ -344,9 +394,7 @@ def voicestalled(guild, name):
         secelapsed = timenow - past
         if secelapsed > 3600:
             hours = divmod(secelapsed, 3600)[0]
-            amount = 50 * hours
-            if amount > 500:
-                amount = 500
+            amount = get_server_info(guild, "eco_pss_ch_hour") * hours
             add(guild, name, amount)
             #ADD HOURS TO DB
             CURSOR.execute(f"SELECT voiceh FROM '{guild}' WHERE name = ?",(name,))
@@ -427,11 +475,70 @@ def clear_stats(guild):
     STATS_CURSOR.execute(f"DROP TABLE '{guild}'")
     STATS_CONNECTION.commit()
 
+#DB SYNC and BACKUP
+
+def parse_schema(schema_str):
+    schema = {}
+
+    # Split by commas that are NOT inside quotes (to avoid breaking multi-word types)
+    schema_lines = re.split(r',\s*\n', schema_str.strip())
+
+    for line in schema_lines:
+        parts = line.strip().split(' ', 1)
+        if len(parts) == 2:
+            column_name = parts[0].strip('"').strip()  # Remove quotes and spaces
+            column_type = parts[1].strip()  # Clean up column type
+            schema[column_name] = column_type
+
+    return schema
+
+def sync_table(table_name, expected_schema_str):
+    expected_schema = parse_schema(expected_schema_str)
+    
+    CURSOR.execute(f"PRAGMA table_info('{table_name}')")
+    existing_schema = {row[1]: row[2] for row in CURSOR.fetchall()} 
+
+    print(f"TABLE: {table_name}")
+
+    if set(existing_schema.keys()) != set(expected_schema.keys()):
+        print(f"-- TRANSFERING TABLE : {table_name} --")
+
+        # Rename old table
+        temp_name = f"{table_name}_old"
+        CURSOR.execute(f"ALTER TABLE '{table_name}' RENAME TO '{temp_name}'")
+        
+        # Create new table with correct schema
+        create_stmt = f"CREATE TABLE '{table_name}' ({expected_schema_str})"
+        CURSOR.execute(create_stmt)
+        
+        matching_columns = set(existing_schema.keys()) & set(expected_schema.keys())
+
+        if matching_columns:
+            columns_str = ", ".join(matching_columns)
+            CURSOR.execute(f"INSERT INTO '{table_name}' ({columns_str}) SELECT {columns_str} FROM '{temp_name}'")
+
+        
+        # Drop old table
+        CURSOR.execute(f"DROP TABLE {temp_name}")
+    
+    CONNECTION.commit()
+
+def sync_db():
+    CURSOR.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'") # Get all tables except the sqlite internal ones
+    tables = [row[0] for row in CURSOR.fetchall()]
+    for table in tables:
+        if table == "servers":
+            sync_table(table, DB_STRUCTURE_SERVER)
+        else:
+            sync_table(table, DB_STRUCTURE_MEMBERS)
+    
+
 def backup_db():
     bckup_path = os.path.join(ROOT_DIR, "db/backup/")
-    bckup_file = os.path.join(backup_db, "bckup_quackers.db")
+    bckup_file = os.path.join(bckup_path, "bckup_quackers.db")
 
     os.makedirs(bckup_path, exist_ok=True)
 
     shutil.copy(DB_PATH, bckup_file)
     qlogs.info(f"BACKUP OF THE DATABASE")
+

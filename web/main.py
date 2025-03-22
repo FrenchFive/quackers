@@ -3,6 +3,8 @@ import requests
 import os
 from dotenv import load_dotenv
 
+import database as db
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -51,15 +53,16 @@ def get_server_info(server_id):
     roles_data = roles_response.json()
 
     # Separate channels into text and voice
-    text_channels = [
-        {"id": channel["id"], "name": channel["name"]}
-        for channel in channels_data if channel["type"] == 0  # Type 0 is text channel
-    ]
+    if channels_data!=None:
+        text_channels = [
+            {"id": channel["id"], "name": channel["name"]}
+            for channel in channels_data if channel["type"] == 0  # Type 0 is text channel
+        ]
 
-    voice_channels = [
-        {"id": channel["id"], "name": channel["name"]}
-        for channel in channels_data if channel["type"] == 2  # Type 2 is voice channel
-    ]
+        voice_channels = [
+            {"id": channel["id"], "name": channel["name"]}
+            for channel in channels_data if channel["type"] == 2  # Type 2 is voice channel
+        ]
 
     # Combine the data
     return {
@@ -118,9 +121,11 @@ def callback():
 
     return redirect('/')
 
-@app.route('/servers')
+@app.route('/servers', methods=['GET', 'POST'])
 def servers():
     check_access_token()
+
+    error = session.pop("error_message", None)
     
     access_token = session.get("access_token")
     headers = {"Authorization": f"Bearer {access_token}"}
@@ -155,37 +160,80 @@ def servers():
 
     user_servers = sorted(user_servers, key=lambda x: not x['bot_on_server'])
 
-    return render_template('server.html', servers=user_servers, clientid=CLIENT_ID)
+    return render_template('server.html', servers=user_servers, clientid=CLIENT_ID, error=error)
 
 @app.route('/config/<int:server_id>')
 def config(server_id):
+    sv_check = db.server_check(server_id, get_server_info(server_id)["name"])
+    if sv_check !=None:
+        session["error_message"] = sv_check
+        return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
-    return render_template('config-general.html', server=server)
+    data = db.get_server_info(server_id)
+    return render_template('config-general.html', server=server, data=data)
 
 @app.route('/config-welcome/<int:server_id>')
 def config_welcome(server_id):
+    sv_check = db.server_check(server_id, get_server_info(server_id)["name"])
+    if sv_check !=None:
+        session["error_message"] = sv_check
+        return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
-    return render_template('config-welcome.html', server=server)
+    data = db.get_server_info(server_id)
+    dm = db.get_txt("welcome_private")
+    return render_template('config-welcome.html', server=server, data=data, dm=dm)
 
 @app.route('/config-economy/<int:server_id>')
 def config_economy(server_id):
+    sv_check = db.server_check(server_id, get_server_info(server_id)["name"])
+    if sv_check !=None:
+        session["error_message"] = sv_check
+        return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
-    return render_template('config-economy.html', server=server)
+    data = db.get_server_info(server_id)
+    return render_template('config-economy.html', server=server, data=data)
 
 @app.route('/config-games/<int:server_id>')
 def config_games(server_id):
+    sv_check = db.server_check(server_id, get_server_info(server_id)["name"])
+    if sv_check !=None:
+        session["error_message"] = sv_check
+        return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
-    return render_template('config-games.html', server=server)
+    data = db.get_server_info(server_id)
+    return render_template('config-games.html', server=server, data=data)
 
 @app.route('/config-ai/<int:server_id>')
 def config_ai(server_id):
+    sv_check = db.server_check(server_id, get_server_info(server_id)["name"])
+    if sv_check !=None:
+        session["error_message"] = sv_check
+        return redirect('/servers')
     check_access_token()
     server = get_server_info(server_id)
-    return render_template('config-ai.html', server=server)
+    print(server)
+    data = db.get_server_info(server_id)
+    return render_template('config-ai.html', server=server, data=data)
+
+@app.route('/save-config', methods=['POST'])
+def save_config():
+    # Retrieve JSON payload
+    payload = request.json
+
+    # Extract server_id and data from the payload
+    server_id = payload.get("server_id")
+    received_data = payload.get("data", [])
+    
+    # Ensure `received_data` is iterable and follows the expected structure
+    for item in received_data:
+        # Assuming `db.update_server_info` is a function that updates the database
+        db.update_server_info(server_id, item["name"], item["value"])
+
+    return jsonify({"success": True, "message": "Configuration updated successfully!"}), 200
 
 @app.route('/logout')
 def logout():

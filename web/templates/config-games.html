@@ -4,7 +4,7 @@
 <!-- Main Content -->
 <main class="flex-grow-1 p-4">
     <header class="mb-4">
-        <h1>Games</h1>
+        <h1 class="schabo">Games</h1>
     </header>
     <section>
         <!-- General Section -->
@@ -12,139 +12,168 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>General
                     <p>
-                        <span class="explanation-text">Explanation of the games</span>
+                        <span class="explanation-text">Quackers is a very playful duck and has plenty of games up his sleeve</span>
                     </p>
-                </h5>                                  
+                </h5>  
+                <div class="form-check form-switch">
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="game-toggle" {% if data['game'] == 1 %} checked {% endif %}>
+                    <label class="form-check-label" for="game-toggle">Active</label>
+                    </form>
+                </div>                              
             </div>
             <div class="card-body" id="general-section">
-                <form>
-                    <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-                        <label for="general-channel" class="form-label" style="margin-bottom: 0;">
-                            Limit games to a channel
-                        </label>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
-                        </div>
-                        <div style="width: 100%;">
-                            <select id="limit-games-channel" class="form-select">
-                                {% for channel in server["text_channels"] %}
-                                    <option>{{ channel.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    </div>
+                <form autocomplete="off">
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="welcome-channel" class="form-label" style="margin-bottom: 0;">
                             Limit how much money can be gambled
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
-                            <label class="form-check-label" for="bot-reaction">Active</label>
+                            <input class="form-check-input toggle-section" type="checkbox" id="game-limit-toggle" {% if data['game_limit'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="game-limit-toggle">Active</label>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="game-limit-input" type="number" class="form-control" value="{{ data['game_limit_value'] }}" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">quack coins</span>
                         </div>
                     </div>
                 
-
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
+            <button id="btn-gme-gme" type="submit" class="btn button text-white">Save Changes</button>
         </div>
         <!-- Dices Section -->
+        <div id="dice-block">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Dices
                     <p>
-                        <span class="explanation-text">Explanation of the games</span>
+                        <span class="explanation-text">Throw dices against Quackers, the one with the most points wins</span>
                     </p>
                 </h5> 
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="dices-toggle" {% if data['dices'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="send-toggle">Active</label>
+                    </form>
                 </div>                                         
             </div>
             <div class="card-body" id="dices-section">
                 <form>
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
+            <button id="btn-gme-dices" type="submit" class="btn button text-white">Save Changes</button>
+        </div>
         </div>
         <!-- RPS Section -->
+        <div id="rps-block">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>RPS
                     <p>
-                        <span class="explanation-text">Explanation of the games</span>
+                        <span class="explanation-text">Play Rock Paper Scissors Lizard Spoke with Quackers</span>
                     </p>
                 </h5> 
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" checked>
-                    <label class="form-check-label" for="send-toggle">Active</label>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="rps-toggle" {% if data['rps'] == 1 %} checked {% endif %}>
+                    <label class="form-check-label" for="rps-toggle">Active</label>
+                    </form>
                 </div>                                         
             </div>
             <div class="card-body" id="welcome-section">
                 <form>
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
+            <button id="btn-gme-rps" type="submit" class="btn button text-white">Save Changes</button>
+        </div>
         </div>
         <!-- 8Ball Section -->
+        <div id="hball-block">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>8 Ball
                     <p>
-                        <span class="explanation-text">Explanation of the games</span>
+                        <span class="explanation-text">Answer any YES/NO question</span>
                     </p>
                 </h5> 
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="send-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="hball-toggle" {% if data['hball'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="send-toggle">Active</label>
+                    </form>
                 </div>
             </div>
         
             <div class="card-body" id="8-ball-section">
                 <form>
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
+            <button id="btn-gme-hball" type="submit" class="btn button text-white">Save Changes</button>
+        </div>
         </div>
         <!-- Bets Section -->
+        <div id="bet-block">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5>Bets
                     <p>
-                        <span class="explanation-text">Explanation of the games</span>
+                        <span class="explanation-text">Bet as much as you want against other Users to win a TON of Coins</span>
                     </p>
                 </h5>
                 <div class="form-check form-switch">
-                    <input class="form-check-input toggle-section" type="checkbox" id="bet-toggle" checked>
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="bet-toggle" {% if data['bet'] == 1 %} checked {% endif %}>
                     <label class="form-check-label" for="bet-toggle">Active</label>
+                    </form>
                 </div>                                  
             </div>
             
             <div class="card-body" id="bet-section">
-                <form>
+                <form autocomplete="off">
                     <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
                         <label for="limit-how-much-money-gambled" class="form-label" style="margin-bottom: 0;">
                             Limit how much money can be gambled at once
                         </label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input toggle-section" type="checkbox" id="bot-reaction" checked>
+                            <input class="form-check-input toggle-section" type="checkbox" id="bet-limit-toggle" {% if data['bet_limit'] == 1 %} checked {% endif %}>
                             <label class="form-check-label" for="bot-reaction">Active</label>
                         </div>
                         <div class="input-group mb-3" style="width: 100%;">
-                            <input type="text" class="form-control" placeholder="Quack coins" aria-label="Quack coins" aria-describedby="basic-addon2">
+                            <input id="bet-limit-input" type="number" class="form-control" value="{{ data['bet_limit_value'] }}" aria-label="Quack coins" aria-describedby="basic-addon2">
                             <span class="form-control" id="basic-addon2">quack coins</span>
                         </div>
                     </div>
-                    <button type="submit" class="btn button text-white">Save Changes</button>
                 </form>
             </div>
-        </div>                
+            <button id="btn-gme-bet" type="submit" class="btn button text-white">Save Changes</button>
+        </div>
+        </div>
+        <!-- ROLL Section -->
+        <div id="roll-block">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5>Roll
+                    <p>
+                        <span class="explanation-text">Use Quackers to roll dices for DnD and more</span>
+                    </p>
+                </h5> 
+                <div class="form-check form-switch">
+                    <form autocomplete="off">
+                    <input class="form-check-input toggle-section" type="checkbox" id="roll-toggle" {% if data['roll'] == 1 %} checked {% endif %}>
+                    <label class="form-check-label" for="roll-toggle">Active</label>
+                    </form>
+                </div>
+            </div>
+        
+            <div class="card-body" id="roll-section">
+                <form>
+                </form>
+            </div>
+            <button id="btn-gme-roll" type="submit" class="btn button text-white">Save Changes</button>
+        </div>
+        </div>             
     </section>
 </main>
-<script src="{{ url_for('static', filename='js/config-games.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/config-games.js') }}"></script>
 {% endblock %}
