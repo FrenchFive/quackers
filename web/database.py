@@ -1,4 +1,4 @@
-from consts import ROOT_DIR, TXT_DIR
+from .consts import ROOT_DIR, TXT_DIR
 import sqlite3
 import os
 
