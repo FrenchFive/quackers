@@ -4,6 +4,7 @@
 
 A discord bot in Python with a lot of functionalities. 
 
+[Discord](https://img.shields.io/badge/Quackers-WEBSITE-7289da?logo=discord&logoColor=white)
 [![Discord](https://img.shields.io/badge/Discord-TEAM_QUACK-7289da?logo=discord&logoColor=white)](https://discord.gg/3NzqXTP8HG)
 ![Python Version](https://img.shields.io/badge/Python-3.12%2B-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/github/license/FrenchFive/quackers)
