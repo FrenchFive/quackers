@@ -146,7 +146,7 @@ def add_server(guild, name):
 
 def get_server_info(guild, info):
     CURSOR.execute(f'SELECT {info} FROM servers WHERE server_id = ?', (guild,))
-    result = CURSOR.fetchone()
+    result = CURSOR.fetchone()[0]
     return result
 
 def get_server_list(param):
@@ -202,7 +202,7 @@ def add(guild, name, amount):
     data = rows[0]
     coins = data[0]
 
-    coins += amount
+    coins += int(amount)
 
     CURSOR.execute(f"UPDATE '{guild}' SET coins = ? WHERE name = ?", (coins, name))
     CONNECTION.commit()
