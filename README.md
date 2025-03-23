@@ -1,5 +1,10 @@
 # 🦆🤖 // QUACKERS
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/FrenchFive/quackers/main/web/static/data/imgs/LOGO_TRANS_5500.PNG" alt="Quackers Logo"/>
+</p>
+
+
 ## DISCORD DUCK [BOT]
 
 A discord bot in Python with a lot of functionalities. 
