@@ -3,7 +3,7 @@ import requests
 import os
 from dotenv import load_dotenv
 
-import database as db
+from . import database as db
 
 # Load environment variables from .env file
 load_dotenv()
