@@ -271,7 +271,7 @@ document.getElementById("btn-eco-bnk").addEventListener("click", () => {
         { name: "bnk_itrs_value", value: document.getElementById("bank-itrs-input").value },
     ];
     saveConfig(
-        "btn-econ-bnk",
+        "btn-eco-bnk",
         data,
     );
 });
@@ -284,7 +284,7 @@ document.getElementById("btn-eco-snd").addEventListener("click", () => {
         { name: "snd_limit_value", value: document.getElementById("send-limit-input").value },
     ];
     saveConfig(
-        "btn-econ-snd",
+        "btn-eco-snd",
         data,
     );
 });
