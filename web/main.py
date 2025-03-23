@@ -2,6 +2,7 @@ from flask import Flask, url_for, redirect, request, session, jsonify, render_te
 import requests
 import os
 from dotenv import load_dotenv
+import time
 
 from . import database as db
 
@@ -40,8 +41,18 @@ def check_access_token():
 def get_server_info(server_id):
     # Check session cache first
     server_cache = session.get("server_info")
-    if server_cache and str(server_cache.get("id")) == str(server_id):
+
+    cache_timestamp = session.get("server_info_timestamp")
+    now = time.time()
+
+    if (
+        server_cache
+        and str(server_cache.get("id")) == str(server_id)
+        and cache_timestamp
+        and now - cache_timestamp < 600  # 600 seconds = 10 minutes
+    ):
         return server_cache
+
 
     headers = {"Authorization": f"Bot {BOT_TOKEN}"}
 
@@ -80,6 +91,7 @@ def get_server_info(server_id):
 
     # Save to session
     session["server_info"] = server_info
+    session["server_info_timestamp"] = now
 
     return server_info
 
