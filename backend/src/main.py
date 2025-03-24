@@ -715,7 +715,8 @@ async def bet_result(
         qgames.bet_result(interaction.guild.id, interaction.user.name, option)
         await interaction.response.send_message('MONEY SENT !!!')
 
-@bot.slash_command(name="roll", description="Roll a dice", guild_ids=serv_list(list(set(qdb.get_server_list("eco")) & set(qdb.get_server_list("roll")))))
+
+@bot.slash_command(name="roll", description="Roll a dice", guild_ids=serv_list(list(set(qdb.get_server_list("game")) & set(qdb.get_server_list("roll")))))
 async def roll(
         interaction: Interaction,
     sides: Optional[int] = SlashOption(
@@ -750,23 +751,57 @@ async def roll(
 
     for i in range(number):
         rolllist.append(random.randint(1, sides))
+    rolllist.sort()
 
     sumroll = sum(rolllist)
-    
+    fail = False
+
     if sumroll == sides*number:
         emoji = emojili[0]
     elif sumroll == number:
         emoji = emojili[1]
+        fail = True
     else:
         emoji = ""
 
-    message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times: {rolllist}"
+    #SENDING GIFs
+    file = None
+    if sides == 20 and number == 1:
+        file = os.path.join(DATA_DIR, f'{DATA_DIR}/imgs/dices/roll.{random.randint(0,4)}.{sumroll-1}.webp')
+
+    if number <= 10:
+        message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times: {rolllist}"
+    else :
+        message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times."
+        message += f"\nMin : {min(rolllist)}"
+        message += f"\nMax : {max(rolllist)}"
+        message += f"\nMean : {sumroll/number}"
+    
+    #SOMME
+    if fail:
+        result = sumroll
+    else:
+        result = sumroll + bonus
+    message += f"\n{emoji}Total : **{result}**{emoji}"
+
     if bonus != 0:
         message += f"\nBonus : [{bonus}]"
-    message += f"\n{emoji}Total : **{sumroll+bonus}**{emoji}"
+
     qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=1)
-    await interaction.response.send_message(message)
+
+    if file:
+        mess = await interaction.response.send_message("", file=nextcord.File(file))
+        #wait for a while
+        await asyncio.sleep(8)
+        #edit the message to change the message content 
+        await mess.edit(content=message)
+        #await again 
+        await asyncio.sleep(5)
+        #delete the file from the message
+        await mess.edit(content=message, attachments=[])
+    else:
+        await interaction.response.send_message(message)
 
 
 # ADMIN
@@ -999,6 +1034,13 @@ async def on_ready():
 
     for guild in bot.guilds:
         qdb.add_server(guild.id, guild.name)
+
+    await bot.sync_all_application_commands(
+        associate_known=True,
+        delete_unknown=True,
+        update_known=True,
+        register_new=True
+    )
 
 @bot.event
 async def on_guild_join(guild):
