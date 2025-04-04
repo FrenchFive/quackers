@@ -2,6 +2,7 @@ from flask import Flask, url_for, redirect, request, session, jsonify, render_te
 import requests
 import os
 from dotenv import load_dotenv
+import time
 
 from . import database as db
 
@@ -38,6 +39,21 @@ def check_access_token():
         return redirect('/')
 
 def get_server_info(server_id):
+    # Check session cache first
+    server_cache = session.get("server_info")
+
+    cache_timestamp = session.get("server_info_timestamp")
+    now = time.time()
+
+    if (
+        server_cache
+        and str(server_cache.get("id")) == str(server_id)
+        and cache_timestamp
+        and now - cache_timestamp < 600  # 600 seconds = 10 minutes
+    ):
+        return server_cache
+
+
     headers = {"Authorization": f"Bot {BOT_TOKEN}"}
 
     # Get server (guild) information
@@ -63,15 +79,22 @@ def get_server_info(server_id):
             {"id": channel["id"], "name": channel["name"]}
             for channel in channels_data if channel["type"] == 2  # Type 2 is voice channel
         ]
-
-    # Combine the data
-    return {
+    
+    
+    server_info = {
         "name": guild_data.get("name"),
         "id": guild_data.get("id"),
         "text_channels": text_channels,
         "voice_channels": voice_channels,
-        "roles": [{"id": role["id"], "name": role["name"]} for role in roles_data],
+        "roles": [{"id": role["id"], "name": role["name"]} for role in roles_data if isinstance(role, dict)],
     }
+
+    # Save to session
+    session["server_info"] = server_info
+    session["server_info_timestamp"] = now
+
+    return server_info
+
 
 @app.route('/')
 def home():
