@@ -763,17 +763,13 @@ async def roll(
     # Message formatting
     message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {dice_num} times."
 
-    if sides > 100 or dice_num > 10:
+    if dice_num > 10:
         from collections import Counter
         counter = Counter(rolllist)
         counts = "\n".join([f"{v}x {k}" for k, v in sorted(counter.items())])
         message += f"\n\n**Breakdown:**\n{counts}"
     else:
         message += f" {rolllist}"
-
-    message += f"\nMin : {min(rolllist)}"
-    message += f"\nMax : {max(rolllist)}"
-    message += f"\nMean : {sumroll / dice_num:.2f}"
 
     total = sumroll if fail else sumroll + bonus
     message += f"\n{emoji}Total : **{total}**{emoji}"
