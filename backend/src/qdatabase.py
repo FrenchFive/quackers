@@ -392,6 +392,7 @@ def voicestalled(guild, name):
 
     if past != 0 and past < timenow:
         secelapsed = timenow - past
+        qlogs.info(f"-- QDB // {name} was active in Voice Channel for {secelapsed} seconds.")
         if secelapsed > 3600:
             hours = divmod(secelapsed, 3600)[0]
             amount = get_server_info(guild, "eco_pss_ch_hour") * hours
