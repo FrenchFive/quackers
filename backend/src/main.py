@@ -715,14 +715,15 @@ async def bet_result(
         qgames.bet_result(interaction.guild.id, interaction.user.name, option)
         await interaction.response.send_message('MONEY SENT !!!')
 
-@bot.slash_command(name="roll", description="Roll a dice", guild_ids=serv_list(list(set(qdb.get_server_list("eco")) & set(qdb.get_server_list("roll")))))
+
+@bot.slash_command(name="roll", description="Roll a dice", guild_ids=serv_list(list(set(qdb.get_server_list("game")) & set(qdb.get_server_list("roll")))))
 async def roll(
-        interaction: Interaction,
+    interaction: Interaction,
     sides: Optional[int] = SlashOption(
         required=False, 
         description="Number of sides on the dice (e.g., 6 for a d6)"
     ),
-    number: Optional[int] = SlashOption(
+    dice_num: Optional[int] = SlashOption(
         required=False, 
         description="Number of dice to roll (default is 1)"
     ),
@@ -732,41 +733,60 @@ async def roll(
     )
 ):
     qdb.user_in_db(interaction.guild.id, interaction.user)
-    rolllist = []
     emojili = [" ✨ ", " 💩 "]
+    rolllist = []
 
-    if sides is None:
-        sides = 20
-    elif sides <= 0:
-        sides = 20
+    # Defaults and bounds
+    sides = sides if sides and sides > 0 else 20
+    dice_num = dice_num if dice_num and dice_num > 0 else 1
+    bonus = bonus if bonus else 0
 
-    if number is None:
-        number = 1
-    elif number <= 0:
-        number = 1
-
-    if bonus is None:
-        bonus = 0
-
-    for i in range(number):
+    for _ in range(dice_num):
         rolllist.append(random.randint(1, sides))
+    rolllist.sort()
 
     sumroll = sum(rolllist)
-    
-    if sumroll == sides*number:
-        emoji = emojili[0]
-    elif sumroll == number:
-        emoji = emojili[1]
-    else:
-        emoji = ""
+    fail = False
 
-    message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {number} times: {rolllist}"
+    emoji = ""
+    if sumroll == sides * dice_num:
+        emoji = emojili[0]
+    elif sumroll == dice_num:
+        emoji = emojili[1]
+        fail = True
+
+    # File path fix
+    filepath_dice = None
+    if sides == 20 and dice_num == 1:
+        filepath_dice = os.path.join(DATA_DIR, f'imgs/dices/roll.{random.randint(0,4)}.{sumroll-1}.webp')
+
+    # Message formatting
+    message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {dice_num} times."
+
+    if dice_num > 10:
+        from collections import Counter
+        counter = Counter(rolllist)
+        counts = "\n".join([f"{v}x {k}" for k, v in sorted(counter.items())])
+        message += f"\n\n**Breakdown:**\n{counts}"
+    else:
+        message += f" {rolllist}"
+
+    total = sumroll if fail else sumroll + bonus
+    message += f"\n{emoji}Total : **{total}**{emoji}"
     if bonus != 0:
         message += f"\nBonus : [{bonus}]"
-    message += f"\n{emoji}Total : **{sumroll+bonus}**{emoji}"
+
     qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=1)
-    await interaction.response.send_message(message)
+
+    if filepath_dice:
+        sent_msg = await interaction.response.send_message("", file=nextcord.File(filepath_dice))
+        await asyncio.sleep(8)
+        await sent_msg.edit(content=message)
+        await asyncio.sleep(5)
+        await sent_msg.edit(content=message, attachments=[])
+    else:
+        await interaction.response.send_message(message)
 
 
 # ADMIN
@@ -999,6 +1019,13 @@ async def on_ready():
 
     for guild in bot.guilds:
         qdb.add_server(guild.id, guild.name)
+
+    await bot.sync_all_application_commands(
+        associate_known=True,
+        delete_unknown=True,
+        update_known=True,
+        register_new=True
+    )
 
 @bot.event
 async def on_guild_join(guild):

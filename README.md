@@ -43,6 +43,34 @@ A discord bot in Python with a lot of functionalities.
   - Messages : Each message sent through Discord gives a Coin
   - Voice Channel : Connecting to a Voice Channel gives some coins | Each hour spent on the Voice Channel gives more coins to the user
   - Welcome and Goodbye Messages : sends a Welcome Message // sends DM Message to new members
+
+### 🌐 **WEB Features** <sub>[Flask Admin Dashboard]</sub>
+
+- **Discord OAuth2 Login**  
+  Securely log in with your Discord account to manage servers you own or admin.
+
+- **Server Overview Dashboard**  
+  View your servers, see which ones have Quackers installed, and access setup tools.
+
+- **Modular Server Configuration**  
+  Adjust Quackers’ behavior for each server using intuitive toggles and forms:
+  - 🔧 **General**: Set admin role, debug/bot/admin channels
+  - 👋 **Welcome**: Enable welcome/goodbye messages, presentation flow, DM setup
+  - 🪙 **Economy**: Toggle coin system, passive income, banking, send limits
+  - 🎮 **Games**: Manage mini-games (dice, RPS, bets), coin limits, global/game toggles
+  - 🤖 **AI**: Enable GPT-4o chat and DALL·E image generation, with optional coin cost
+
+- **Real-Time Server Data**  
+  Auto-fetch guild info (channels, roles, etc.) from the Discord API for config.
+
+- **Live Config Saving**  
+  All changes are stored to the database via a `/save-config` endpoint.
+
+- **Smart UI**  
+  Dynamic input toggles, JS-powered visibility, and field disabling for smooth admin experience.
+
+- **Tamper Protection**  
+  DevTools access is blocked to prevent unauthorized inspection or manipulation.
  
 ---
 
