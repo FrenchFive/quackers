@@ -758,7 +758,7 @@ async def roll(
     # File path fix
     filepath_dice = None
     if sides == 20 and dice_num == 1:
-        filepath_dice = os.path.join(DATA_DIR, f'imgs/dices/roll.{random.randint(0,4)}.{sumroll-1}.webp')
+        filepath_dice = os.path.join(DATA_DIR, f'imgs/dices/ROLL.{random.randint(0,4)}.{sumroll-1}.webp')
 
     # Message formatting
     message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {dice_num} times."
