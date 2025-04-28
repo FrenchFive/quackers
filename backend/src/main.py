@@ -880,7 +880,7 @@ async def admin_scan(interaction: Interaction):
         f"**Created At**: {guild.created_at}\n"
         f"**Emoji Count**: {len(guild.emojis)}\n"
         f"\n \n"
-        f"To SETUP the QUACKERS go to :: [QUACKERS](<https://quackersbot.com/setup>)\n"
+        f"To SETUP the QUACKERS go to :: [QUACKERS]({os.getenv('DISCORD_REDIRECT_URI')})\n"
         f"To Locally Setup the BOT :: [GITHUB](<https://github.com/FrenchFive/quackers/wiki>)\n"
     )
 
@@ -902,6 +902,13 @@ async def daily_update():
             if channel and qdb.get_server_info(server, "dbg_ch")==True:
                 await channel.send("BANK HAS BEEN UPDATED")
     
+    await bot.sync_all_application_commands(
+        associate_known=True,
+        delete_unknown=True,
+        update_known=True,
+        register_new=True
+    )
+
     qdb.backup_db()
 
 @daily_update.before_loop
