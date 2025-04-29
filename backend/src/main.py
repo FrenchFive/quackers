@@ -791,10 +791,7 @@ async def roll(
 
 # ADMIN
 def is_admin(interaction: Interaction) -> bool:
-    if interaction.user.id == interaction.guild.owner_id or interaction.user.guild_permissions.administrator:
-        return True
-    else:
-        return False
+    return (interaction.user.id == interaction.guild.owner_id or interaction.user.guild_permissions.administrator)
 
 @bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids= serv_list(qdb.get_server_list("eco")))
 async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member):
