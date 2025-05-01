@@ -761,9 +761,9 @@ async def roll(
         filepath_dice = os.path.join(DATA_DIR, f'imgs/dices/ROLL.{random.randint(0,4)}.{sumroll-1}.webp')
 
     # Message formatting
-    message = f"🎲 **{interaction.user.name.capitalize()}** rolled a d{sides} dice {dice_num} times."
+    message = f"🎲 **{interaction.user.mention}** rolled a d{sides} dice {dice_num} times."
 
-    if dice_num > 10:
+    if dice_num > 15:
         from collections import Counter
         counter = Counter(rolllist)
         counts = "\n".join([f"{v}x {k}" for k, v in sorted(counter.items())])
@@ -771,10 +771,11 @@ async def roll(
     else:
         message += f" {rolllist}"
 
-    total = sumroll if fail else sumroll + bonus
-    message += f"\n{emoji}Total : **{total}**{emoji}"
+    
     if bonus != 0:
         message += f"\nBonus : [{bonus}]"
+    total = sumroll if fail else sumroll + bonus
+    message += f"\n## {emoji}Total : __**{total}**__{emoji}"
 
     qdb.add(interaction.guild.id, interaction.user.name, random.randint(0, 5))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="GAME", amount=1)
