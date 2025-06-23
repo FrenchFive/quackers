@@ -478,7 +478,7 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
 
 
 class QuizJoinView(nextcord.ui.View):
-    def __init__(self, month, year):
+    def __init__(self, month: int, year: int):
         super().__init__(timeout=None)
         self.month = month
         self.year = year
@@ -488,80 +488,92 @@ class QuizJoinView(nextcord.ui.View):
         if qquiz.has_participated(interaction.guild.id, self.month, self.year, interaction.user.name):
             await interaction.response.send_message("You already took this quiz.", ephemeral=True)
             return
-        await interaction.response.send_message(
-            "Quiz replied in more than 2 mins will be disqualified due to googling or ai usage",
-            ephemeral=True,
-            view=QuizAckView(self.month, self.year)
-        )
+        await interaction.response.send_message("Check your DMs for the quiz.", ephemeral=True)
+        try:
+            dm = await interaction.user.create_dm()
+            await dm.send(
+                "Quiz replied in more than 2 mins will be disqualified due to googling or ai usage",
+                view=QuizAckView(interaction.guild.id, self.month, self.year),
+            )
+        except Exception:
+            await interaction.followup.send("Unable to send you a DM.", ephemeral=True)
 
 
 class QuizAckView(nextcord.ui.View):
-    def __init__(self, month, year):
+    def __init__(self, guild: int, month: int, year: int):
         super().__init__(timeout=None)
+        self.guild = guild
         self.month = month
         self.year = year
 
-    @nextcord.ui.button(label="ACKOLEDGE", style=nextcord.ButtonStyle.blurple)
+    @nextcord.ui.button(label="ACKNOWLEDGE", style=nextcord.ButtonStyle.blurple)
     async def acknowledge(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        data = qquiz.get_quiz(interaction.guild.id, self.month, self.year)
+        data = qquiz.get_quiz(self.guild, self.month, self.year)
         if not data:
             await interaction.response.send_message("Quiz unavailable.", ephemeral=True)
             return
         questions, answers, _, _ = data
-        qquiz.start_attempt(interaction.guild.id, self.month, self.year, interaction.user.name)
-        modal = QuizQuestionModal(interaction.guild.id, self.month, self.year, questions, answers)
-        await interaction.response.send_modal(modal)
+        qquiz.start_attempt(self.guild, self.month, self.year, interaction.user.name)
+        view = QuizQuestionView(self.guild, self.month, self.year, questions, answers)
+        q = questions[0]
+        content = (
+            f"**{q['q']}**\nA) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
+        )
+        await interaction.response.edit_message(content=content, view=view)
 
 
-class QuizQuestionModal(nextcord.ui.Modal):
-    def __init__(self, guild, month, year, questions, answers, index=0, start=None, choices=None):
-        q = questions[index]
-        title = f"Q{index+1}: {q['q'][:45]}"  # limit title length
-        super().__init__(title=title, timeout=None)
+class QuizAnswerSelect(nextcord.ui.Select):
+    def __init__(self, parent: "QuizQuestionView"):
+        q = parent.questions[parent.index]
+        options = [
+            nextcord.SelectOption(label="A", description=q["A"], value="A"),
+            nextcord.SelectOption(label="B", description=q["B"], value="B"),
+            nextcord.SelectOption(label="C", description=q["C"], value="C"),
+            nextcord.SelectOption(label="D", description=q["D"], value="D"),
+        ]
+        super().__init__(placeholder="Choose your answer", min_values=1, max_values=1, options=options)
+        self.parent = parent
+
+    async def callback(self, interaction: nextcord.Interaction):
+        await self.parent.process_answer(interaction, self.values[0])
+
+
+class QuizQuestionView(nextcord.ui.View):
+    def __init__(self, guild: int, month: int, year: int, questions: list, answers: list, index: int = 0, choices=None, start: float | None = None):
+        super().__init__(timeout=None)
         self.guild = guild
         self.month = month
         self.year = year
         self.questions = questions
         self.answers = answers
         self.index = index
-        self.start = start or time.time()
         self.choices = choices or []
+        self.start = start or time.time()
+        self.add_item(QuizAnswerSelect(self))
 
-        opts = f"A) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
-        self.answer_input = nextcord.ui.TextInput(
-            label="Choose A/B/C/D",
-            placeholder=opts,
-            max_length=1,
-            required=True,
-        )
-        self.add_item(self.answer_input)
-
-    async def callback(self, interaction: nextcord.Interaction):
-        choice = self.answer_input.value.strip().upper()[:1]
+    async def process_answer(self, interaction: nextcord.Interaction, choice: str):
         self.choices.append(choice)
-        if self.index + 1 < len(self.questions):
-            next_modal = QuizQuestionModal(
-                self.guild,
-                self.month,
-                self.year,
-                self.questions,
-                self.answers,
-                self.index + 1,
-                self.start,
-                self.choices,
-            )
-            await interaction.response.send_modal(next_modal)
+        self.index += 1
+        if self.index < len(self.questions):
+            self.clear_items()
+            self.add_item(QuizAnswerSelect(self))
+            q = self.questions[self.index]
+            content = f"**{q['q']}**\nA) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
+            await interaction.response.edit_message(content=content, view=self)
         else:
             total = int(time.time() - self.start)
             score = sum(1 for u, a in zip(self.choices, self.answers) if u == a)
+            guild = interaction.client.get_guild(self.guild)
             if total > 120:
                 qquiz.add_score(self.guild, self.month, self.year, interaction.user.name, score, total, True)
                 msg = f"You scored {score}/10 in {total} seconds - Disqualified for exceeding 2 minutes"
             else:
                 qquiz.add_score(self.guild, self.month, self.year, interaction.user.name, score, total, False)
-                await update_leaderboard_message(interaction.guild, self.month, self.year)
+                if guild:
+                    await update_leaderboard_message(guild, self.month, self.year)
                 msg = f"You scored {score}/10 in {total} seconds"
-            await interaction.response.send_message(msg, ephemeral=True)
+            await interaction.message.delete()
+            await interaction.channel.send(msg)
 
 
 async def update_leaderboard_message(guild, month, year):
@@ -969,12 +981,12 @@ async def quiz_launch(interaction: Interaction):
     if not is_admin(interaction):
         await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
         return
-
+    await interaction.response.defer(ephemeral=True)
     success = await launch_quiz(interaction.guild.id)
     if success:
-        await interaction.response.send_message("Quiz launched.", ephemeral=True)
+        await interaction.followup.send("Quiz launched.", ephemeral=True)
     else:
-        await interaction.response.send_message("Quiz already active or channel missing.", ephemeral=True)
+        await interaction.followup.send("Quiz already active or channel missing.", ephemeral=True)
 
 
 @bot.slash_command(name="admin-scan", description="[ADMIN] scans the server and retrieves details about channels and roles.") #NO GUILD SPECIFIED SO ANY SERVER CAN BE ADDED
