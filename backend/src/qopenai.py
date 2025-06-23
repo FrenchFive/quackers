@@ -1,7 +1,11 @@
 import os
+import random
+import re
 from openai import OpenAI
 import requests
 import qlogs
+import json
+import qquiz
 from consts import DATA_DIR, IMG_DIR
 
 from dotenv import load_dotenv
@@ -164,3 +168,74 @@ def imagine(user, prompt):
         handler.write(img_data)
 
     return img_path
+
+def _parse_question(raw: str):
+    parts = [p.strip() for p in raw.split("//")]
+    if len(parts) != 6:
+        return None
+    try:
+        qtext = parts[0].replace("Q:", "").strip()
+        optA = parts[1][2:].strip() if parts[1].startswith("A") else parts[1]
+        optB = parts[2][2:].strip() if parts[2].startswith("B") else parts[2]
+        optC = parts[3][2:].strip() if parts[3].startswith("C") else parts[3]
+        optD = parts[4][2:].strip() if parts[4].startswith("D") else parts[4]
+        ans = parts[5].split(":")[-1].strip().upper()[0]
+    except Exception:
+        return None
+    return {"q": qtext, "A": optA, "B": optB, "C": optC, "D": optD, "answer": ans}
+
+
+def _generate_single_question(category: str, difficulty: str):
+    prompt = (
+        f"Generate one {difficulty} multiple choice question about {category}. "
+        "Respond on a single line exactly formatted as: "
+        "Q: question ? // A) choice1 // B) choice2 // C) choice3 // D) choice4 // ANSWER: <A/B/C/D>"
+    )
+    messages = [{"role": "user", "content": prompt}]
+    return generation(messages)
+
+
+def _originality_score(question: str, others):
+    if not others:
+        return 10
+    lines = "\n".join(others)
+    prompt = (
+        "On a scale from 1 to 10, how different is the following question from the list provided?\n"
+        f"Question: {question}\nList:{lines}\nRespond with only the number."
+    )
+    messages = [{"role": "user", "content": prompt}]
+    resp = generation(messages)
+    match = re.search(r"(\d+)", resp)
+    if not match:
+        return 10
+    return int(match.group(1))
+
+
+def generate_quiz(guild: int):
+    """Generate a list of 10 unique questions for the given guild."""
+    cat_path = os.path.join(DATA_DIR, "txt/quiz_categories.txt")
+    with open(cat_path, "r", encoding="utf-8") as f:
+        categories = [l.strip() for l in f if l.strip()]
+    difficulties = ["easy"] * 2 + ["medium"] * 4 + ["hard"] * 4
+    questions = []
+    for i in range(10):
+        category = random.choice(categories)
+        diff = difficulties[i]
+        while True:
+            raw = _generate_single_question(category, diff)
+            q = _parse_question(raw)
+            if not q:
+                continue
+            q["category"] = category
+            q["difficulty"] = diff
+            existing_global = qquiz.get_questions_by_category(category)
+            existing_guild = qquiz.get_questions_by_category(category, guild)
+            if q["q"] in existing_global or q["q"] in existing_guild:
+                continue
+            score = _originality_score(q["q"], existing_global)
+            if score < 6:
+                continue
+            questions.append(q)
+            break
+    return questions
+

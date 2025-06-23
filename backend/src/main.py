@@ -12,6 +12,7 @@ import qdatabase as qdb
 import qgames
 import qdraw
 import qopenai
+import qquiz
 import qlogs
 from consts import DATA_DIR, ROOT_DIR
 
@@ -476,6 +477,114 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
     await interaction.followup.send(content=message ,file=nextcord.File(img_path), view=view)
 
 
+class QuizJoinView(nextcord.ui.View):
+    def __init__(self, month, year):
+        super().__init__(timeout=None)
+        self.month = month
+        self.year = year
+
+    @nextcord.ui.button(label="Do the Quiz", style=nextcord.ButtonStyle.green)
+    async def start(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        if qquiz.has_participated(interaction.guild.id, self.month, self.year, interaction.user.name):
+            await interaction.response.send_message("You already took this quiz.", ephemeral=True)
+            return
+        await interaction.response.send_message(
+            "Quiz replied in more than 2 mins will be disqualified due to googling or ai usage",
+            ephemeral=True,
+            view=QuizAckView(self.month, self.year)
+        )
+
+
+class QuizAckView(nextcord.ui.View):
+    def __init__(self, month, year):
+        super().__init__(timeout=None)
+        self.month = month
+        self.year = year
+
+    @nextcord.ui.button(label="ACKOLEDGE", style=nextcord.ButtonStyle.blurple)
+    async def acknowledge(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        data = qquiz.get_quiz(interaction.guild.id, self.month, self.year)
+        if not data:
+            await interaction.response.send_message("Quiz unavailable.", ephemeral=True)
+            return
+        questions, answers, _, _ = data
+        qquiz.start_attempt(interaction.guild.id, self.month, self.year, interaction.user.name)
+        modal = QuizQuestionModal(interaction.guild.id, self.month, self.year, questions, answers)
+        await interaction.response.send_modal(modal)
+
+
+class QuizQuestionModal(nextcord.ui.Modal):
+    def __init__(self, guild, month, year, questions, answers, index=0, start=None, choices=None):
+        q = questions[index]
+        title = f"Q{index+1}: {q['q'][:45]}"  # limit title length
+        super().__init__(title=title, timeout=None)
+        self.guild = guild
+        self.month = month
+        self.year = year
+        self.questions = questions
+        self.answers = answers
+        self.index = index
+        self.start = start or time.time()
+        self.choices = choices or []
+
+        opts = f"A) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
+        self.answer_input = nextcord.ui.TextInput(
+            label="Choose A/B/C/D",
+            placeholder=opts,
+            max_length=1,
+            required=True,
+        )
+        self.add_item(self.answer_input)
+
+    async def callback(self, interaction: nextcord.Interaction):
+        choice = self.answer_input.value.strip().upper()[:1]
+        self.choices.append(choice)
+        if self.index + 1 < len(self.questions):
+            next_modal = QuizQuestionModal(
+                self.guild,
+                self.month,
+                self.year,
+                self.questions,
+                self.answers,
+                self.index + 1,
+                self.start,
+                self.choices,
+            )
+            await interaction.response.send_modal(next_modal)
+        else:
+            total = int(time.time() - self.start)
+            score = sum(1 for u, a in zip(self.choices, self.answers) if u == a)
+            if total > 120:
+                qquiz.add_score(self.guild, self.month, self.year, interaction.user.name, score, total, True)
+                msg = f"You scored {score}/10 in {total} seconds - Disqualified for exceeding 2 minutes"
+            else:
+                qquiz.add_score(self.guild, self.month, self.year, interaction.user.name, score, total, False)
+                await update_leaderboard_message(interaction.guild, self.month, self.year)
+                msg = f"You scored {score}/10 in {total} seconds"
+            await interaction.response.send_message(msg, ephemeral=True)
+
+
+async def update_leaderboard_message(guild, month, year):
+    lb = qquiz.get_leaderboard(guild.id, month, year)
+    lines = ["Pos // Name // Points // Time"]
+    if not lb:
+        lines.append("-----")
+    else:
+        for i, (user, score, t, _) in enumerate(lb[:5], 1):
+            lines.append(f"{i}. {user.upper()} - {score}pts - {t}seconds")
+    text = "\n".join(lines)
+    data = qquiz.get_quiz(guild.id, month, year)
+    if not data:
+        return
+    _, _, _, lb_msg_id = data
+    channel = guild.get_channel(qdb.get_server_info(guild.id, "quiz_ch_id"))
+    if channel:
+        try:
+            msg = await channel.fetch_message(lb_msg_id)
+            await msg.edit(content=text)
+        except Exception:
+            pass
+
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids= serv_list(list(set(qdb.get_server_list("dices")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game")))))
 async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(required=False), roll: Optional[int] = SlashOption(required=False)):
@@ -851,6 +960,23 @@ async def admin_logs(interaction: Interaction):
         await interaction.response.send_message("Error: qlogs.log file not found.")
 
 
+@bot.slash_command(
+    name="quiz-launch",
+    description="[ADMIN] launch the monthly quiz",
+    guild_ids=serv_list(list(set(testid) & set(qdb.get_server_list("quiz_enable"))))
+)
+async def quiz_launch(interaction: Interaction):
+    if not is_admin(interaction):
+        await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
+        return
+
+    success = await launch_quiz(interaction.guild.id)
+    if success:
+        await interaction.response.send_message("Quiz launched.", ephemeral=True)
+    else:
+        await interaction.response.send_message("Quiz already active or channel missing.", ephemeral=True)
+
+
 @bot.slash_command(name="admin-scan", description="[ADMIN] scans the server and retrieves details about channels and roles.") #NO GUILD SPECIFIED SO ANY SERVER CAN BE ADDED
 async def admin_scan(interaction: Interaction):
     guild = interaction.guild  # Get the guild (server) where the command was invoked
@@ -1007,6 +1133,64 @@ async def before_weekly_update():
     qlogs.info(f"Waiting for {wait_time} seconds until the next Sunday...")
     await asyncio.sleep(wait_time)
 
+
+async def launch_quiz(server: int) -> bool:
+    """Launch the monthly quiz on the specified server."""
+    if qdb.get_server_info(server, "quiz_enable") == 0:
+        return False
+    channel = bot.get_channel(qdb.get_server_info(server, "quiz_ch_id"))
+    if channel is None or qquiz.get_active_quiz(server):
+        return False
+    now = datetime.now()
+    questions = qopenai.generate_quiz(server)
+    answers = [q['answer'] for q in questions]
+    leaderboard = await channel.send("Pos // Name // Points // Time\n-----")
+    join = await channel.send(
+        "JOIN QUACKY QUIZ and WIN BIG", view=QuizJoinView(now.month, now.year)
+    )
+    qquiz.start_quiz(server, now.month, now.year, questions, answers, join.id, leaderboard.id)
+    return True
+
+
+@tasks.loop(hours=24)
+async def monthly_quiz_check():
+    now = datetime.now()
+    for server in serverid:
+        if qdb.get_server_info(server, "quiz_enable") == 0:
+            continue
+        channel = bot.get_channel(qdb.get_server_info(server, "quiz_ch_id"))
+        if channel is None:
+            continue
+        active = qquiz.get_active_quiz(server)
+        if now.day == 15 and active is None:
+            await launch_quiz(server)
+        if now.day == 20 and active:
+            month, year, qlist, ans, join_id, lb_id = active
+            try:
+                msg = await channel.fetch_message(join_id)
+                await msg.delete()
+            except Exception:
+                pass
+            top = qquiz.get_leaderboard(server, month, year)
+            lines = ["Pos // Name // Points // Time"]
+            for i, (user, score, t, _) in enumerate(top[:3], 1):
+                lines.append(f"{i}. {user.upper()} - {score}pts - {t}seconds")
+            if not top:
+                lines.append("-----")
+            answers_lines = [f"Q{i+1}: {q['answer']}" for i, q in enumerate(qlist)]
+            final = "\n".join(lines) + "\n\n" + "\n".join(answers_lines)
+            await channel.send(final)
+            qquiz.end_quiz(server, month, year)
+
+
+@monthly_quiz_check.before_loop
+async def before_monthly_quiz_check():
+    await bot.wait_until_ready()
+    now = datetime.now()
+    next_midnight = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    wait_time = (next_midnight - now).total_seconds()
+    await asyncio.sleep(wait_time)
+
 # EVENTS
 #QUACKER IS READY 
 @bot.event
@@ -1017,6 +1201,8 @@ async def on_ready():
         daily_update.start()
     if not weekly_update.is_running():
         weekly_update.start()
+    if not monthly_quiz_check.is_running():
+        monthly_quiz_check.start()
 
     for guild in bot.guilds:
         qdb.add_server(guild.id, guild.name)
