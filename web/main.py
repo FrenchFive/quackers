@@ -101,6 +101,11 @@ def home():
     logged_in = "access_token" in session
     return render_template('index.html', logged_in=logged_in)
 
+@app.route('/about')
+def about():
+    logged_in = "access_token" in session
+    return render_template('about.html', logged_in=logged_in)
+
 @app.route('/login')
 def login():
     discord_oauth_url = f"{API_BASE_URL}/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify+guilds+email"
