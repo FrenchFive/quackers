@@ -1,16 +1,6 @@
 {% include "header.html" %}
 <body data-bs-theme="dark">
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button onclick="window.location.href='/about'" type="button" class="btn btn-outline-custom me-2 d-none">About</button>
-            {% if logged_in %}
-                <button onclick="window.location.href='/servers'" type="button" class="btn btn-outline-custom">Servers</button>
-                <button onclick="window.location.href='/logout'" class="btn button btn-primary me-3 no-wrap" type="button">Log Out</button>
-            {% else %}
-                <button onclick="window.location.href='/login'" class="btn button btn-primary me-3 no-wrap" type="button">Log In</button>
-            {% endif %}
-        </div>
-    </nav>
+    {% include "top-nav.html" %}
     <div class="container py-5">
         <h1 class="mb-4">About Quackers</h1>
         <p>Quackers is an open-source Discord bot written in Python. It provides fun commands like <code>/duck</code>, helpful utilities like <code>/info</code>, and AI features powered by OpenAI's GPT-4o and DALL·E models.</p>

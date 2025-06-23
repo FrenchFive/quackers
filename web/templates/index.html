@@ -1,18 +1,6 @@
 {% include "header.html" %}
 <body data-bs-theme="dark">
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <!-- LOG IN -->
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button onclick="window.location.href='/about'" type="button" class="btn btn-outline-custom me-2">About</button>
-            {% if logged_in %}
-                <button onclick="window.location.href='/servers'" type="button" class="btn btn-outline-custom">Servers</button>
-                <button onclick="window.location.href='/logout'" class="btn button btn-primary me-3 no-wrap" type="button">Log Out</button>
-            {% else %}
-                <button onclick="window.location.href='/login'" class="btn button btn-primary me-3 no-wrap" type="button">Log In</button>
-            {% endif %}
-        </div>
-    </nav>
+    {% include "top-nav.html" %}
     <div class="centered-text" style="font-family: Quackers2; padding-left: 10%; padding-right: 10%;">
         <h1>
             <img src="{{ url_for('static', filename='data/imgs/LOGO.svg') }}" alt="Logo" style="height: 100%; width: auto; object-fit: contain; max-width: 100%;" draggable="false">

@@ -188,7 +188,8 @@ def servers():
 
     user_servers = sorted(user_servers, key=lambda x: not x['bot_on_server'])
 
-    return render_template('server.html', servers=user_servers, clientid=CLIENT_ID, error=error)
+    logged_in = "access_token" in session
+    return render_template('server.html', servers=user_servers, clientid=CLIENT_ID, error=error, logged_in=logged_in)
 
 @app.route('/config/<int:server_id>')
 def config(server_id):
@@ -199,7 +200,8 @@ def config(server_id):
     check_access_token()
     server = get_server_info(server_id)
     data = db.get_server_info(server_id)
-    return render_template('config-general.html', server=server, data=data)
+    logged_in = "access_token" in session
+    return render_template('config-general.html', server=server, data=data, logged_in=logged_in)
 
 @app.route('/config-welcome/<int:server_id>')
 def config_welcome(server_id):
@@ -211,7 +213,8 @@ def config_welcome(server_id):
     server = get_server_info(server_id)
     data = db.get_server_info(server_id)
     dm = db.get_txt("welcome_private")
-    return render_template('config-welcome.html', server=server, data=data, dm=dm)
+    logged_in = "access_token" in session
+    return render_template('config-welcome.html', server=server, data=data, dm=dm, logged_in=logged_in)
 
 @app.route('/config-economy/<int:server_id>')
 def config_economy(server_id):
@@ -222,7 +225,8 @@ def config_economy(server_id):
     check_access_token()
     server = get_server_info(server_id)
     data = db.get_server_info(server_id)
-    return render_template('config-economy.html', server=server, data=data)
+    logged_in = "access_token" in session
+    return render_template('config-economy.html', server=server, data=data, logged_in=logged_in)
 
 @app.route('/config-games/<int:server_id>')
 def config_games(server_id):
@@ -233,7 +237,8 @@ def config_games(server_id):
     check_access_token()
     server = get_server_info(server_id)
     data = db.get_server_info(server_id)
-    return render_template('config-games.html', server=server, data=data)
+    logged_in = "access_token" in session
+    return render_template('config-games.html', server=server, data=data, logged_in=logged_in)
 
 @app.route('/config-ai/<int:server_id>')
 def config_ai(server_id):
@@ -245,7 +250,8 @@ def config_ai(server_id):
     server = get_server_info(server_id)
     print(server)
     data = db.get_server_info(server_id)
-    return render_template('config-ai.html', server=server, data=data)
+    logged_in = "access_token" in session
+    return render_template('config-ai.html', server=server, data=data, logged_in=logged_in)
 
 @app.route('/save-config', methods=['POST'])
 def save_config():
