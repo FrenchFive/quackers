@@ -1,11 +1,16 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">
-            <img onclick="window.location.href='/'" src="{{ url_for('static', filename='data/imgs/ICON.svg') }}" alt="Logo" class="responsive-img" style="height: 40px; width: auto; object-fit: contain;">
+        <a class="navbar-brand" href="/">
+            <img src="{{ url_for('static', filename='data/imgs/ICON.svg') }}" alt="Logo" class="responsive-img" style="height: 40px; width: auto; object-fit: contain;">
         </a>
         <div class="d-flex ms-auto">
-            <button onclick="window.location.href='/servers'" type="button" class="btn btn-outline-custom me-2">Servers</button>
-            <button onclick="window.location.href='/logout'" class="btn button btn-primary me-3 no-wrap" type="button">Log Out</button>
+            <button onclick="window.location.href='/about'" type="button" class="btn btn-outline-custom me-2">About</button>
+            {% if logged_in %}
+                <button onclick="window.location.href='/servers'" type="button" class="btn btn-outline-custom me-2">Servers</button>
+                <button onclick="window.location.href='/logout'" class="btn button btn-primary me-3 no-wrap" type="button">Log Out</button>
+            {% else %}
+                <button onclick="window.location.href='/login'" class="btn button btn-primary me-3 no-wrap" type="button">Log In</button>
+            {% endif %}
         </div>
     </div>
 </nav>
