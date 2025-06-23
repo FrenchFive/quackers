@@ -91,11 +91,11 @@ body {
 
 /* Highlight unsaved changes */
 .button.unsaved {
-    background-color: #dc3545;
+    background-color: #fd7e14;
 }
 
 .button.unsaved:hover {
-    background-color: #bb2d3b;
+    background-color: #e86b09;
 }
 
 /* Explanation text Headboard */
