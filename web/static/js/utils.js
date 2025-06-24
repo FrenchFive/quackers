@@ -6,6 +6,7 @@ export function saveConfig(buttonId, configData) {
     `;
 
     const server_id = document.getElementById("server-id").value;
+    let success = false;
 
     fetch("/save-config", {
         method: "POST",
@@ -18,6 +19,7 @@ export function saveConfig(buttonId, configData) {
         .then(response => {
             if (response.success) {
                 console.log(response.message);
+                success = true;
             } else {
                 alert("Failed to save changes.");
             }
@@ -31,6 +33,9 @@ export function saveConfig(buttonId, configData) {
             setTimeout(() => {
                 saveButton.disabled = false;
                 saveButton.innerHTML = "Save Changes";
+                if (success && typeof saveButton.updateInitial === "function") {
+                    saveButton.updateInitial();
+                }
             }, 1000);
         });
 }

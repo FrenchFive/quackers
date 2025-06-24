@@ -119,6 +119,7 @@ DISCORD_CLIENT_ID=your_client_id
 DISCORD_CLIENT_SECRET=your_client_secret
 DISCORD_REDIRECT_URI=http://127.0.0.1:5000/callback
 FLASK_SECRET_KEY=your_secret_key
+FLASK_APP=web/__init__.py
 ```
 
 ### 4️⃣ Start the Bot
@@ -128,7 +129,7 @@ python backend/src/main.py
 
 ### 5️⃣ Start the Flask Server for Web UI
 ```bash
-python web/main.py
+flask run
 ```
 
 ## 📖 Detailed Installation Guide

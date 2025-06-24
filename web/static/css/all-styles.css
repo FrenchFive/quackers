@@ -89,6 +89,15 @@ body {
     background-color: #5a6fb2;
 }
 
+/* Highlight unsaved changes */
+.button.unsaved {
+    background-color: #fd7e14;
+}
+
+.button.unsaved:hover {
+    background-color: #e86b09;
+}
+
 /* Explanation text Headboard */
 .explanation-text {
     font-size: 15px;    /* Smaller font size */
