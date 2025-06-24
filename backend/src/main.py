@@ -521,7 +521,7 @@ class QuizAckView(nextcord.ui.View):
         bar = '[' + '-' * int(view.per_question // 2) + ']'
         content = (
             f"{bar}\n{emoji} __Question 1/{len(questions)}__\n"
-            f"**{q['q']}**\nA) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
+            f"**{q['q']}**\n{q['A']}\n{q['B']}\n{q['C']}\n{q['D']}"
         )
         await interaction.response.edit_message(content=content, view=view)
         view.message = await interaction.original_message()
@@ -532,10 +532,10 @@ class QuizAnswerSelect(nextcord.ui.Select):
     def __init__(self, parent: "QuizQuestionView"):
         q = parent.questions[parent.index]
         options = [
-            nextcord.SelectOption(label="A", description=q["A"], value="A"),
-            nextcord.SelectOption(label="B", description=q["B"], value="B"),
-            nextcord.SelectOption(label="C", description=q["C"], value="C"),
-            nextcord.SelectOption(label="D", description=q["D"], value="D"),
+            nextcord.SelectOption(label=q["A"], value="A"),
+            nextcord.SelectOption(label=q["B"], value="B"),
+            nextcord.SelectOption(label=q["C"], value="C"),
+            nextcord.SelectOption(label=q["D"], value="D"),
         ]
         super().__init__(placeholder="Choose your answer", min_values=1, max_values=1, options=options)
         self.parent = parent
@@ -578,7 +578,7 @@ class QuizQuestionView(nextcord.ui.View):
             emoji = {"easy": "🟢", "medium": "🟠", "hard": "🔴"}.get(q.get("difficulty", ""), "")
             content = (
                 f"{bar}\n{emoji} __Question {self.index+1}/{len(self.questions)}__\n"
-                f"**{q['q']}**\nA) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
+                f"**{q['q']}**\n{q['A']}\n{q['B']}\n{q['C']}\n{q['D']}"
             )
             try:
                 await self.message.edit(content=content, view=self)
@@ -600,7 +600,7 @@ class QuizQuestionView(nextcord.ui.View):
             emoji = {"easy": "🟢", "medium": "🟠", "hard": "🔴"}.get(q.get("difficulty", ""), "")
             content = (
                 f"[{'-'*int(self.per_question//2)}]\n{emoji} __Question {self.index+1}/{len(self.questions)}__\n"
-                f"**{q['q']}**\nA) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
+                f"**{q['q']}**\n{q['A']}\n{q['B']}\n{q['C']}\n{q['D']}"
             )
             await interaction.response.edit_message(content=content, view=self)
             self.message = await interaction.original_message()
