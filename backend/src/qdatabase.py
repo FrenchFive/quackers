@@ -95,7 +95,8 @@ DB_STRUCTURE_SERVER = '''
 "ai_img_pay" BOOLEAN DEFAULT 1,
 "ai_img_pay_value" INTEGER DEFAULT 100,
 "quiz_enable" BOOLEAN DEFAULT 0,
-"quiz_ch_id" INTEGER DEFAULT 0
+"quiz_ch_id" INTEGER DEFAULT 0,
+"quiz_time_limit" INTEGER DEFAULT 150
 '''
 
 DB_STRUCTURE_MEMBERS = '''

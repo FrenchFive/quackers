@@ -69,6 +69,10 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label for="quiz-time-limit" class="form-label">Time limit (seconds)</label>
+                        <input id="quiz-time-limit" type="number" class="form-control" value="{{ data['quiz_time_limit'] }}">
+                    </div>
                 </form>
             </div>
             <button id="btn-gme-quiz" type="submit" class="btn button text-white">Save Changes</button>

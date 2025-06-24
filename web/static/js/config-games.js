@@ -63,20 +63,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const toggle = document.getElementById("quiz-toggle");
     const section = document.getElementById("quiz-section");
     const inputField = document.getElementById("quiz-channel");
+    const timeField = document.getElementById("quiz-time-limit");
 
     toggle.addEventListener("change", () => {
         if (toggle.checked) {
             section.style.display = "block";
             inputField.disabled = false;
+            timeField.disabled = false;
         } else {
             section.style.display = "none";
             inputField.disabled = true;
+            timeField.disabled = true;
         }
     });
 
     section.style.display = toggle.checked ? "block" : "none";
     if (!toggle.checked) {
         inputField.disabled = true;
+        timeField.disabled = true;
     }
 });
 
@@ -193,6 +197,7 @@ document.getElementById("btn-gme-quiz").addEventListener("click", () => {
     const data = [
         { name: "quiz_enable", value: document.getElementById("quiz-toggle").checked ? 1 : 0 },
         { name: "quiz_ch_id", value: document.getElementById("quiz-channel").value },
+        { name: "quiz_time_limit", value: document.getElementById("quiz-time-limit").value },
     ];
     saveConfig(
         "btn-gme-quiz",

@@ -491,8 +491,9 @@ class QuizJoinView(nextcord.ui.View):
         await interaction.response.send_message("Check your DMs for the quiz.", ephemeral=True)
         try:
             dm = await interaction.user.create_dm()
+            limit = qdb.get_server_info(interaction.guild.id, "quiz_time_limit")
             await dm.send(
-                "Quiz replied in more than 2 mins will be disqualified due to googling or ai usage",
+                f"Quiz replied in more than {limit} seconds will be disqualified due to googling or ai usage",
                 view=QuizAckView(interaction.guild.id, self.month, self.year),
             )
         except Exception:
@@ -517,6 +518,7 @@ class QuizAckView(nextcord.ui.View):
         view = QuizQuestionView(self.guild, self.month, self.year, questions, answers)
         q = questions[0]
         content = (
+            f"__Question 1/{len(questions)}__\n"
             f"**{q['q']}**\nA) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
         )
         await interaction.response.edit_message(content=content, view=view)
@@ -558,15 +560,19 @@ class QuizQuestionView(nextcord.ui.View):
             self.clear_items()
             self.add_item(QuizAnswerSelect(self))
             q = self.questions[self.index]
-            content = f"**{q['q']}**\nA) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
+            content = (
+                f"__Question {self.index+1}/{len(self.questions)}__\n"
+                f"**{q['q']}**\nA) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
+            )
             await interaction.response.edit_message(content=content, view=self)
         else:
             total = int(time.time() - self.start)
             score = sum(1 for u, a in zip(self.choices, self.answers) if u == a)
             guild = interaction.client.get_guild(self.guild)
-            if total > 120:
+            limit = qdb.get_server_info(self.guild, "quiz_time_limit")
+            if total > limit:
                 qquiz.add_score(self.guild, self.month, self.year, interaction.user.name, score, total, True)
-                msg = f"You scored {score}/10 in {total} seconds - Disqualified for exceeding 2 minutes"
+                msg = f"You scored {score}/10 in {total} seconds - Disqualified for exceeding {limit} seconds"
             else:
                 qquiz.add_score(self.guild, self.month, self.year, interaction.user.name, score, total, False)
                 if guild:
