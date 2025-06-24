@@ -995,6 +995,23 @@ async def quiz_launch(interaction: Interaction):
         await interaction.followup.send("Quiz already active or channel missing.", ephemeral=True)
 
 
+@bot.slash_command(
+    name="quiz-end",
+    description="[ADMIN] end the monthly quiz",
+    guild_ids=serv_list(list(set(testid) & set(qdb.get_server_list("quiz_enable"))))
+)
+async def quiz_end(interaction: Interaction):
+    if not is_admin(interaction):
+        await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
+        return
+    await interaction.response.defer(ephemeral=True)
+    success = await close_quiz(interaction.guild.id)
+    if success:
+        await interaction.followup.send("Quiz ended.", ephemeral=True)
+    else:
+        await interaction.followup.send("No active quiz or channel missing.", ephemeral=True)
+
+
 @bot.slash_command(name="admin-scan", description="[ADMIN] scans the server and retrieves details about channels and roles.") #NO GUILD SPECIFIED SO ANY SERVER CAN BE ADDED
 async def admin_scan(interaction: Interaction):
     guild = interaction.guild  # Get the guild (server) where the command was invoked
@@ -1170,6 +1187,34 @@ async def launch_quiz(server: int) -> bool:
     return True
 
 
+async def close_quiz(server: int) -> bool:
+    """End the active quiz on *server* and post final results."""
+    channel = bot.get_channel(qdb.get_server_info(server, "quiz_ch_id"))
+    if channel is None:
+        return False
+    active = qquiz.get_active_quiz(server)
+    if not active:
+        return False
+    month, year, qlist, ans, join_id, lb_id = active
+    try:
+        msg = await channel.fetch_message(join_id)
+        await msg.delete()
+    except Exception:
+        pass
+    top = qquiz.get_leaderboard(server, month, year)
+    lines = ["Pos // Name // Points // Time"]
+    for i, (user, score, t, _) in enumerate(top[:3], 1):
+        lines.append(f"{i}. {user.upper()} - {score}pts - {t}seconds")
+    if not top:
+        lines.append("-----")
+    answers_lines = [f"Q{i+1}: {q['answer']}" for i, q in enumerate(qlist)]
+    final = "\n".join(lines) + "\n\n" + "\n".join(answers_lines)
+    await channel.send(final)
+    qquiz.end_quiz(server, month, year)
+    qlogs.info(f"QUIZ ENDED :: guild {server}")
+    return True
+
+
 @tasks.loop(hours=24)
 async def monthly_quiz_check():
     now = datetime.now()
@@ -1183,22 +1228,7 @@ async def monthly_quiz_check():
         if now.day == 15 and active is None:
             await launch_quiz(server)
         if now.day == 20 and active:
-            month, year, qlist, ans, join_id, lb_id = active
-            try:
-                msg = await channel.fetch_message(join_id)
-                await msg.delete()
-            except Exception:
-                pass
-            top = qquiz.get_leaderboard(server, month, year)
-            lines = ["Pos // Name // Points // Time"]
-            for i, (user, score, t, _) in enumerate(top[:3], 1):
-                lines.append(f"{i}. {user.upper()} - {score}pts - {t}seconds")
-            if not top:
-                lines.append("-----")
-            answers_lines = [f"Q{i+1}: {q['answer']}" for i, q in enumerate(qlist)]
-            final = "\n".join(lines) + "\n\n" + "\n".join(answers_lines)
-            await channel.send(final)
-            qquiz.end_quiz(server, month, year)
+            await close_quiz(server)
 
 
 @monthly_quiz_check.before_loop
