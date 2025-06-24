@@ -6,7 +6,6 @@ from openai import OpenAI
 import requests
 import qlogs
 import json
-import qquiz
 from consts import DATA_DIR, IMG_DIR
 
 from dotenv import load_dotenv
@@ -170,65 +169,4 @@ def imagine(user, prompt):
 
     return img_path
 
-def _fetch_trivia_question(difficulty: str) -> dict | None:
-    """Fetch a single multiple-choice question from Open Trivia DB."""
-    try:
-        resp = requests.get(
-            "https://opentdb.com/api.php",
-            params={"amount": 1, "difficulty": difficulty, "type": "multiple"},
-            timeout=10,
-        )
-        data = resp.json()
-    except Exception:
-        return None
-    if data.get("response_code") != 0 or not data.get("results"):
-        return None
-    item = data["results"][0]
-    qtext = html.unescape(item["question"])
-    correct = html.unescape(item["correct_answer"])
-    incorrect = [html.unescape(i) for i in item["incorrect_answers"]]
-    options = incorrect + [correct]
-    random.shuffle(options)
-    answer_letter = "ABCD"[options.index(correct)]
-    return {
-        "q": qtext,
-        "A": options[0],
-        "B": options[1],
-        "C": options[2],
-        "D": options[3],
-        "answer": answer_letter,
-        "category": item["category"],
-        "difficulty": difficulty,
-    }
-
-
-
-
-def generate_quiz(guild: int):
-    """Generate a list of 10 unique questions for the given guild."""
-    difficulties = ["easy"] * 5 + ["medium"] * 3 + ["hard"] * 2
-    questions = []
-    seen_questions = set()
-    for diff in difficulties:
-        # keep trying until a new question is obtained
-        for _ in range(5):
-            q = _fetch_trivia_question(diff)
-            if not q:
-                continue
-            category = q["category"]
-            existing_global = qquiz.get_questions_by_category(category)
-            existing_guild = qquiz.get_questions_by_category(category, guild)
-            if (
-                q["q"] in existing_global
-                or q["q"] in existing_guild
-                or q["q"] in seen_questions
-            ):
-                continue
-            questions.append(q)
-            seen_questions.add(q["q"])
-            qlogs.info(
-                f"CREATED QUESTION :: {category} [{diff}] {q['q']}"
-            )
-            break
-    return questions
 
