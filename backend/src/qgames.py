@@ -125,12 +125,19 @@ def _fetch_trivia_question(difficulty: str) -> dict | None:
 
 
 def generate_quiz(guild: int):
-    """Generate a list of 10 unique questions for the given guild."""
-    difficulties = ["easy"] * 5 + ["medium"] * 3 + ["hard"] * 2
+    """Generate exactly 10 unique questions for *guild*.
+
+    The quiz includes five easy, three medium and two hard questions.
+    """
+    difficulties = [("easy", 5), ("medium", 3), ("hard", 2)]
     questions = []
     seen_questions = set()
-    for diff in difficulties:
-        for _ in range(5):
+
+    for diff, target in difficulties:
+        attempts = 0
+        # keep trying until we reach the desired count or hit a safety limit
+        while len([q for q in questions if q["difficulty"] == diff]) < target and attempts < 50:
+            attempts += 1
             q = _fetch_trivia_question(diff)
             if not q:
                 continue
@@ -148,7 +155,6 @@ def generate_quiz(guild: int):
             qlogs.info(
                 f"CREATED QUESTION :: {category} [{diff}] {q['q']}"
             )
-            break
     return questions
 
 #BET  
