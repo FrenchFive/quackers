@@ -1155,12 +1155,12 @@ async def launch_quiz(server: int) -> bool:
         return False
     now = datetime.now()
     questions = qopenai.generate_quiz(server)
-    answers = [q['answer'] for q in questions]
     leaderboard = await channel.send("Pos // Name // Points // Time\n-----")
     join = await channel.send(
         "JOIN QUACKY QUIZ and WIN BIG", view=QuizJoinView(now.month, now.year)
     )
-    qquiz.start_quiz(server, now.month, now.year, questions, answers, join.id, leaderboard.id)
+    qquiz.start_quiz(server, now.month, now.year, questions, join.id, leaderboard.id)
+    qlogs.info(f"QUIZ LAUNCHED :: guild {server}")
     return True
 
 

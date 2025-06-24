@@ -236,6 +236,7 @@ def generate_quiz(guild: int):
             if score < 6:
                 continue
             questions.append(q)
+            qlogs.info(f"CREATED QUESTION :: {category} [{diff}] {q['q']}")
             break
     return questions
 
