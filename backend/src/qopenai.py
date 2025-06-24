@@ -216,7 +216,7 @@ def generate_quiz(guild: int):
     cat_path = os.path.join(DATA_DIR, "txt/quiz_categories.txt")
     with open(cat_path, "r", encoding="utf-8") as f:
         categories = [l.strip() for l in f if l.strip()]
-    difficulties = ["easy"] * 2 + ["medium"] * 4 + ["hard"] * 4
+    difficulties = ["easy"] * 5 + ["medium"] * 3 + ["hard"] * 2
     questions = []
     for i in range(10):
         category = random.choice(categories)

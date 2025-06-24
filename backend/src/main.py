@@ -517,11 +517,15 @@ class QuizAckView(nextcord.ui.View):
         qquiz.start_attempt(self.guild, self.month, self.year, interaction.user.name)
         view = QuizQuestionView(self.guild, self.month, self.year, questions, answers)
         q = questions[0]
+        emoji = {"easy": "🟢", "medium": "🟠", "hard": "🔴"}.get(q.get("difficulty", ""), "")
+        bar = '[' + '-' * int(view.per_question // 2) + ']'
         content = (
-            f"__Question 1/{len(questions)}__\n"
+            f"{bar}\n{emoji} __Question 1/{len(questions)}__\n"
             f"**{q['q']}**\nA) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
         )
         await interaction.response.edit_message(content=content, view=view)
+        view.message = await interaction.original_message()
+        await view.start_timer()
 
 
 class QuizAnswerSelect(nextcord.ui.Select):
@@ -551,33 +555,72 @@ class QuizQuestionView(nextcord.ui.View):
         self.index = index
         self.choices = choices or []
         self.start = start or time.time()
+        self.message: nextcord.Message | None = None
+        self.time_limit = qdb.get_server_info(self.guild, "quiz_time_limit")
+        self.per_question = self.time_limit / len(self.questions)
+        self.question_start = time.time()
+        self.timer_task: asyncio.Task | None = None
         self.add_item(QuizAnswerSelect(self))
+
+    async def start_timer(self):
+        if self.timer_task:
+            self.timer_task.cancel()
+        self.question_start = time.time()
+        self.timer_task = asyncio.create_task(self._update_bar())
+
+    async def _update_bar(self):
+        steps = int(self.per_question // 2)
+        while True:
+            elapsed = time.time() - self.question_start
+            filled = min(int(elapsed // 2), steps)
+            bar = "[" + "#" * filled + "-" * (steps - filled) + "]"
+            q = self.questions[self.index]
+            emoji = {"easy": "🟢", "medium": "🟠", "hard": "🔴"}.get(q.get("difficulty", ""), "")
+            content = (
+                f"{bar}\n{emoji} __Question {self.index+1}/{len(self.questions)}__\n"
+                f"**{q['q']}**\nA) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
+            )
+            try:
+                await self.message.edit(content=content, view=self)
+            except Exception:
+                pass
+            if elapsed >= self.per_question:
+                break
+            await asyncio.sleep(2)
 
     async def process_answer(self, interaction: nextcord.Interaction, choice: str):
         self.choices.append(choice)
         self.index += 1
         if self.index < len(self.questions):
+            if self.timer_task:
+                self.timer_task.cancel()
             self.clear_items()
             self.add_item(QuizAnswerSelect(self))
             q = self.questions[self.index]
+            emoji = {"easy": "🟢", "medium": "🟠", "hard": "🔴"}.get(q.get("difficulty", ""), "")
             content = (
-                f"__Question {self.index+1}/{len(self.questions)}__\n"
+                f"[{'-'*int(self.per_question//2)}]\n{emoji} __Question {self.index+1}/{len(self.questions)}__\n"
                 f"**{q['q']}**\nA) {q['A']}\nB) {q['B']}\nC) {q['C']}\nD) {q['D']}"
             )
             await interaction.response.edit_message(content=content, view=self)
+            self.message = await interaction.original_message()
+            await self.start_timer()
         else:
             total = int(time.time() - self.start)
             score = sum(1 for u, a in zip(self.choices, self.answers) if u == a)
             guild = interaction.client.get_guild(self.guild)
             limit = qdb.get_server_info(self.guild, "quiz_time_limit")
-            if total > limit:
+            allowed = limit + len(self.questions)
+            if total > allowed:
                 qquiz.add_score(self.guild, self.month, self.year, interaction.user.name, score, total, True)
-                msg = f"You scored {score}/10 in {total} seconds - Disqualified for exceeding {limit} seconds"
+                msg = f"You scored {score}/10 in {total} seconds - Disqualified for exceeding {allowed} seconds"
             else:
                 qquiz.add_score(self.guild, self.month, self.year, interaction.user.name, score, total, False)
                 if guild:
                     await update_leaderboard_message(guild, self.month, self.year)
                 msg = f"You scored {score}/10 in {total} seconds"
+            if self.timer_task:
+                self.timer_task.cancel()
             await interaction.message.delete()
             await interaction.channel.send(msg)
 
