@@ -1220,6 +1220,8 @@ async def launch_quiz(server: int) -> bool:
     if channel is None or qquiz.get_active_quiz(server):
         return False
     now = datetime.now()
+    if qquiz.get_quiz(server, now.month, now.year):
+        return False
     questions = qgames.generate_quiz(server)
     leaderboard = await channel.send("Pos // Name // Points // Time\n-----")
     join = await channel.send(

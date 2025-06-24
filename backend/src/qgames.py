@@ -130,13 +130,13 @@ def generate_quiz(guild: int):
     The quiz includes five easy, three medium and two hard questions.
     """
     difficulties = [("easy", 5), ("medium", 3), ("hard", 2)]
-    questions = []
-    seen_questions = set()
+    questions: list[dict] = []
+    seen_questions: set[str] = set()
 
     for diff, target in difficulties:
+        count = 0
         attempts = 0
-        # keep trying until we reach the desired count or hit a safety limit
-        while len([q for q in questions if q["difficulty"] == diff]) < target and attempts < 50:
+        while count < target and attempts < 100:
             attempts += 1
             q = _fetch_trivia_question(diff)
             if not q:
@@ -152,9 +152,13 @@ def generate_quiz(guild: int):
                 continue
             questions.append(q)
             seen_questions.add(q["q"])
+            count += 1
             qlogs.info(
                 f"CREATED QUESTION :: {category} [{diff}] {q['q']}"
             )
+        if count < target:
+            raise RuntimeError("Unable to fetch enough unique trivia questions")
+
     return questions
 
 #BET  
