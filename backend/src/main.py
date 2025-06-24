@@ -1007,6 +1007,66 @@ async def before_weekly_update():
     qlogs.info(f"Waiting for {wait_time} seconds until the next Sunday...")
     await asyncio.sleep(wait_time)
 
+
+@tasks.loop(hours=24)
+async def presentation_reminder():
+    for server in qdb.get_server_list("prst"):
+        if qdb.get_server_info(server, "prst_rmd") != 1:
+            continue
+        guild = bot.get_guild(server)
+        if not guild:
+            continue
+
+        now_ts = int(time.time())
+        interval_days = qdb.get_server_info(server, "prst_rmd_days") or 3
+        last_ts = qdb.get_server_info(server, "prst_last") or 0
+        if now_ts - int(last_ts) < interval_days * 86400:
+            continue
+
+        role_id = qdb.get_server_info(server, "prst_role")
+        role = guild.get_role(role_id)
+        if not role:
+            continue
+
+        channel_id = qdb.get_server_info(server, "prst_ch_id")
+        channel_mention = f"<#{channel_id}>" if channel_id else ""
+        channel_link = (
+            f"https://discord.com/channels/{guild.id}/{channel_id}"
+            if channel_id else ""
+        )
+
+        try:
+            with open(os.path.join(TXT_PATH, "presentation_reminder.txt"), "r", encoding="utf-8") as file:
+                template = file.read()
+        except Exception:
+            template = (
+                "Hello {name}! Please use the `/presentation` command in {channel}."
+                " You can open it directly here: {link}"
+            )
+
+        sent_any = False
+        for member in role.members:
+            try:
+                msg = (
+                    template.replace("{name}", member.name)
+                    .replace("{channel}", channel_mention)
+                    .replace("{link}", channel_link)
+                )
+                await member.send(msg)
+                qlogs.info(f"Sent presentation reminder to {member.name} :: {guild.name}")
+                sent_any = True
+            except Exception as e:
+                qlogs.error(f"Failed to send presentation reminder to {member.name}: {e}")
+            await asyncio.sleep(1)
+
+        if sent_any:
+            qdb.update_server_info(server, "prst_last", now_ts)
+
+
+@presentation_reminder.before_loop
+async def before_presentation_reminder():
+    await bot.wait_until_ready()
+
 # EVENTS
 #QUACKER IS READY 
 @bot.event
@@ -1017,6 +1077,8 @@ async def on_ready():
         daily_update.start()
     if not weekly_update.is_running():
         weekly_update.start()
+    if not presentation_reminder.is_running():
+        presentation_reminder.start()
 
     for guild in bot.guilds:
         qdb.add_server(guild.id, guild.name)
