@@ -218,6 +218,7 @@ def generate_quiz(guild: int):
         categories = [l.strip() for l in f if l.strip()]
     difficulties = ["easy"] * 5 + ["medium"] * 3 + ["hard"] * 2
     questions = []
+    seen_questions = set()
     for i in range(10):
         category = random.choice(categories)
         diff = difficulties[i]
@@ -230,12 +231,17 @@ def generate_quiz(guild: int):
             q["difficulty"] = diff
             existing_global = qquiz.get_questions_by_category(category)
             existing_guild = qquiz.get_questions_by_category(category, guild)
-            if q["q"] in existing_global or q["q"] in existing_guild:
+            if (
+                q["q"] in existing_global
+                or q["q"] in existing_guild
+                or q["q"] in seen_questions
+            ):
                 continue
             score = _originality_score(q["q"], existing_global)
             if score < 6:
                 continue
             questions.append(q)
+            seen_questions.add(q["q"])
             qlogs.info(f"CREATED QUESTION :: {category} [{diff}] {q['q']}")
             break
     return questions

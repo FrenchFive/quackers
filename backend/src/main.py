@@ -1250,7 +1250,9 @@ async def close_quiz(server: int) -> bool:
         lines.append(f"{i}. {user.upper()} - {score}pts - {t}seconds")
     if not top:
         lines.append("-----")
-    answers_lines = [f"Q{i+1}: {q['answer']}" for i, q in enumerate(qlist)]
+    answers_lines = [
+        f"Q{i+1}: {q['q']} || {q[q['answer']]} ||" for i, q in enumerate(qlist)
+    ]
     final = "\n".join(lines) + "\n\n" + "\n".join(answers_lines)
     await channel.send(final)
     qquiz.end_quiz(server, month, year)
