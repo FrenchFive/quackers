@@ -1,6 +1,7 @@
 import os
 import random
 import re
+import html
 from openai import OpenAI
 import requests
 import qlogs
@@ -169,66 +170,52 @@ def imagine(user, prompt):
 
     return img_path
 
-def _parse_question(raw: str):
-    parts = [p.strip() for p in raw.split("//")]
-    if len(parts) != 6:
-        return None
+def _fetch_trivia_question(difficulty: str) -> dict | None:
+    """Fetch a single multiple-choice question from Open Trivia DB."""
     try:
-        qtext = parts[0].replace("Q:", "").strip()
-        optA = parts[1][2:].strip() if parts[1].startswith("A") else parts[1]
-        optB = parts[2][2:].strip() if parts[2].startswith("B") else parts[2]
-        optC = parts[3][2:].strip() if parts[3].startswith("C") else parts[3]
-        optD = parts[4][2:].strip() if parts[4].startswith("D") else parts[4]
-        ans = parts[5].split(":")[-1].strip().upper()[0]
+        resp = requests.get(
+            "https://opentdb.com/api.php",
+            params={"amount": 1, "difficulty": difficulty, "type": "multiple"},
+            timeout=10,
+        )
+        data = resp.json()
     except Exception:
         return None
-    return {"q": qtext, "A": optA, "B": optB, "C": optC, "D": optD, "answer": ans}
+    if data.get("response_code") != 0 or not data.get("results"):
+        return None
+    item = data["results"][0]
+    qtext = html.unescape(item["question"])
+    correct = html.unescape(item["correct_answer"])
+    incorrect = [html.unescape(i) for i in item["incorrect_answers"]]
+    options = incorrect + [correct]
+    random.shuffle(options)
+    answer_letter = "ABCD"[options.index(correct)]
+    return {
+        "q": qtext,
+        "A": options[0],
+        "B": options[1],
+        "C": options[2],
+        "D": options[3],
+        "answer": answer_letter,
+        "category": item["category"],
+        "difficulty": difficulty,
+    }
 
 
-def _generate_single_question(category: str, difficulty: str):
-    prompt = (
-        f"Generate one {difficulty} multiple choice question about {category}. "
-        "Respond on a single line exactly formatted as: "
-        "Q: question ? // A) choice1 // B) choice2 // C) choice3 // D) choice4 // ANSWER: <A/B/C/D>"
-    )
-    messages = [{"role": "user", "content": prompt}]
-    return generation(messages)
-
-
-def _originality_score(question: str, others):
-    if not others:
-        return 10
-    lines = "\n".join(others)
-    prompt = (
-        "On a scale from 1 to 10, how different is the following question from the list provided?\n"
-        f"Question: {question}\nList:{lines}\nRespond with only the number."
-    )
-    messages = [{"role": "user", "content": prompt}]
-    resp = generation(messages)
-    match = re.search(r"(\d+)", resp)
-    if not match:
-        return 10
-    return int(match.group(1))
 
 
 def generate_quiz(guild: int):
     """Generate a list of 10 unique questions for the given guild."""
-    cat_path = os.path.join(DATA_DIR, "txt/quiz_categories.txt")
-    with open(cat_path, "r", encoding="utf-8") as f:
-        categories = [l.strip() for l in f if l.strip()]
     difficulties = ["easy"] * 5 + ["medium"] * 3 + ["hard"] * 2
     questions = []
     seen_questions = set()
-    for i in range(10):
-        category = random.choice(categories)
-        diff = difficulties[i]
-        while True:
-            raw = _generate_single_question(category, diff)
-            q = _parse_question(raw)
+    for diff in difficulties:
+        # keep trying until a new question is obtained
+        for _ in range(5):
+            q = _fetch_trivia_question(diff)
             if not q:
                 continue
-            q["category"] = category
-            q["difficulty"] = diff
+            category = q["category"]
             existing_global = qquiz.get_questions_by_category(category)
             existing_guild = qquiz.get_questions_by_category(category, guild)
             if (
@@ -237,12 +224,11 @@ def generate_quiz(guild: int):
                 or q["q"] in seen_questions
             ):
                 continue
-            score = _originality_score(q["q"], existing_global)
-            if score < 6:
-                continue
             questions.append(q)
             seen_questions.add(q["q"])
-            qlogs.info(f"CREATED QUESTION :: {category} [{diff}] {q['q']}")
+            qlogs.info(
+                f"CREATED QUESTION :: {category} [{diff}] {q['q']}"
+            )
             break
     return questions
 
