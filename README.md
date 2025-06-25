@@ -39,6 +39,7 @@ A discord bot in Python with a lot of functionalities.
     - `/bet-create` : Open a bet
     - `/bet-close` : Close all bets and Display info about the bet
     - `/bet-result` : Sends the money to the winners
+  - **Monthly Quiz** : Compete with ten trivia questions (5 easy, 3 medium, 2 hard) and climb the leaderboard
 - 😴 || **PASSIVE Actions** <sub>[Users are Rewarded for using the Discord Channel]</sub>
   - Messages : Each message sent through Discord gives a Coin
   - Voice Channel : Connecting to a Voice Channel gives some coins | Each hour spent on the Voice Channel gives more coins to the user
