@@ -48,6 +48,9 @@ DB_STRUCTURE_SERVER = '''
 "prst" BOOLEAN DEFAULT 0,
 "prst_ch_id" INTEGER DEFAULT 0,
 "prst_role" INTEGER DEFAULT 0,
+"prst_last" INTEGER DEFAULT 0,
+"prst_rmd" BOOLEAN DEFAULT 1,
+"prst_rmd_days" INTEGER DEFAULT 3,
 
 "dm" BOOLEAN DEFAULT 0,
 "dm_msg_content" TEXT DEFAULT '',
@@ -160,6 +163,10 @@ def get_server_name(guild):
     CURSOR.execute('SELECT server_name FROM servers WHERE server_id = ?', (guild,))
     result = CURSOR.fetchone()
     return result
+
+def update_server_info(guild, parm, value):
+    CURSOR.execute(f"UPDATE servers SET {parm} = ? WHERE server_id = ?", (value, guild))
+    CONNECTION.commit()
 
 #MEMBERS
 def user_in_db(guild, member):

@@ -160,7 +160,9 @@ document.getElementById("btn-wlc-prst").addEventListener("click", () => {
     const data = [
         { name: "prst", value: document.getElementById("presentation-toggle").checked ? 1 : 0 },
         { name: "prst_ch_id", value: document.getElementById("presentation-txt-channel").value },
-        { name: "gdb_msg", value: document.getElementById("newbie-role").value },
+        { name: "prst_role", value: document.getElementById("newbie-role").value },
+        { name: "prst_rmd", value: document.getElementById("presentation-reminder-toggle").checked ? 1 : 0 },
+        { name: "prst_rmd_days", value: document.getElementById("presentation-reminder-days").value },
     ];
     saveConfig(
         "btn-wlc-prst",
