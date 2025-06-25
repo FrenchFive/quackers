@@ -30,7 +30,7 @@ A discord bot in Python with a lot of functionalities.
   - `/bank` : Allows the user to store coins to get interest
   - `/send` : Send coins from a User to another
   - `/daily` : Receive Daily Coins everyday (with a Streak function, the more you do it, the more you get)
-  - `/leaderboard` : Display the Top 10 Users with the most coins
+  - `/leaderboard` : Display the Top 10 Users with the most coins (values use dots as thousand separators)
 - 🎲 || **Games** <sub>[Play Games and earn Coins]</sub>
   - `/dices` : Throw dices against Quackers, the one with the most points wins
   - `/rps` : Play Rock Paper Scissors Lizard Spoke with Quackers
