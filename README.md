@@ -63,8 +63,12 @@ A discord bot in Python with a lot of functionalities.
 - **Real-Time Server Data**  
   Auto-fetch guild info (channels, roles, etc.) from the Discord API for config.
 
-- **Live Config Saving**  
+- **Live Config Saving**
   All changes are stored to the database via a `/save-config` endpoint.
+
+- **Config Sync Delay**
+  After saving, it can take **5-10 minutes** for new settings and commands to
+  appear on Discord while the bot refreshes.
 
 - **Smart UI**  
   Dynamic input toggles, JS-powered visibility, and field disabling for smooth admin experience.
