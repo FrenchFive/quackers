@@ -375,7 +375,9 @@ def leaderboard(guild):
         bold = ""
         if i <= 2:
             bold = "**"
-        result.append(f'{emoji[emo]} N.{i+1} :: {bold}{data[i][0].capitalize()}{bold} :: {(data[i][1] + data[i][2])} <:quackCoin:1124255606782578698>')
+        total = data[i][1] + data[i][2]
+        formatted_total = f"{total:,}".replace(",", ".")
+        result.append(f'{emoji[emo]} N.{i+1} :: {bold}{data[i][0].capitalize()}{bold} :: {formatted_total} <:quackCoin:1124255606782578698>')
     return(result)
 
 def voiceactive(guild, name):
