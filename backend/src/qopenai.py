@@ -59,7 +59,7 @@ def generation(messages):
 
     qlogs.info(f"- Requesting generation from OpenAI")
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1",
         messages=messages
     )
     
