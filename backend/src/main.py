@@ -444,6 +444,11 @@ class ImagineView(nextcord.ui.View):
 
         qlogs.info(f"{interaction.user.name} RE-GENERATING IMAGE :: {self.prompt}")
         img_path = qopenai.imagine(interaction.user.name, self.prompt)
+        if not img_path:
+            if price:
+                qdb.add(interaction.guild.id, interaction.user.name, price)
+            await interaction.followup.send("Image generation failed.", ephemeral=True)
+            return
 
         message = f"**{self.prompt[:100]}** :: by {interaction.user.mention}"
 
@@ -464,6 +469,7 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
 
     await interaction.response.defer()  # Defer the response
 
+    price = 0
     if qdb.get_server_info(interaction.guild.id, "ai_img_pay"):
         price = qdb.get_server_info(interaction.guild.id, "ai_img_pay_value")
 
@@ -479,6 +485,11 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
 
     qlogs.info(f"{interaction.user.name} GENERATING IMAGE :: {prompt}")
     img_path = qopenai.imagine(interaction.user.name, prompt)
+    if not img_path:
+        if price:
+            qdb.add(interaction.guild.id, interaction.user.name, price)
+        await interaction.followup.send("Image generation failed.", ephemeral=True)
+        return
 
     message = f"**{prompt[:100]}** :: by {interaction.user.mention}"
 

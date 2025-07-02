@@ -59,7 +59,7 @@ def generation(messages):
 
     qlogs.info(f"- Requesting generation from OpenAI")
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1",
         messages=messages
     )
     
@@ -74,15 +74,18 @@ def img_generation(user, prompt):
     user = user[:1000]
 
     qlogs.info(f"- Requesting Image generation from OpenAI")
-    response = client.images.generate(
-        model="dall-e-3",
-        prompt=prompt,
-        n=1,
-        size="1024x1024",
-        user = user,
-    )
-
-    return response.data[0].url
+    try:
+        response = client.images.generate(
+            model="gpt-image-1",
+            prompt=prompt,
+            n=1,
+            size="1024x1024",
+            user=user,
+        )
+        return response.data[0].url
+    except Exception as exc:
+        qlogs.error(f"Image generation failed: {exc}")
+        return None
 
 def generate_response(prompt, user):
     global personality, emoji, memory, interactions
@@ -93,7 +96,6 @@ def generate_response(prompt, user):
         {"role": "system", "content": memory},
         {"role": "system", "content": "".join(interactions)},
         {"role": "system", "content": f"Message sent by {user}"},
-        {"role": "system", "content": "Language : French"},
         {"role": "user", "content": prompt}
     ]
 
@@ -129,7 +131,6 @@ def update_memory_summary():
         {"role": "system", "content": personality},
         {"role": "system", "content": memory},
         {"role": "system", "content": "".join(interactions)},
-        {"role": "system", "content": "Language : French"},
         {"role": "user", "content": prompt}
     ]
     
@@ -147,7 +148,6 @@ def welcome(presentation):
         {"role": "system", "content": personality},
         {"role": "system", "content": emoji},
         {"role": "system", "content": "User answered question about themselves, write from the given information a presentation for the user to the other member of the server. Use bullet points. Make it Discord formatted."},
-        {"role": "system", "content": "Language : French"},
         {"role": "user", "content": presentation}
     ]
     
@@ -157,9 +157,17 @@ def welcome(presentation):
 
 def imagine(user, prompt):
     url = img_generation(user, prompt)
+    if not url:
+        qlogs.error("No URL returned for generated image")
+        return None
 
-    img_data = requests.get(url).content
-    img_path = os.path.join(IMG_DIR, f"tmp_gen.png")
+    try:
+        img_data = requests.get(url).content
+    except Exception as exc:
+        qlogs.error(f"Failed to download generated image: {exc}")
+        return None
+
+    img_path = os.path.join(IMG_DIR, "tmp_gen.png")
     with open(img_path, 'wb') as handler:
         handler.write(img_data)
 
