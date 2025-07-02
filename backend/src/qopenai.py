@@ -1,6 +1,7 @@
 import os
 from openai import OpenAI
 import requests
+import base64
 import qlogs
 from consts import DATA_DIR, IMG_DIR
 
@@ -81,8 +82,10 @@ def img_generation(user, prompt):
             n=1,
             size="1024x1024",
             user=user,
+            response_format="b64_json",
         )
-        return response.data[0].url
+        image_base64 = response.data[0].b64_json
+        return base64.b64decode(image_base64)
     except Exception as exc:
         qlogs.error(f"Image generation failed: {exc}")
         return None
@@ -157,15 +160,9 @@ def welcome(presentation):
     return response_content
 
 def imagine(user, prompt):
-    url = img_generation(user, prompt)
-    if not url:
-        qlogs.error("No URL returned for generated image")
-        return None
-
-    try:
-        img_data = requests.get(url).content
-    except Exception as exc:
-        qlogs.error(f"Failed to download generated image: {exc}")
+    img_data = img_generation(user, prompt)
+    if not img_data:
+        qlogs.error("No image data returned for generated image")
         return None
 
     img_path = os.path.join(IMG_DIR, "tmp_gen.png")
