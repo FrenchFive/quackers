@@ -87,6 +87,7 @@ def img_generation(user, prompt):
         qlogs.error(f"Image generation failed: {exc}")
         return None
 
+
 def generate_response(prompt, user):
     global personality, emoji, memory, interactions
     
