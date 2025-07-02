@@ -424,16 +424,23 @@ class ImagineView(nextcord.ui.View):
         return True
     @nextcord.ui.button(label="Regenerate", style=nextcord.ButtonStyle.green, emoji="🔄")
     async def regenerate_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        # Check if the user is the correct user
-        price = 100 #Will be changed to ask for DB / server price (not transmitted to check if the price has changed in the meantime)
+        # Determine the price using the same logic as the slash command
+        if qdb.get_server_info(interaction.guild.id, "ai_img_pay"):
+            price = qdb.get_server_info(interaction.guild.id, "ai_img_pay_value")
+        else:
+            price = 0
 
         if not await self.ensure_funds(interaction, price):
             return
 
+        # Acknowledge the interaction in case image generation is slow
+        await interaction.response.defer()
+
         # Regenerate the image
         qdb.add(interaction.guild.id, interaction.user.name, 5)
         qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
-        qdb.add(interaction.guild.id, interaction.user.name, -price)
+        if price:
+            qdb.add(interaction.guild.id, interaction.user.name, -price)
 
         qlogs.info(f"{interaction.user.name} RE-GENERATING IMAGE :: {self.prompt}")
         img_path = qopenai.imagine(interaction.user.name, self.prompt)
@@ -446,7 +453,10 @@ class ImagineView(nextcord.ui.View):
     @nextcord.ui.button(label="Show Full Prompt", style=nextcord.ButtonStyle.blurple, emoji="📜")
     async def show_prompt_button(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         # Send the full prompt
-        await interaction.followup.send(content=f"Full prompt: {self.prompt} by {interaction.user.name}")
+        await interaction.response.send_message(
+            content=f"Full prompt: {self.prompt} by {interaction.user.name}",
+            ephemeral=True,
+        )
 
 @bot.slash_command(name="imagine", description="Cost : 100.Qc - Image generation using AI", guild_ids= serv_list(qdb.get_server_list("ai_img")))
 async def imagine(interaction: nextcord.Interaction, prompt: str):
@@ -935,19 +945,24 @@ async def weekly_update():
         message.append(f"\n**Total Unique Users:** `{unique_names_count}`")
 
         # TOTALS
-        if "ARR" in dict(type_totals):
-            message.append(f"\n**New Members This Week:** `{dict(type_totals)['ARR'] - dict(type_totals)['DEP']}`")
-        if "MESS" in dict(type_totals):
-            message.append(f"\n**Message Quantity This Week:** `{dict(type_totals)['MESS']}`")
-        if "VC_CON" in dict(type_totals):
-            message.append(f"\n**Voice Connection Quantity This Week:** `{dict(type_totals)['VC_CON']}`")
-        if "COMMAND" in dict(type_totals) or "GAME" in dict(type_totals):
+        totals_dict = dict(type_totals)
+
+        arrivals = totals_dict.get("ARR", 0)
+        departures = totals_dict.get("DEP", 0)
+
+        if arrivals or departures:
+            message.append(f"\n**New Members This Week:** `{arrivals - departures}`")
+        if "MESS" in totals_dict:
+            message.append(f"\n**Message Quantity This Week:** `{totals_dict['MESS']}`")
+        if "VC_CON" in totals_dict:
+            message.append(f"\n**Voice Connection Quantity This Week:** `{totals_dict['VC_CON']}`")
+        if "COMMAND" in totals_dict or "GAME" in totals_dict:
             try:
-                cmd = dict(type_totals)['COMMAND']
+                cmd = totals_dict['COMMAND']
             except:
                 cmd = 0
             try:
-                game = dict(type_totals)['GAME']
+                game = totals_dict['GAME']
             except:
                 game = 0
             message.append(f"\n**Commands Quantity This Week:** `{cmd + game}`")
