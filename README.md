@@ -18,7 +18,7 @@ A discord bot in Python with a lot of functionalities.
   - `/duck` : Send a Duck Picture
   - `/info` : Send an image with information about a user
   - `/presentation` : User answer few questions about themselves, used to know new members
-  - `/imagine` : Generate an Image using AI based on a prompt :: **DALL-E-3** Model by OpenAI
+  - `/imagine` : Generate an Image using AI based on a prompt :: **gpt-image-1** Model by OpenAI
   - Quackers repond to Mention and Replies with his personnality using :: **GPT4-o** Model by OpenAI
 - 👨🏻‍💻 || **Admin Functions** <sub>[Allows Admins to change value for the bot]</sub>
   - `/admin-scan` : Easy and quick bot setup
@@ -58,7 +58,7 @@ A discord bot in Python with a lot of functionalities.
   - 👋 **Welcome**: Enable welcome/goodbye messages, presentation flow, DM setup
   - 🪙 **Economy**: Toggle coin system, passive income, banking, send limits
   - 🎮 **Games**: Manage mini-games (dice, RPS, bets), coin limits, global/game toggles
-  - 🤖 **AI**: Enable GPT-4o chat and DALL·E image generation, with optional coin cost
+  - 🤖 **AI**: Enable GPT-4o chat and gpt-image-1 generation, with optional coin cost
 
 - **Real-Time Server Data**  
   Auto-fetch guild info (channels, roles, etc.) from the Discord API for config.

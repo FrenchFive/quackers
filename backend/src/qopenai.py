@@ -75,7 +75,7 @@ def img_generation(user, prompt):
 
     qlogs.info(f"- Requesting Image generation from OpenAI")
     response = client.images.generate(
-        model="dall-e-3",
+        model="gpt-image-1",
         prompt=prompt,
         n=1,
         size="1024x1024",
