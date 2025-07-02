@@ -36,7 +36,7 @@
         - [ ] Sell to get coins 
         - [ ] Send to another user
   - [ ] Make a role "pet" and have it display all functions except /pet => user buy a pet if doesnt have one already
-- [x] GPT4-O
+ - [x] GPT-4.1
   - [x] Rewrite the API python integration
   - [x] Clean up what information is sent to OpenAi
   - [ ] Transmit information about the server as server name and server context unique to each server 
