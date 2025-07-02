@@ -13,7 +13,7 @@ import qgames
 import qdraw
 import qopenai
 import qlogs
-from consts import DATA_DIR, ROOT_DIR
+from consts import DATA_DIR, ROOT_DIR, BADGE_DIR
 
 import os
 import random
@@ -102,13 +102,10 @@ async def info(interaction: Interaction, user: Optional[nextcord.Member] = Slash
     qdb.user_in_db(interaction.guild.id, interaction.user)
     if user:
         qdb.user_in_db(interaction.guild.id, user)
-    
-    if user is None:
-        name = interaction.user.name
-        url = interaction.user.display_avatar.url
-    else:
-        name = user.name
-        url = user.display_avatar.url
+
+    member = user if user else interaction.user
+    name = member.name
+    url = member.display_avatar.url
 
     await interaction.response.defer()
 
@@ -117,7 +114,10 @@ async def info(interaction: Interaction, user: Optional[nextcord.Member] = Slash
         qdb.add(interaction.guild.id, interaction.user.name, qdb.get_server_info(interaction.guild.id, "eco_pss_cmd_value"))
     qdb.add_stat(guild=interaction.guild.id, user=interaction.user.name, type="COMMAND", amount=1)
 
-    path = qdraw.info(name, url, result, rank)
+    newbie_role = qdb.get_server_info(interaction.guild.id, "prst_role")
+    badge = get_user_badge(member, newbie_role)
+
+    path = qdraw.info(name, url, result, rank, badge)
 
     imgfile = nextcord.File(path)
     await interaction.followup.send(file=imgfile)
@@ -796,6 +796,22 @@ def is_admin(interaction: Interaction) -> bool:
         return True
     if interaction.user.guild_permissions.administrator:
         return True
+
+def member_is_admin(member: nextcord.Member) -> bool:
+    if member.id == member.guild.owner_id:
+        return True
+    if member.guild_permissions.administrator:
+        return True
+    return False
+
+def get_user_badge(member: nextcord.Member, newbie_role_id: int) -> str | None:
+    if member_is_admin(member):
+        return os.path.join(BADGE_DIR, "admin.png")
+    if member.premium_since is not None:
+        return os.path.join(BADGE_DIR, "certified.png")
+    if newbie_role_id and any(role.id == newbie_role_id for role in member.roles):
+        return os.path.join(BADGE_DIR, "newbies.png")
+    return None
 
 @bot.slash_command(name="admin-add", description="[ADMIN] add QuackCoins to a User", guild_ids= serv_list(qdb.get_server_list("eco")))
 async def admin_add(interaction: Interaction, amount: int, user: nextcord.Member):
