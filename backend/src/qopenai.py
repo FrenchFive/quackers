@@ -76,15 +76,12 @@ def img_generation(user, prompt):
 
     qlogs.info(f"- Requesting Image generation from OpenAI")
     try:
-        response = client.images.generate(
+        result = client.images.generate(
             model="gpt-image-1",
             prompt=prompt,
-            n=1,
-            size="1024x1024",
             user=user,
-            response_format="b64_json",
         )
-        image_base64 = response.data[0].b64_json
+        image_base64 = result.data[0].b64_json
         return base64.b64decode(image_base64)
     except Exception as exc:
         qlogs.error(f"Image generation failed: {exc}")
