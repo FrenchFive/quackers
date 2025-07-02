@@ -55,7 +55,25 @@
                                 <option {% if data["admin_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
                             {% endfor %}
                         </select>
-                    </div>                                  
+                    </div>
+                    <div class="mb-3" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                        <label for="stats-txt-channel" class="form-label">Statistics channel text</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input toggle-section" type="checkbox" id="stats-toggle"  {% if data['stats'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="stats-toggle">Active</label>
+                        </div>
+                        <select id="stats-input" class="form-select">
+                            {% for channel in server["text_channels"] %}
+                                <option {% if data["stats_ch_id"]|int == channel.id|int %} selected="selected" {% endif %} value="{{ channel.id }}">{{ channel.name }}</option>
+                            {% endfor %}
+                        </select>
+
+                        <div class="form-check form-switch" style="margin-top: 0.5rem;">
+                            <input class="form-check-input" type="checkbox" id="stats-advanced-toggle" {% if data['stats_advanced'] == 1 %} checked {% endif %}>
+                            <label class="form-check-label" for="stats-advanced-toggle">Advanced</label>
+                        </div>
+
+                    </div>
                 </form>
             </div>
             <button id="btn-general-main" type="button" class="btn button text-white">Save Changes</button>
