@@ -58,7 +58,7 @@ A discord bot in Python with a lot of functionalities.
   - 👋 **Welcome**: Enable welcome/goodbye messages, presentation flow, DM setup
   - 🪙 **Economy**: Toggle coin system, passive income, banking, send limits
   - 🎮 **Games**: Manage mini-games (dice, RPS, bets), coin limits, global/game toggles
-  - 🤖 **AI**: Enable GPT-4.1 chat and gpt-image-1 generation, with optional coin cost
+  - 🤖 **AI**: Enable GPT-4.1 chat and gpt-image-1 image generation, with optional coin cost
 
 - **Real-Time Server Data**  
   Auto-fetch guild info (channels, roles, etc.) from the Discord API for config.
