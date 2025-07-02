@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const hball = document.getElementById("hball-block");
     const bet = document.getElementById("bet-block");
     const roll = document.getElementById("roll-block");
+    const quiz = document.getElementById("quiz-block");
 
     toggle.addEventListener("change", () => {
         if (toggle.checked) {
@@ -18,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
             hball.style.display = "block";
             bet.style.display = "block";
             roll.style.display = "block";
+            quiz.style.display = "block";
         } else {
             section.style.display = "none";
             dice.style.display = "none";
@@ -25,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
             hball.style.display = "none";
             bet.style.display = "none";
             roll.style.display = "none";
+            quiz.style.display = "none";
         }
     });
 
@@ -35,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     hball.style.display = toggle.checked ? "block" : "none";
     bet.style.display = toggle.checked ? "block" : "none";
     roll.style.display = toggle.checked ? "block" : "none";
+    quiz.style.display = toggle.checked ? "block" : "none";
 });
 
 //BET TOGGLE
@@ -52,6 +56,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize the visibility based on the toggle's initial state
     section.style.display = toggle.checked ? "block" : "none";
+});
+
+//QUIZ TOGGLE
+document.addEventListener("DOMContentLoaded", () => {
+    const toggle = document.getElementById("quiz-toggle");
+    const section = document.getElementById("quiz-section");
+    const inputField = document.getElementById("quiz-channel");
+    const timeField = document.getElementById("quiz-time-limit");
+
+    toggle.addEventListener("change", () => {
+        if (toggle.checked) {
+            section.style.display = "block";
+            inputField.disabled = false;
+            timeField.disabled = false;
+        } else {
+            section.style.display = "none";
+            inputField.disabled = true;
+            timeField.disabled = true;
+        }
+    });
+
+    section.style.display = toggle.checked ? "block" : "none";
+    if (!toggle.checked) {
+        inputField.disabled = true;
+        timeField.disabled = true;
+    }
 });
 
 //DISABLE INPUT Limitation of the amount Gambled 
@@ -158,6 +188,19 @@ document.getElementById("btn-gme-roll").addEventListener("click", () => {
     ];
     saveConfig(
         "btn-gme-roll",
+        data,
+    );
+});
+
+//BUTTON SAVE QUIZ
+document.getElementById("btn-gme-quiz").addEventListener("click", () => {
+    const data = [
+        { name: "quiz_enable", value: document.getElementById("quiz-toggle").checked ? 1 : 0 },
+        { name: "quiz_ch_id", value: document.getElementById("quiz-channel").value },
+        { name: "quiz_time_limit", value: document.getElementById("quiz-time-limit").value },
+    ];
+    saveConfig(
+        "btn-gme-quiz",
         data,
     );
 });

@@ -1,7 +1,11 @@
 import os
+import random
+import re
+import html
 from openai import OpenAI
 import requests
 import qlogs
+import json
 from consts import DATA_DIR, IMG_DIR
 
 from dotenv import load_dotenv
@@ -164,3 +168,5 @@ def imagine(user, prompt):
         handler.write(img_data)
 
     return img_path
+
+

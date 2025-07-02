@@ -12,6 +12,7 @@ import qdatabase as qdb
 import qgames
 import qdraw
 import qopenai
+import qquiz
 import qlogs
 from consts import DATA_DIR, ROOT_DIR
 
@@ -486,6 +487,175 @@ async def imagine(interaction: nextcord.Interaction, prompt: str):
     await interaction.followup.send(content=message ,file=nextcord.File(img_path), view=view)
 
 
+class QuizJoinView(nextcord.ui.View):
+    def __init__(self, month: int, year: int):
+        super().__init__(timeout=None)
+        self.month = month
+        self.year = year
+
+    @nextcord.ui.button(label="Do the Quiz", style=nextcord.ButtonStyle.green)
+    async def start(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        if qquiz.has_participated(interaction.guild.id, self.month, self.year, interaction.user.name):
+            await interaction.response.send_message("You already took this quiz.", ephemeral=True)
+            return
+        await interaction.response.send_message("Check your DMs for the quiz.", ephemeral=True)
+        try:
+            dm = await interaction.user.create_dm()
+            limit = qdb.get_server_info(interaction.guild.id, "quiz_time_limit")
+            await dm.send(
+                f"Quiz replied in more than {limit} seconds will be disqualified due to googling or ai usage",
+                view=QuizAckView(interaction.guild.id, self.month, self.year),
+            )
+        except Exception:
+            await interaction.followup.send("Unable to send you a DM.", ephemeral=True)
+
+
+class QuizAckView(nextcord.ui.View):
+    def __init__(self, guild: int, month: int, year: int):
+        super().__init__(timeout=None)
+        self.guild = guild
+        self.month = month
+        self.year = year
+
+    @nextcord.ui.button(label="ACKNOWLEDGE", style=nextcord.ButtonStyle.blurple)
+    async def acknowledge(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        data = qquiz.get_quiz(self.guild, self.month, self.year)
+        if not data:
+            await interaction.response.send_message("Quiz unavailable.", ephemeral=True)
+            return
+        questions, answers, _, _ = data
+        qquiz.start_attempt(self.guild, self.month, self.year, interaction.user.name)
+        view = QuizQuestionView(self.guild, self.month, self.year, questions, answers)
+        q = questions[0]
+        emoji = {"easy": "🟢", "medium": "🟠", "hard": "🔴"}.get(q.get("difficulty", ""), "")
+        bar = '[' + '-' * int(view.per_question // 2) + ']'
+        content = (
+            f"{bar}\n{emoji} __Question 1/{len(questions)}__\n"
+            f"**{q['q']}**\n{q['A']}\n{q['B']}\n{q['C']}\n{q['D']}"
+        )
+        await interaction.response.edit_message(content=content, view=view)
+        view.message = await interaction.original_message()
+        await view.start_timer()
+
+
+class QuizAnswerSelect(nextcord.ui.Select):
+    def __init__(self, parent: "QuizQuestionView"):
+        q = parent.questions[parent.index]
+        options = [
+            nextcord.SelectOption(label=q["A"], value="A"),
+            nextcord.SelectOption(label=q["B"], value="B"),
+            nextcord.SelectOption(label=q["C"], value="C"),
+            nextcord.SelectOption(label=q["D"], value="D"),
+        ]
+        super().__init__(placeholder="Choose your answer", min_values=1, max_values=1, options=options)
+        self.parent = parent
+
+    async def callback(self, interaction: nextcord.Interaction):
+        await self.parent.process_answer(interaction, self.values[0])
+
+
+class QuizQuestionView(nextcord.ui.View):
+    def __init__(self, guild: int, month: int, year: int, questions: list, answers: list, index: int = 0, choices=None, start: float | None = None):
+        super().__init__(timeout=None)
+        self.guild = guild
+        self.month = month
+        self.year = year
+        self.questions = questions
+        self.answers = answers
+        self.index = index
+        self.choices = choices or []
+        self.start = start or time.time()
+        self.message: nextcord.Message | None = None
+        self.time_limit = qdb.get_server_info(self.guild, "quiz_time_limit")
+        self.per_question = self.time_limit / len(self.questions)
+        self.question_start = time.time()
+        self.timer_task: asyncio.Task | None = None
+        self.add_item(QuizAnswerSelect(self))
+
+    async def start_timer(self):
+        if self.timer_task:
+            self.timer_task.cancel()
+        self.question_start = time.time()
+        self.timer_task = asyncio.create_task(self._update_bar())
+
+    async def _update_bar(self):
+        steps = int(self.per_question // 2)
+        while True:
+            elapsed = time.time() - self.question_start
+            filled = min(int(elapsed // 2), steps)
+            bar = "[" + "#" * filled + "-" * (steps - filled) + "]"
+            q = self.questions[self.index]
+            emoji = {"easy": "🟢", "medium": "🟠", "hard": "🔴"}.get(q.get("difficulty", ""), "")
+            content = (
+                f"{bar}\n{emoji} __Question {self.index+1}/{len(self.questions)}__\n"
+                f"**{q['q']}**\n{q['A']}\n{q['B']}\n{q['C']}\n{q['D']}"
+            )
+            try:
+                await self.message.edit(content=content, view=self)
+            except Exception:
+                pass
+            if elapsed >= self.per_question:
+                break
+            await asyncio.sleep(2)
+
+    async def process_answer(self, interaction: nextcord.Interaction, choice: str):
+        self.choices.append(choice)
+        self.index += 1
+        if self.index < len(self.questions):
+            if self.timer_task:
+                self.timer_task.cancel()
+            self.clear_items()
+            self.add_item(QuizAnswerSelect(self))
+            q = self.questions[self.index]
+            emoji = {"easy": "🟢", "medium": "🟠", "hard": "🔴"}.get(q.get("difficulty", ""), "")
+            content = (
+                f"[{'-'*int(self.per_question//2)}]\n{emoji} __Question {self.index+1}/{len(self.questions)}__\n"
+                f"**{q['q']}**\n{q['A']}\n{q['B']}\n{q['C']}\n{q['D']}"
+            )
+            await interaction.response.edit_message(content=content, view=self)
+            self.message = await interaction.original_message()
+            await self.start_timer()
+        else:
+            total = int(time.time() - self.start)
+            score = sum(1 for u, a in zip(self.choices, self.answers) if u == a)
+            guild = interaction.client.get_guild(self.guild)
+            limit = qdb.get_server_info(self.guild, "quiz_time_limit")
+            allowed = limit + len(self.questions)
+            if total > allowed:
+                qquiz.add_score(self.guild, self.month, self.year, interaction.user.name, score, total, True)
+                msg = f"You scored {score}/10 in {total} seconds - Disqualified for exceeding {allowed} seconds"
+            else:
+                qquiz.add_score(self.guild, self.month, self.year, interaction.user.name, score, total, False)
+                if guild:
+                    await update_leaderboard_message(guild, self.month, self.year)
+                msg = f"You scored {score}/10 in {total} seconds"
+            if self.timer_task:
+                self.timer_task.cancel()
+            await interaction.message.delete()
+            await interaction.channel.send(msg)
+
+
+async def update_leaderboard_message(guild, month, year):
+    lb = qquiz.get_leaderboard(guild.id, month, year)
+    lines = ["Pos // Name // Points // Time"]
+    if not lb:
+        lines.append("-----")
+    else:
+        for i, (user, score, t, _) in enumerate(lb[:5], 1):
+            lines.append(f"{i}. {user.upper()} - {score}pts - {t}seconds")
+    text = "\n".join(lines)
+    data = qquiz.get_quiz(guild.id, month, year)
+    if not data:
+        return
+    _, _, _, lb_msg_id = data
+    channel = guild.get_channel(qdb.get_server_info(guild.id, "quiz_ch_id"))
+    if channel:
+        try:
+            msg = await channel.fetch_message(lb_msg_id)
+            await msg.edit(content=text)
+        except Exception:
+            pass
+
 # qgames
 @bot.slash_command(name="dices", description="Gamble QuackCoins against Quackers by throwing dices.", guild_ids= serv_list(list(set(qdb.get_server_list("dices")) & set(qdb.get_server_list("eco")) & set(qdb.get_server_list("game")))))
 async def dices(interaction: Interaction, bet: Optional[int] = SlashOption(required=False), roll: Optional[int] = SlashOption(required=False)):
@@ -861,6 +1031,40 @@ async def admin_logs(interaction: Interaction):
         await interaction.response.send_message("Error: qlogs.log file not found.")
 
 
+@bot.slash_command(
+    name="quiz-launch",
+    description="[ADMIN] launch the monthly quiz",
+    guild_ids=serv_list(list(set(testid) & set(qdb.get_server_list("quiz_enable"))))
+)
+async def quiz_launch(interaction: Interaction):
+    if not is_admin(interaction):
+        await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
+        return
+    await interaction.response.defer(ephemeral=True)
+    success = await launch_quiz(interaction.guild.id)
+    if success:
+        await interaction.followup.send("Quiz launched.", ephemeral=True)
+    else:
+        await interaction.followup.send("Quiz already active or channel missing.", ephemeral=True)
+
+
+@bot.slash_command(
+    name="quiz-end",
+    description="[ADMIN] end the monthly quiz",
+    guild_ids=serv_list(list(set(testid) & set(qdb.get_server_list("quiz_enable"))))
+)
+async def quiz_end(interaction: Interaction):
+    if not is_admin(interaction):
+        await interaction.response.send_message("You do not have permission to use this command.", ephemeral=True)
+        return
+    await interaction.response.defer(ephemeral=True)
+    success = await close_quiz(interaction.guild.id)
+    if success:
+        await interaction.followup.send("Quiz ended.", ephemeral=True)
+    else:
+        await interaction.followup.send("No active quiz or channel missing.", ephemeral=True)
+
+
 @bot.slash_command(name="admin-scan", description="[ADMIN] scans the server and retrieves details about channels and roles.") #NO GUILD SPECIFIED SO ANY SERVER CAN BE ADDED
 async def admin_scan(interaction: Interaction):
     guild = interaction.guild  # Get the guild (server) where the command was invoked
@@ -1022,6 +1226,81 @@ async def before_weekly_update():
     qlogs.info(f"Waiting for {wait_time} seconds until the next Sunday...")
     await asyncio.sleep(wait_time)
 
+
+async def launch_quiz(server: int) -> bool:
+    """Launch the monthly quiz on the specified server."""
+    if qdb.get_server_info(server, "quiz_enable") == 0:
+        return False
+    channel = bot.get_channel(qdb.get_server_info(server, "quiz_ch_id"))
+    if channel is None or qquiz.get_active_quiz(server):
+        return False
+    now = datetime.now()
+    if qquiz.get_quiz(server, now.month, now.year):
+        return False
+    questions = qgames.generate_quiz(server)
+    leaderboard = await channel.send("Pos // Name // Points // Time\n-----")
+    join = await channel.send(
+        "JOIN QUACKY QUIZ and WIN BIG", view=QuizJoinView(now.month, now.year)
+    )
+    qquiz.start_quiz(server, now.month, now.year, questions, join.id, leaderboard.id)
+    qlogs.info(f"QUIZ LAUNCHED :: guild {server}")
+    return True
+
+
+async def close_quiz(server: int) -> bool:
+    """End the active quiz on *server* and post final results."""
+    channel = bot.get_channel(qdb.get_server_info(server, "quiz_ch_id"))
+    if channel is None:
+        return False
+    active = qquiz.get_active_quiz(server)
+    if not active:
+        return False
+    month, year, qlist, ans, join_id, lb_id = active
+    try:
+        msg = await channel.fetch_message(join_id)
+        await msg.delete()
+    except Exception:
+        pass
+    top = qquiz.get_leaderboard(server, month, year)
+    lines = ["Pos // Name // Points // Time"]
+    for i, (user, score, t, _) in enumerate(top[:3], 1):
+        lines.append(f"{i}. {user.upper()} - {score}pts - {t}seconds")
+    if not top:
+        lines.append("-----")
+    answers_lines = [
+        f"Q{i+1}: {q['q']} || {q[q['answer']]} ||" for i, q in enumerate(qlist)
+    ]
+    final = "\n".join(lines) + "\n\n" + "\n".join(answers_lines)
+    await channel.send(final)
+    qquiz.end_quiz(server, month, year)
+    qlogs.info(f"QUIZ ENDED :: guild {server}")
+    return True
+
+
+@tasks.loop(hours=24)
+async def monthly_quiz_check():
+    now = datetime.now()
+    for server in serverid:
+        if qdb.get_server_info(server, "quiz_enable") == 0:
+            continue
+        channel = bot.get_channel(qdb.get_server_info(server, "quiz_ch_id"))
+        if channel is None:
+            continue
+        active = qquiz.get_active_quiz(server)
+        if now.day == 15 and active is None:
+            await launch_quiz(server)
+        if now.day == 20 and active:
+            await close_quiz(server)
+
+
+@monthly_quiz_check.before_loop
+async def before_monthly_quiz_check():
+    await bot.wait_until_ready()
+    now = datetime.now()
+    next_midnight = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    wait_time = (next_midnight - now).total_seconds()
+    await asyncio.sleep(wait_time)
+
 # EVENTS
 #QUACKER IS READY 
 @bot.event
@@ -1032,6 +1311,8 @@ async def on_ready():
         daily_update.start()
     if not weekly_update.is_running():
         weekly_update.start()
+    if not monthly_quiz_check.is_running():
+        monthly_quiz_check.start()
 
     for guild in bot.guilds:
         qdb.add_server(guild.id, guild.name)
