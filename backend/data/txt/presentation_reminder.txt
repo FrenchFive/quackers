@@ -1,0 +1,4 @@
+Hello {name}!
+Don't forget to introduce yourself using the `/presentation` command in {channel}.
+You can open it directly here: {link}
+See you soon!
