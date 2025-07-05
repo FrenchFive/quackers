@@ -5,7 +5,7 @@
 A discord bot in Python with a lot of functionalities. 
 
 [![Quackers](https://img.shields.io/badge/Quackers-WEBSITE-7289da?logo=data:image/svg%2bxml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+DQo8IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPg0KPCEtLSBDcmVhdGVkIHdpdGggVmVjdG9ybmF0b3IgKGh0dHA6Ly92ZWN0b3JuYXRvci5pby8pIC0tPg0KPHN2ZyBoZWlnaHQ9IjIwNDguMHB4IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIHN0eWxlPSJmaWxsLXJ1bGU6bm9uemVybztjbGlwLXJ1bGU6ZXZlbm9kZDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7IiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAyMDQ4IDIwNDgiIHdpZHRoPSIyMDQ4LjBweCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+DQo8ZGVmcy8+DQo8ZyBpZD0iRHVjayI+DQo8cGF0aCBkPSJNNzEwLjgwNSAxODkzLjQyQzcxMC44MDUgMTg5My40MiA3MDMuNjI0IDYzNS44MTEgNzEwLjgwNSA1NzguNjMzQzcxNy45ODYgNTIxLjQ1NCA3MjcuNTQ1IDM0My41NjEgOTI4LjE1MyAzNDUuMjYxQzExMjguNzYgMzQ2Ljk2MSAxMTQ2LjI0IDUyMS40NTQgMTE0OS4wNyA1NzguNjMzQzExNTEuOSA2MzUuODExIDExNDkuMDcgMTg5My40MiAxMTQ5LjA3IDE4OTMuNDJMMTM2OC4yIDE4OTMuNDJDMTM2OC4yIDE4OTMuNDIgMTM0Mi40MiA2NTMuODk4IDEzMzcuNiA1NzguNjMzQzEzMzIuNzcgNTAzLjM2OCAxMzE5LjE3IDE2Ni43NTQgOTI4LjE1MyAxNTQuODUzQzUzNy4xMzcgMTQyLjk1MyA1MTUuNzQzIDUyMi4wOTQgNTEwLjM3NCA1NzUuMjMzQzUwNS4wMDUgNjI4LjM3MSA0OTEuNjczIDE4OTMuNDIgNDkxLjY3MyAxODkzLjQyTDcxMC44MDUgMTg5My40MloiIGZpbGw9IiNmZmZmZmYiIGZpbGwtcnVsZT0ibm9uemVybyIgb3BhY2l0eT0iMSIgc3Ryb2tlPSJub25lIi8+DQo8cGF0aCBkPSJNOTY2LjI3MiA3MzEuOTE2Qzk2Ni4yNzIgNjg1LjMwOCAxMDA0LjA2IDY0Ny41MjQgMTA1MC42NiA2NDcuNTI0QzEwOTcuMjcgNjQ3LjUyNCAxMTM1LjA2IDY4NS4zMDggMTEzNS4wNiA3MzEuOTE2QzExMzUuMDYgNzc4LjUyNSAxMDk3LjI3IDgxNi4zMDggMTA1MC42NiA4MTYuMzA4QzEwMDQuMDYgODE2LjMwOCA5NjYuMjcyIDc3OC41MjUgOTY2LjI3MiA3MzEuOTE2WiIgZmlsbD0iI2ZmZmZmZiIgZmlsbC1ydWxlPSJub256ZXJvIiBvcGFjaXR5PSIxIiBzdHJva2U9Im5vbmUiLz4NCjxwYXRoIGQ9Ik0xMzU2LjczIDczNy40MzhDMTM1OC41NSA2NjUuODAyIDE0MzUuMTggNjEzLjQ2NiAxNDc1LjU4IDYwNy45ODhDMTUxNS45OCA2MDIuNTExIDE1NDkuNTMgNjM1LjgyIDE1NTUuODQgNjcwLjg0M0MxNTYyLjE1IDcwNS44NjUgMTUwNC42MSA3MzUuOTY3IDE1MDQuNjEgNzM1Ljk2N0MxNTA0LjYxIDczNS45NjcgMTU1My4zIDc3My44MTcgMTU1My4zIDgwOS44NjNDMTU1My4zIDg0NS45MDkgMTUxMi4yIDg3My40NjcgMTQ3MC4wMiA4NzAuMzE2QzE0MjcuODQgODY3LjE2NiAxMzU0LjkgODA5LjA3MyAxMzU2LjczIDczNy40MzhaIiBmaWxsPSIjZmZmZmZmIiBmaWxsLXJ1bGU9Im5vbnplcm8iIG9wYWNpdHk9IjEiIHN0cm9rZT0ibm9uZSIvPg0KPC9nPg0KPC9zdmc+DQo=&logoColor=white)](https://quackers.app)
-[![Discord](https://img.shields.io/badge/Discord-TEAM_QUACK-7289da?logo=discord&logoColor=white)](https://discord.gg/3NzqXTP8HG)
+[![Discord](https://img.shields.io/badge/Discord-TEAM_QUACK-7289da?logo=discord&logoColor=white)](https://discord.gg/rHsjmqshrW)
 ![Python Version](https://img.shields.io/badge/Python-3.12%2B-blue?logo=python&logoColor=white)
 ![License](https://img.shields.io/github/license/FrenchFive/quackers)
 
@@ -18,8 +18,8 @@ A discord bot in Python with a lot of functionalities.
   - `/duck` : Send a Duck Picture
   - `/info` : Send an image with information about a user
   - `/presentation` : User answer few questions about themselves, used to know new members
-  - `/imagine` : Generate an Image using AI based on a prompt :: **DALL-E-3** Model by OpenAI
-  - Quackers repond to Mention and Replies with his personnality using :: **GPT4-o** Model by OpenAI
+  - `/imagine` : Generate an Image using AI based on a prompt :: **gpt-image-1** Model by OpenAI
+  - Quackers repond to Mention and Replies with his personnality using :: **GPT-4.1** Model by OpenAI
 - 👨🏻‍💻 || **Admin Functions** <sub>[Allows Admins to change value for the bot]</sub>
   - `/admin-scan` : Easy and quick bot setup
   - `/admin-add` : Add QuackCoins for a specific User to the Quack Database
@@ -58,7 +58,7 @@ A discord bot in Python with a lot of functionalities.
   - 👋 **Welcome**: Enable welcome/goodbye messages, presentation flow, DM setup
   - 🪙 **Economy**: Toggle coin system, passive income, banking, send limits
   - 🎮 **Games**: Manage mini-games (dice, RPS, bets), coin limits, global/game toggles
-  - 🤖 **AI**: Enable GPT-4o chat and DALL·E image generation, with optional coin cost
+  - 🤖 **AI**: Enable GPT-4.1 chat and gpt-image-1 image generation, with optional coin cost
 
 - **Real-Time Server Data**  
   Auto-fetch guild info (channels, roles, etc.) from the Discord API for config.
