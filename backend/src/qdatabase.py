@@ -241,7 +241,7 @@ def add_quackers(guild, name):
 
     quackers += 1
 
-    CURSOR.execute(f"UPDATE '{guild}' quackers = ? WHERE name = ?", (quackers, name))
+    CURSOR.execute(f"UPDATE '{guild}' SET quackers = ? WHERE name = ?", (quackers, name))
     CONNECTION.commit()
 
 def daily(guild, name):

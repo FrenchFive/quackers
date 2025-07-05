@@ -3,7 +3,14 @@ import os
 import requests
 import plotly.express as px
 
-from consts import FONT_DIR, IMG_DIR
+from consts import FONT_DIR, IMG_DIR, BADGE_DIR
+
+# Paths to default badges
+BADGES = {
+    "admin": os.path.join(BADGE_DIR, "admin.png"),
+    "certified": os.path.join(BADGE_DIR, "certified.png"),
+    "newbie": os.path.join(BADGE_DIR, "newbies.png"),
+}
 
 WOSKER = os.path.join(FONT_DIR, 'thunder.ttf')
 SCHABO = os.path.join(FONT_DIR, 'schabo.otf')
@@ -16,8 +23,8 @@ def avatar_download(url):
         handler.write(img_data)
     return tmpavatar
 
-def info(name, url, result, rank):
-    name = name[:20].upper() #CUTTING THE NAME
+def info(name, url, result, rank, badge_path: str | None = None):
+    name = name[:20].upper()  # CUTTING THE NAME
 
     coins = result[0]
     bank = result[1]
@@ -60,10 +67,26 @@ def info(name, url, result, rank):
         base.paste(mask, (rest, rest), mask)
     
 
-    #DISPLAY NAME
+    # DISPLAY NAME AND OPTIONAL BADGE
     draw = ImageDraw.Draw(base)
     font = ImageFont.truetype(WOSKER, size=400)
-    draw.text(((rest*2)+lildim, rest*2), name, fill=(255, 255, 255, 255), font=font)
+
+    base_x = (rest * 2) + lildim
+    badge_size = 200
+    text_x = base_x
+
+    if badge_path:
+        text_x += badge_size + 40
+
+    name_pos = (text_x, rest * 2)
+    draw.text(name_pos, name, fill=(255, 255, 255, 255), font=font)
+
+    if badge_path:
+        badge = Image.open(badge_path).convert("RGBA")
+        badge = badge.resize((badge_size, badge_size))
+        text_box = draw.textbbox(name_pos, name, font=font)
+        badge_y = name_pos[1] + int(((text_box[3] - text_box[1]) - badge_size) / 2)
+        base.paste(badge, (base_x, badge_y), badge)
 
     #BIG INFO
     draw = ImageDraw.Draw(base)
