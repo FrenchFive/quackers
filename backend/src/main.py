@@ -959,12 +959,21 @@ async def before_daily_update():
 async def weekly_update():
     qlogs.info("WEEKLY UPDATE")
 
-    for server in serverid:
+    for server in qdb.get_server_list("stats"):
 
-        type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries = qdb.get_stats(server)
+        (
+            type_totals,
+            type_min_max,
+            unique_names_count,
+            interval_totals,
+            hour_totals,
+            type_most_entries,
+        ) = qdb.get_stats(server)
 
         path = qdraw.stat(interval_totals)
         imgfile = nextcord.File(path)
+
+        advanced = qdb.get_server_info(server, "stats_advanced")
 
         message = ["**📊 Server Activity Statistics**"]
 
@@ -992,12 +1001,22 @@ async def weekly_update():
                 game = totals_dict['GAME']
             except:
                 game = 0
-            message.append(f"\n**Commands Quantity This Week:** `{cmd + game}`")
+        message.append(f"\n**Commands Quantity This Week:** `{cmd + game}`")
 
         # Add type totals
         message.append("\n\n**Activity Summary:**")
         for activity, count in type_totals:
             message.append(f"- **{activity}:** `{count}` entries")
+
+        days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        busiest_day_index = interval_totals.index(max(interval_totals))
+        busiest_hour = hour_totals.index(max(hour_totals))
+        message.append(
+            f"\n**Busiest Day:** `{days[busiest_day_index]}` with `{interval_totals[busiest_day_index]}` activities"
+        )
+        message.append(
+            f"\n**Peak Hour:** `{busiest_hour}:00` with `{max(hour_totals)}` activities"
+        )
 
         # Add detailed stats for each type
         message.append("\n\n**Detailed Statistics by Type:**")
@@ -1028,11 +1047,14 @@ async def weekly_update():
 
         # Combine all parts into a single string
         mess = "\n".join(message)
-        mess = mess[:1000] #Cutting too long message
+        mess = mess[:1000]  # Cutting too long message
 
-        channel = bot.get_channel(qdb.get_server_info(server, "admin_ch_id"))
+        channel = bot.get_channel(qdb.get_server_info(server, "stats_ch_id"))
         if channel:
-            await channel.send(mess, file=imgfile)
+            if advanced:
+                await channel.send(mess, file=imgfile)
+            else:
+                await channel.send(message[0], file=imgfile)
             
         qdb.clear_stats(guild=server) #CLEAR STATS
 
@@ -1126,7 +1148,7 @@ def vc_disconnect(guild, member):
     hours = qdb.voicestalled(guild.id, member.name)
     qlogs.info(f"{member.name} is disconnected")
 
-    qdb.add_stat(guild=guild.id, user=member.name, type="VC_HOUR", amount=hours)
+    qdb.add_stat(guild=guild.id, user=member.name, type="VC_HOURS", amount=hours)
 
 @bot.event
 async def on_voice_state_update(member, before, after):

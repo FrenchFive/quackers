@@ -32,6 +32,9 @@ DB_STRUCTURE_SERVER = '''
 "dbg_ch" BOOLEAN DEFAULT 0,
 "dbg_ch_id" INTEGER DEFAULT 0,
 "bot_ch_id" INTEGER DEFAULT 0,
+"stats" BOOLEAN DEFAULT 0,
+"stats_advanced" BOOLEAN DEFAULT 1,
+"stats_ch_id" INTEGER DEFAULT 0,
 
 "wlc" BOOLEAN DEFAULT 0,
 "wlc_ch_id" INTEGER DEFAULT 0,
@@ -418,13 +421,31 @@ def voicestalled(guild, name):
 
 #STATS
 def add_stat(guild, user, type, amount):
-    weekday_number = datetime.now().weekday()
+    now = datetime.now()
+    weekday_number = now.weekday()
+    hour_number = now.hour
     # check if a table exists with the id of the guild as tables name
-    STATS_CURSOR.execute(f"CREATE TABLE IF NOT EXISTS '{guild}' (id INTEGER PRIMARY KEY AUTOINCREMENT, time INT, name TEXT, type TEXT, amount INTEGER)")
+    STATS_CURSOR.execute(
+        f"CREATE TABLE IF NOT EXISTS '{guild}' (id INTEGER PRIMARY KEY AUTOINCREMENT, timestamp TEXT, day INT, hour INT, name TEXT, type TEXT, amount INTEGER)"
+    )
+    STATS_CONNECTION.commit()
+
+    # ensure new columns exist for legacy tables
+    STATS_CURSOR.execute(f"PRAGMA table_info('{guild}')")
+    cols = [row[1] for row in STATS_CURSOR.fetchall()]
+    if "timestamp" not in cols:
+        STATS_CURSOR.execute(f"ALTER TABLE '{guild}' ADD COLUMN timestamp TEXT")
+    if "day" not in cols:
+        STATS_CURSOR.execute(f"ALTER TABLE '{guild}' ADD COLUMN day INT")
+    if "hour" not in cols:
+        STATS_CURSOR.execute(f"ALTER TABLE '{guild}' ADD COLUMN hour INT")
     STATS_CONNECTION.commit()
 
     # insert the data into the table
-    STATS_CURSOR.execute(f"INSERT INTO '{guild}' (time, name, type, amount) VALUES (?, ?, ?, ?)", (weekday_number, user, type, amount))
+    STATS_CURSOR.execute(
+        f"INSERT INTO '{guild}' (timestamp, day, hour, name, type, amount) VALUES (?, ?, ?, ?, ?, ?)",
+        (now.isoformat(), weekday_number, hour_number, user, type, amount),
+    )
     STATS_CONNECTION.commit()
 
 def get_stats(guild):
@@ -448,10 +469,19 @@ def get_stats(guild):
 
     # Total for each day
     interval_totals = [0] * 7  # Initialize a list with 7 zeros, one for each day of the week
-    STATS_CURSOR.execute(f"SELECT time, COUNT(*) as count FROM '{guild}' GROUP BY time")
+    STATS_CURSOR.execute(f"SELECT day, COUNT(*) as count FROM '{guild}' GROUP BY day")
     for row in STATS_CURSOR.fetchall():
         day_of_week, count = row
-        interval_totals[day_of_week] = count
+        if day_of_week is not None and 0 <= day_of_week < 7:
+            interval_totals[day_of_week] = count
+
+    # Total for each hour
+    hour_totals = [0] * 24
+    STATS_CURSOR.execute(f"SELECT hour, COUNT(*) as count FROM '{guild}' GROUP BY hour")
+    for row in STATS_CURSOR.fetchall():
+        hour_of_day, count = row
+        if hour_of_day is not None and 0 <= hour_of_day < 24:
+            hour_totals[hour_of_day] = count
     
 
 
@@ -472,7 +502,7 @@ def get_stats(guild):
     }
     '''
 
-    return type_totals, type_min_max, unique_names_count, interval_totals, type_most_entries
+    return type_totals, type_min_max, unique_names_count, interval_totals, hour_totals, type_most_entries
 
 def clear_stats(guild):
     STATS_CURSOR.execute(f"DROP TABLE '{guild}'")
