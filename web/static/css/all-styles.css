@@ -230,3 +230,10 @@ body {
 .svgico:hover svg {
     fill: white;
 }
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 1rem;
+}
