@@ -1,6 +1,7 @@
 from .consts import ROOT_DIR, TXT_DIR
 import sqlite3
 import os
+import qlogs
 
 def server_check(server, name):
     #check that the db file exists
@@ -43,8 +44,10 @@ def update_server_info(guild, parm, value):
     conn = sqlite3.connect(f"{ROOT_DIR}/db/quackers.db")
     cursor = conn.cursor()
 
-    cursor.execute(f"UPDATE servers SET {parm} = ? WHERE server_id = ?", (value, guild))
+    cursor.execute(f"UPDATE servers SET {parm} = ?, nsync = 1 WHERE server_id = ?", (value, guild))
     conn.commit()
+
+    qlogs.info(f"Server {guild} updated {parm} -> {value} (nsync set)")
 
     conn.close()
 

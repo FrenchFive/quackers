@@ -96,7 +96,8 @@ DB_STRUCTURE_SERVER = '''
 "ai_chat" BOOLEAN DEFAULT 0,
 "ai_img" BOOLEAN DEFAULT 0,
 "ai_img_pay" BOOLEAN DEFAULT 1,
-"ai_img_pay_value" INTEGER DEFAULT 100
+"ai_img_pay_value" INTEGER DEFAULT 100,
+"nsync" BOOLEAN DEFAULT 0
 '''
 
 DB_STRUCTURE_MEMBERS = '''
@@ -163,6 +164,15 @@ def get_server_name(guild):
     CURSOR.execute('SELECT server_name FROM servers WHERE server_id = ?', (guild,))
     result = CURSOR.fetchone()
     return result
+
+def set_nsync(guild, value=1):
+    CURSOR.execute('UPDATE servers SET nsync = ? WHERE server_id = ?', (value, guild))
+    CONNECTION.commit()
+
+def get_nsync_servers():
+    CURSOR.execute('SELECT server_id FROM servers WHERE nsync = 1')
+    rows = CURSOR.fetchall()
+    return [row[0] for row in rows]
 
 #MEMBERS
 def user_in_db(guild, member):

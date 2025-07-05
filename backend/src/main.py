@@ -1071,6 +1071,28 @@ async def before_weekly_update():
     qlogs.info(f"Waiting for {wait_time} seconds until the next Sunday...")
     await asyncio.sleep(wait_time)
 
+# Sync commands for servers marked for update
+@tasks.loop(minutes=5)
+async def sync_commands_update():
+    servers = qdb.get_nsync_servers()
+    for sid in servers:
+        guild = bot.get_guild(sid)
+        if guild:
+            try:
+                await bot.sync_application_commands(guild)
+                qdb.set_nsync(sid, 0)
+                qlogs.info(f"Synced commands for {sid}")
+
+                channel = bot.get_channel(qdb.get_server_info(sid, "dbg_ch_id"))
+                if channel and qdb.get_server_info(sid, "dbg_ch") == True:
+                    await channel.send("Commands have been refreshed")
+            except Exception as e:
+                qlogs.error(f"Failed to sync commands for {sid}: {e}")
+
+@sync_commands_update.before_loop
+async def before_sync_commands_update():
+    await bot.wait_until_ready()
+
 # EVENTS
 #QUACKER IS READY 
 @bot.event
@@ -1081,6 +1103,8 @@ async def on_ready():
         daily_update.start()
     if not weekly_update.is_running():
         weekly_update.start()
+    if not sync_commands_update.is_running():
+        sync_commands_update.start()
 
     for guild in bot.guilds:
         qdb.add_server(guild.id, guild.name)
