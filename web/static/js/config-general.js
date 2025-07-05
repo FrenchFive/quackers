@@ -20,16 +20,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const statsToggle = document.getElementById('stats-toggle');
     const statsInput = document.getElementById('stats-input');
-    statsToggle.addEventListener('change', () => {
+    const advancedToggle = document.getElementById('stats-advanced-toggle');
+
+    const toggleStatsFields = () => {
         if (statsToggle.checked) {
             statsInput.disabled = false;
+            advancedToggle.disabled = false;
         } else {
             statsInput.disabled = true;
+            advancedToggle.disabled = true;
         }
-    });
-    if (!statsToggle.checked) {
-        statsInput.disabled = true;
-    }
+    };
+
+    statsToggle.addEventListener('change', toggleStatsFields);
+    toggleStatsFields();
 });
 
 //BUTTON SAVE
