@@ -11,6 +11,18 @@
         <div class="container">
             <h2>Where technology and ducks coexist... at least theoretically</h2>
             <p>- QUACKING ON DISCORD -</p>
+            <div class="stats-grid">
+                <div class="stats-grid-item">
+                    <span class="status-dot {% if bot_stats.online %}status-online{% else %}status-offline{% endif %}"></span>
+                    {% if bot_stats.online %}ONLINE{% else %}OFFLINE{% endif %}
+                </div>
+                <div class="stats-grid-item">
+                    {{ bot_stats.server_count }} servers
+                </div>
+                <div class="stats-grid-item">
+                    {{ bot_stats.member_count }} members
+                </div>
+            </div>
             <div class="row" style="padding-left: 15%; padding-right: 15%;">
                 <div class="col">
                     <button onclick="window.location.href='/{% if logged_in %}servers{% else %}login{% endif %}'" type="button" class="btn btn-outline-primary btn-lg w-100 svgico">

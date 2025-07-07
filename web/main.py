@@ -3,6 +3,8 @@ import requests
 import os
 from dotenv import load_dotenv
 import time
+import json
+from .consts import ROOT_DIR
 
 from . import database as db
 
@@ -18,6 +20,52 @@ CLIENT_SECRET = os.getenv('DISCORD_CLIENT_SECRET')
 REDIRECT_URI = os.getenv('DISCORD_REDIRECT_URI')
 BOT_TOKEN = os.getenv('KEY_DISCORD')
 API_BASE_URL = "https://discord.com/api"
+
+# Path to store cached bot statistics
+STATS_FILE = os.path.join(ROOT_DIR, "web", "data", "bot_stats.json")
+
+def fetch_bot_stats():
+    """Fetch bot status, server count and member count from Discord API."""
+    headers = {"Authorization": f"Bot {BOT_TOKEN}"}
+    online = False
+    server_count = 0
+    member_count = 0
+
+    try:
+        me_resp = requests.get(f"{API_BASE_URL}/users/@me", headers=headers)
+        online = me_resp.status_code == 200
+
+        guilds_resp = requests.get(f"{API_BASE_URL}/users/@me/guilds", headers=headers)
+        if guilds_resp.status_code == 200:
+            guilds = guilds_resp.json()
+            server_count = len(guilds)
+            for guild in guilds:
+                g_resp = requests.get(f"{API_BASE_URL}/guilds/{guild['id']}?with_counts=true", headers=headers)
+                if g_resp.status_code == 200:
+                    g_data = g_resp.json()
+                    member_count += g_data.get("approximate_member_count", 0)
+    except Exception:
+        pass
+
+    stats = {
+        "timestamp": int(time.time()),
+        "online": online,
+        "server_count": server_count,
+        "member_count": member_count,
+    }
+    os.makedirs(os.path.dirname(STATS_FILE), exist_ok=True)
+    with open(STATS_FILE, "w") as f:
+        json.dump(stats, f)
+    return stats
+
+def get_cached_bot_stats():
+    """Return cached bot statistics, refreshing if older than 15 minutes."""
+    if os.path.exists(STATS_FILE):
+        with open(STATS_FILE, "r") as f:
+            data = json.load(f)
+        if time.time() - data.get("timestamp", 0) < 900:
+            return data
+    return fetch_bot_stats()
 
 def check_access_token():
     # Redirect to the home page if no access token is in the session
@@ -99,7 +147,8 @@ def get_server_info(server_id):
 @app.route('/')
 def home():
     logged_in = "access_token" in session
-    return render_template('index.html', logged_in=logged_in)
+    bot_stats = get_cached_bot_stats()
+    return render_template('index.html', logged_in=logged_in, bot_stats=bot_stats)
 
 @app.route('/about')
 def about():
