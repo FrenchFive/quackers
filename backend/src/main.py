@@ -531,37 +531,59 @@ async def playsound(
         await interaction.response.send_message("No sound files found", ephemeral=True)
         return
 
-    if qdb.get_server_info(interaction.guild.id, "sound_pay_value") > 0 and qdb.get_server_info(interaction.guild.id, "eco") == True and qdb.get_server_info(interaction.guild.id, "sound_pay") == True:
-        price = qdb.get_server_info(interaction.guild.id, "sound_pay_value")
-        check = qdb.qcheck(interaction.guild.id, interaction.user.name, price)
-        if check != 0:
-            await interaction.response.send_message("Not enough QuackCoins", ephemeral=True)
-            return
-        qdb.add(interaction.guild.id, interaction.user.name, -price)
-
     # Use default sound if none is selected
     if sound:
         selected_sound = sound
     else:
         selected_sound = random.choice(sound_files)
 
-    # Connect to voice channel
-    voice_client = await channel.connect()
-    file = os.path.join(DATA_DIR, "sound",f"{selected_sound}.mp3")
-    audio_source = nextcord.FFmpegPCMAudio(file)
+    file = os.path.join(DATA_DIR, "sound", f"{selected_sound}.mp3")
+    if not os.path.exists(file):
+        await interaction.response.send_message("Sound file not found", ephemeral=True)
+        return
 
-    if not voice_client.is_playing():
-        voice_client.play(audio_source)
+    price = 0
+    charged = False
+    if (
+        qdb.get_server_info(interaction.guild.id, "sound_pay_value") > 0
+        and qdb.get_server_info(interaction.guild.id, "eco") == True
+        and qdb.get_server_info(interaction.guild.id, "sound_pay") == True
+    ):
+        price = qdb.get_server_info(interaction.guild.id, "sound_pay_value")
+        check = qdb.qcheck(interaction.guild.id, interaction.user.name, price)
+        if check != 0:
+            await interaction.response.send_message("Not enough QuackCoins", ephemeral=True)
+            return
+        qdb.add(interaction.guild.id, interaction.user.name, -price)
+        charged = True
 
-    # Wait for the sound to finish playing
-    while voice_client.is_playing():
-        await asyncio.sleep(1)
+    await interaction.response.defer(ephemeral=True)
 
-    # Disconnect from the voice channel
-    await voice_client.disconnect()
+    voice_client = None
+    try:
+        voice_client = await channel.connect()
+        audio_source = nextcord.FFmpegPCMAudio(file)
+        if not voice_client.is_playing():
+            voice_client.play(audio_source)
+        while voice_client.is_playing():
+            await asyncio.sleep(1)
+    except Exception as exc:
+        qlogs.error(f"Error playing sound {selected_sound}: {exc}")
+        if charged:
+            qdb.add(interaction.guild.id, interaction.user.name, price)
+        msg = "Error playing sound."
+        if charged:
+            msg += f" {price} QuackCoins refunded."
+        await interaction.followup.send(msg, ephemeral=True)
+        return
+    finally:
+        if voice_client and voice_client.is_connected():
+            await voice_client.disconnect()
 
-    # Notify the user
-    await interaction.response.send_message(f"🎶 **{selected_sound}** played in {channel.name} and disconnected.", ephemeral=True)
+    success_msg = f"🎶 **{selected_sound}** played in {channel.name} and disconnected."
+    if charged:
+        success_msg += f" (-{price} <:quackCoin:1124255606782578698>)"
+    await interaction.followup.send(success_msg, ephemeral=True)
 
 
 # qgames
